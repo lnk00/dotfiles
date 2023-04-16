@@ -1,0 +1,15 @@
+[[language]]
+name = "astro"
+scope = "source.astro"
+injection-regex = "astro"
+file-types = ["astro"]
+roots = []
+indent = { tab-width = 2, unit = "  " }
+language-server = { command = "astro-ls", args = ["--stdio"] }
+# config = { typescript.serverPath = "/Users/damiendumontet/.nvm/versions/node/v19.8.1/bin/typescript-language-server" }
+
+[[language]]
+name = "rust"
+
+[language.config.check]
+command = "clippy"

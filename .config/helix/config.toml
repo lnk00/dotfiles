@@ -1,0 +1,29 @@
+theme = "lnk0"
+
+[keys.normal]
+esc = ["collapse_selection", "keep_primary_selection"]
+up = "no_op"
+down = "no_op"
+left = "no_op"
+right = "no_op"
+
+[keys.normal.space]
+q = ":quit"
+w = ":write"
+z = ":reload"
+
+[keys.normal.g]
+c = ":buffer-close"
+
+[keys.insert]
+up = "no_op"
+down = "no_op"
+left = "no_op"
+right = "no_op"
+
+[keys.insert.j]
+k = "normal_mode"
+
+[editor.cursor-shape]
+insert = "bar"
+
