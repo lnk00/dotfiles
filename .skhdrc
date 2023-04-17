@@ -79,3 +79,7 @@
 # fast focus desktop
 ctrl - left : yabai -m space --focus prev
 ctrl - right : yabai -m space --focus next
+
+# fast focus window
+ctrl - h : yabai -m window --focus prev
+ctrl - l : yabai -m window --focus next
