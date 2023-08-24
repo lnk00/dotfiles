@@ -1,4 +1,7 @@
-theme = "lnk0"
+theme = "catppuccin-lnk0"
+
+[editor]
+line-number = "relative"
 
 [keys.normal]
 esc = ["collapse_selection", "keep_primary_selection"]
@@ -27,3 +30,11 @@ k = "normal_mode"
 [editor.cursor-shape]
 insert = "bar"
 
+[editor.lsp]
+display-messages = true
+display-inlay-hints = true
+
+[editor.indent-guides]
+render = true
+character = "┆"# Some characters that work well: "▏", "┆", "┊", "⸽"
+skip-levels = 1

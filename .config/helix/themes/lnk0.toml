@@ -68,6 +68,9 @@
 "ui.menu.selected" = { bg = "bogster-base3" }
 "ui.menu.scroll" = { fg = "bogster-red" }
 
+"ui.virtual.inlay-hint" = { fg = "bogster-base4" }
+"ui.virtual.indent-guide" = { fg = "bogster-base1" }
+
 "warning" = "bogster-orange"
 "error" = "bogster-lred"
 "info" = "bogster-teal"

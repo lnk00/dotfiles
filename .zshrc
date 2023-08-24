@@ -13,7 +13,7 @@ source $ZSH/oh-my-zsh.sh
 alias zshconf="hx ~/.zshrc"
 alias zshsource="source ~/.zshrc"
 alias hxconf="hx ~/.config/helix/config.toml"
-alias hxtheme="hx ~/.config/helix/themes/lnk0.toml"
+alias hxtheme="hx ~/.config/helix/themes/catppuccin-lnk0.toml"
 alias hxlang="hx ~/.config/helix/languages.toml"
 alias yabaiconf="hx ~/.yabairc"
 alias skhdconf="hx ~/.skhdrc"

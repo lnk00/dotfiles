@@ -7,3 +7,7 @@
 !.zshrc
 
 .config/raycast
+.config/flipper
+.config/github-copilot
+.config/jgit
+.config/yarn
