@@ -9,7 +9,7 @@ name = "typescript"
 scope = "source.ts"
 injection-regex = "^(ts|typescript)$"
 file-types = ["ts"]
-auto-format = true
+# auto-format = true
 formatter = { command = "prettier", args = ["--parser", "typescript"]}
 
 [[language]]
@@ -17,5 +17,11 @@ name = "tsx"
 scope = "source.tsx"
 injection-regex = "^(tsx)$"
 file-types = ["tsx"]
-auto-format = true
+# auto-format = true
 formatter = { command = "prettier", args = ["--parser", "typescript"]}
+
+[[language]]
+name = "html"
+injection-regex = "^(html|edge)$"
+file-types = ["html", "edge"]
+auto-format = true
