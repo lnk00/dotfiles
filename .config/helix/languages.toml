@@ -1,27 +1,90 @@
-[[language]]
-name = "rust"
+[language-server]
+deno = { command = "deno", args = [ "lsp" ]}
+emmet-ls = { command = "emmet-ls", args = [ "--stdio" ]}
+tailwindcss-ls = { command = "tailwindcss-language-server", args = [ "--stdio" ] }
 
-[language.config.check]
-command = "clippy"
+[language-server.astro-ls]
+command = "astro-ls"
+args = ["--stdio"]
+
+[language-server.astro-ls.config]
+typescript = { sdk = "/Users/damiendumontet/.nvm/versions/node/v19.8.1/lib/node_modules/typescript/lib" }
+
+[language-server.eslint]
+command = "vscode-eslint-language-server"
+args = ["--stdio"]
+
+[language-server.eslint.config]
+codeActionsOnSave = { mode = "all", "source.fixAll.eslint" = true }
+format = { enable = true }
+nodePath = ""
+quiet = false
+rulesCustomizations = []
+run = "onType"
+validate = "on"
+experimental = {}
+problems = { shortenToSingleLine = false }
+
+[language-server.eslint.config.codeAction]
+disableRuleComment = { enable = true, location = "separateLine" }
+showDocumentation = { enable = false }
+
+[language-server.vscode-json-language-server.config]
+json = { validate = { enable = true }, format = { enable = true } }
+provideFormatter = true
+
+[language-server.vscode-css-language-server.config]
+css = { validate = { enable = true } }
+scss = { validate = { enable = true } }
+less = { validate = { enable = true } }
+provideFormatter = true
+
 
 [[language]]
 name = "typescript"
-scope = "source.ts"
-injection-regex = "^(ts|typescript)$"
-file-types = ["ts"]
-# auto-format = true
-formatter = { command = "prettier", args = ["--parser", "typescript"]}
+language-servers = [ "typescript-language-server", "eslint" ]
+formatter = { command = "prettier", args = [ "--parser", "typescript" ] }
+auto-format = true
 
 [[language]]
 name = "tsx"
-scope = "source.tsx"
-injection-regex = "^(tsx)$"
-file-types = ["tsx"]
-# auto-format = true
-formatter = { command = "prettier", args = ["--parser", "typescript"]}
+language-servers = [ "typescript-language-server", "eslint", "emmet-ls", "tailwindcss-ls" ]
+formatter = { command = "prettier", args = [ "--parser", "typescript" ] }
+auto-format = true
+
+[[language]]
+name = "javascript"
+language-servers = [ "typescript-language-server", "eslint"]
+formatter = { command = "prettier", args = [ "--parser", "typescript" ] }
+auto-format = true
+
+[[language]]
+name = "jsx"
+language-servers = [ "typescript-language-server", "eslint", "emmet-ls", "tailwindcss-ls" ]
+formatter = { command = "prettier", args = [ "--parser", "typescript" ] }
+auto-format = true
+
+[[language]]
+name = "json"
+formatter = { command = "prettier", args = [ "--parser", "json" ] }
+auto-format = true
 
 [[language]]
 name = "html"
 injection-regex = "^(html|edge)$"
 file-types = ["html", "edge"]
+language-servers = [ "vscode-html-language-server", "emmet-ls", "tailwindcss-ls" ]
+formatter = { command = 'prettier', args = ["--parser", "html"] }
+auto-format = true
+
+[[language]]
+name = "css"
+language-servers = [ "vscode-css-language-server", "emmet-ls", "tailwindcss-ls" ]
+formatter = { command = 'prettier', args = ["--parser", "css"] }
+auto-format = true
+
+[[language]]
+name = "astro"
+language-servers = [ "typescript-language-server", "eslint", "emmet-ls", "tailwindcss-ls", "astro-ls" ]
+formatter = { command = 'prettier', args = ["--parser", "typescript"] }
 auto-format = true
