@@ -11,3 +11,5 @@
 .config/github-copilot
 .config/jgit
 .config/yarn
+
+.config/configstore/update-notifier-npm.json
