@@ -1,6 +1,6 @@
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
-export PATH="$PATH:$HOME/Documents/flutter/bin"
+export PATH="$PATH:$HOME/dev/flutter/bin"
 
 ZSH_THEME="gallois"
 ENABLE_CORRECTION="true"
