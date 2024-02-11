@@ -88,3 +88,9 @@ name = "astro"
 language-servers = [ "typescript-language-server", "eslint", "emmet-ls", "tailwindcss-ls", "astro-ls" ]
 formatter = { command = 'prettier', args = ["--parser", "typescript"] }
 auto-format = true
+
+[[language]]
+name = "templ"
+language-servers = ["templ", "emmet-ls", "tailwindcss-ls"]
+formatter = { command = "templ", args = ["fmt"] }
+auto-format = true
