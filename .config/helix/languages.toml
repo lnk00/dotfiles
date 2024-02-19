@@ -1,5 +1,4 @@
 [language-server]
-deno = { command = "deno", args = [ "lsp" ]}
 emmet-ls = { command = "emmet-ls", args = [ "--stdio" ]}
 tailwindcss-ls = { command = "tailwindcss-language-server", args = [ "--stdio" ] }
 
@@ -44,13 +43,13 @@ provideFormatter = true
 name = "typescript"
 language-servers = [ "typescript-language-server", "eslint" ]
 formatter = { command = "prettier", args = [ "--parser", "typescript" ] }
-auto-format = true
+# auto-format = true
 
 [[language]]
 name = "tsx"
 language-servers = [ "typescript-language-server", "eslint", "emmet-ls", "tailwindcss-ls" ]
 formatter = { command = "prettier", args = [ "--parser", "typescript" ] }
-auto-format = true
+# auto-format = true
 
 [[language]]
 name = "javascript"
@@ -94,3 +93,26 @@ name = "templ"
 language-servers = ["templ", "emmet-ls", "tailwindcss-ls"]
 formatter = { command = "templ", args = ["fmt"] }
 auto-format = true
+
+
+# [[language]]
+# name = "typescript"
+# shebangs = ["deno"]
+# roots = ["deno.json", "deno.jsonc", "package.json"]
+# auto-format = true
+# language-servers = ["deno-lsp"]
+
+# [language-server.deno-lsp]
+# command = "deno"
+# args = ["lsp"]
+
+# [language-server.deno-lsp.config.deno]
+# enable = true
+# unstable = true
+# suggest.imports.hosts = { "https://deno.land" = true }
+# inlayHints.parameterNames.enabled = "all"
+# inlayHints.parameterTypes.enabled = true
+# inlayHints.variableTypes.enabled = true
+# inlayHints.propertyDeclarationTypes.enabled  = true
+# inlayHints.functionLikeReturnTypes.enabled = true
+# inlayHints.enumMemberValues.enabled = true
