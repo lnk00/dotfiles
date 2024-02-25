@@ -24,6 +24,7 @@ alias hxtheme="hx ~/.config/helix/themes/catppuccin-lnk0.toml"
 alias hxlang="hx ~/.config/helix/languages.toml"
 alias m1="arch -x86_64"
 alias tt="tree -I 'node_modules|build'"
+alias ff="yazi ."
 
 # Homebrew setup
 eval "$(/opt/homebrew/bin/brew shellenv)"
