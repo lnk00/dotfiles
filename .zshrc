@@ -8,7 +8,7 @@ export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 export PATH=$PATH:/Users/damiendumontet/Library/Android/sdk/build-tools/33.0.0
 export ANDROID_HOME=$HOME/Library/Android/sdk
-export JAVA_HOME="/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home"
+export JAVA_HOME=`/usr/libexec/java_home -v"21"`
 export EDITOR="hx"
 
 # Config
