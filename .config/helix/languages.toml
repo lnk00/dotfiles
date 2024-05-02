@@ -93,3 +93,9 @@ name = "templ"
 language-servers = ["templ", "emmet-ls", "tailwindcss-ls"]
 formatter = { command = "templ", args = ["fmt"] }
 auto-format = true
+
+[[language]]
+name = "svelte"
+language-servers = ["svelteserver", "emmet-ls", "tailwindcss-ls"]
+formatter = { command = "prettier", args = ["--parser", "typescript"] }
+auto-format = true
