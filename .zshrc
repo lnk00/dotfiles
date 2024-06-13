@@ -35,3 +35,7 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 
 # Source
 source $ZSH/oh-my-zsh.sh
+
+
+# Load Angular CLI autocompletion.
+source <(ng completion script)
