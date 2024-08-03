@@ -39,3 +39,6 @@ source $ZSH/oh-my-zsh.sh
 
 # Load Angular CLI autocompletion.
 source <(ng completion script)
+
+# Created by `pipx` on 2024-08-03 00:02:48
+export PATH="$PATH:/Users/damiendumontet/.local/bin"
