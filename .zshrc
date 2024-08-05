@@ -10,6 +10,7 @@ export PATH=$PATH:/Users/damiendumontet/Library/Android/sdk/build-tools/33.0.0
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export JAVA_HOME=`/usr/libexec/java_home -v"21"`
 export EDITOR="hx"
+export DISPLAY=localhost:0
 
 # Config
 ZSH_THEME="gallois"
