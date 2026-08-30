@@ -1,0 +1,16 @@
+/* GENERATED from ~/.config/theme/eink.toml by build.py -- do not edit by hand */
+/* GTK3 named colours for waybar, imported by style.css. That file holds the
+   geometry, is hand-written, and is the one to edit. */
+
+@define-color ink        #282826;
+@define-color charcoal   #41403c;
+@define-color slate      #5b5954;
+@define-color muted      #686661;
+@define-color faint      #a29f95;
+@define-color rule       #c0bcb0;
+@define-color selection  #cfcbbf;
+@define-color highlight  #dfdbcd;
+@define-color cursorline #efeadb;
+@define-color paper      #fffaea;
+@define-color error      #833f39;
+@define-color warning    #8f6737;

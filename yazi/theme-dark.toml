@@ -1,0 +1,135 @@
+# High-contrast dark monochrome theme for Yazi.
+
+[app]
+overall = { bg = "#111111" }
+
+[mgr]
+cwd = { fg = "#f5f5f5", bold = true }
+find_keyword = { fg = "#f5f5f5", bg = "#333333", bold = true }
+find_position = { fg = "#888888", bg = "#333333" }
+symlink_target = { fg = "#888888", italic = true }
+marker_copied = { fg = "#111111", bg = "#b3b3b3", bold = true }
+marker_cut = { fg = "#111111", bg = "#d6d6d6", bold = true }
+marker_marked = { fg = "#f5f5f5", bg = "#333333", bold = true }
+marker_selected = { fg = "#111111", bg = "#f5f5f5", bold = true }
+count_copied = { fg = "#111111", bg = "#b3b3b3", bold = true }
+count_cut = { fg = "#111111", bg = "#d6d6d6", bold = true }
+count_selected = { fg = "#111111", bg = "#f5f5f5", bold = true }
+border_symbol = "│"
+border_style = { fg = "#666666" }
+
+[indicator]
+parent = { reversed = true, bold = true }
+# Keep the hovered item unmistakable on the white background.
+current = { reversed = true, bold = true }
+preview = { fg = "#a3a3a3" }
+padding = { open = "▐", close = "▌" }
+
+[tabs]
+active = { fg = "#111111", bg = "#f5f5f5", bold = true }
+inactive = { fg = "#888888", bg = "#444444" }
+sep_inner = { open = " ", close = " " }
+sep_outer = { open = "", close = "" }
+
+[mode]
+normal_main = { fg = "#111111", bg = "#f5f5f5", bold = true }
+normal_alt = { fg = "#b3b3b3", bg = "#444444" }
+select_main = { fg = "#111111", bg = "#d6d6d6", bold = true }
+select_alt = { fg = "#b3b3b3", bg = "#444444" }
+unset_main = { fg = "#111111", bg = "#b3b3b3", bold = true }
+unset_alt = { fg = "#b3b3b3", bg = "#444444" }
+
+[status]
+overall = { fg = "#d6d6d6", bg = "#222222" }
+sep_left = { open = "", close = " " }
+sep_right = { open = " ", close = "" }
+perm_type = { fg = "#b3b3b3" }
+perm_read = { fg = "#d6d6d6" }
+perm_write = { fg = "#b3b3b3" }
+perm_exec = { fg = "#f5f5f5", bold = true }
+perm_sep = { fg = "#666666" }
+progress_label = { fg = "#f5f5f5", bold = true }
+progress_normal = { fg = "#b3b3b3", bg = "#333333" }
+progress_error = { fg = "#f5f5f5", bg = "#666666", bold = true }
+
+[which]
+cols = 2
+mask = { fg = "#a3a3a3" }
+cand = { fg = "#f5f5f5", bold = true }
+rest = { fg = "#888888" }
+desc = { fg = "#d6d6d6" }
+separator = " → "
+separator_style = { fg = "#666666" }
+
+[confirm]
+border = { fg = "#a3a3a3" }
+title = { fg = "#f5f5f5", bold = true }
+body = { fg = "#d6d6d6" }
+list = { fg = "#b3b3b3" }
+btn_yes = { fg = "#111111", bg = "#f5f5f5", bold = true }
+btn_no = { fg = "#d6d6d6", bg = "#333333" }
+btn_labels = [ "Yes", "No" ]
+
+[spot]
+border = { fg = "#a3a3a3" }
+title = { fg = "#f5f5f5", bold = true }
+tbl_col = { fg = "#f5f5f5", bg = "#333333", bold = true }
+tbl_cell = { fg = "#d6d6d6", bg = "#222222" }
+
+[notify]
+title_info = { fg = "#f5f5f5", bold = true }
+title_warn = { fg = "#d6d6d6", bold = true }
+title_error = { fg = "#f5f5f5", bold = true, underline = true }
+
+[pick]
+border = { fg = "#a3a3a3" }
+active = { fg = "#111111", bg = "#f5f5f5", bold = true }
+inactive = { fg = "#d6d6d6", bg = "#222222" }
+
+[input]
+border = { fg = "#a3a3a3" }
+title = { fg = "#f5f5f5", bold = true }
+value = { fg = "#d6d6d6" }
+selected = { fg = "#111111", bg = "#f5f5f5", bold = true }
+
+[cmp]
+border = { fg = "#a3a3a3" }
+active = { fg = "#111111", bg = "#f5f5f5", bold = true }
+inactive = { fg = "#d6d6d6", bg = "#222222" }
+
+[tasks]
+border = { fg = "#a3a3a3" }
+title = { fg = "#f5f5f5", bold = true }
+hovered = { fg = "#111111", bg = "#f5f5f5", bold = true }
+
+[help]
+on = { fg = "#f5f5f5", bold = true }
+run = { fg = "#d6d6d6" }
+desc = { fg = "#b3b3b3" }
+hovered = { fg = "#111111", bg = "#f5f5f5", bold = true }
+footer = { fg = "#888888", italic = true }
+icon_info = "i"
+icon_warn = "!"
+icon_error = "×"
+
+[filetype]
+rules = [
+    { url = "*/", fg = "#f5f5f5", bold = true },
+    { url = "*", fg = "#d6d6d6" },
+]
+
+# Replace colored devicons with neutral glyphs while keeping file-type cues.
+[icon]
+globs = []
+dirs = []
+files = []
+exts = []
+conds = [
+    { if = "orphan", text = "", fg = "#a3a3a3" },
+    { if = "link", text = "", fg = "#888888" },
+    { if = "hidden & dir", text = "", fg = "#d6d6d6" },
+    { if = "dir", text = "", fg = "#f5f5f5" },
+    { if = "exec", text = "󰆍", fg = "#f5f5f5" },
+    { if = "block | char | fifo | sock", text = "󰜫", fg = "#b3b3b3" },
+    { if = "!(dir | link)", text = "󰈔", fg = "#d6d6d6" },
+]

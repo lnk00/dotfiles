@@ -1,0 +1,64 @@
+// waybar -- hand-written. Colours are NOT here; they live in eink-colors.css,
+// which is generated from ~/.config/theme/eink.toml. Geometry is in style.css.
+{
+  "layer": "top",
+  "position": "top",
+  "height": 28,
+  "spacing": 0,
+
+  // The dots are the centre widget, so GTK keeps them on the screen's midpoint
+  // rather than balancing against neighbours -- but only while the side boxes
+  // still fit. That is what max-length on the title below is protecting.
+  "modules-left": ["custom/logo", "custom/window"],
+  "modules-center": ["niri/workspaces"],
+  // Two clock instances rather than one: the date/time hierarchy is then a
+  // CSS matter (@muted vs @ink) instead of a hardcoded colour inside a pango
+  // span, which could not reference the generated palette.
+  "modules-right": ["clock#date", "clock"],
+
+  // Decorative only -- a torii (fa-torii_gate, U+EEE6) for the rice's Japanese
+  // theme, matching the ink-wash wallpaper. Line art rather than a filled
+  // glyph, which is why it sits with the hairlines and hollow dots instead of
+  // fighting them.
+  "custom/logo": {
+    "format": "",
+    "tooltip": false
+  },
+
+  // The focused window title. This is window-resolve.py rather than the
+  // built-in niri/window because the built-in offers no hook between "title
+  // arrived" and "label drawn", and GTK3 CSS cannot animate text CONTENT --
+  // only colour and opacity. The e-ink resolve therefore has to be driven from
+  // the data side, one JSON line per frame. The script re-implements the
+  // built-in's separate-outputs behaviour off WAYBAR_OUTPUT_NAME; see its
+  // header for why the trigger is focus change and not every title change.
+  //
+  // max-length is not cosmetic: an untruncated title grows modules-left until
+  // it reaches the centre box, and the workspace dots then get shoved off the
+  // screen midpoint. 60 chars at 12px GeistMono is ~430px, which leaves the
+  // dots room on this display.
+  "custom/window": {
+    "exec": "$HOME/.config/waybar/window-resolve.py",
+    "return-type": "json",
+    // Titles are arbitrary text and will eventually contain & or <, which
+    // would otherwise be parsed as pango markup and break the label.
+    "escape": true,
+    "max-length": 60,
+    "tooltip": false
+  },
+
+  "clock#date": {
+    "format": "{:%a %d %b}",
+    "tooltip": false
+  },
+
+  "clock": {
+    "format": "{:%H:%M}"
+  },
+
+  "niri/workspaces": {
+    // No text and no icon: every mark is drawn in CSS. See style.css.
+    "format": "",
+    "all-outputs": false
+  }
+}

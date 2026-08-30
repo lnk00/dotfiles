@@ -1,0 +1,145 @@
+# monochrome-light: high-contrast white background with grayscale syntax hierarchy
+inherits = "default"
+
+# Interface
+"ui.background" = { fg = "ink", bg = "paper" }
+"ui.background.separator" = { fg = "line", bg = "paper" }
+"ui.text" = { fg = "ink" }
+"ui.text.focus" = { fg = "ink", bg = "highlight", modifiers = ["bold"] }
+"ui.text.inactive" = { fg = "muted", bg = "paper" }
+"ui.text.info" = { fg = "ink", bg = "highlight", modifiers = ["bold"] }
+"ui.text.directory" = { fg = "ink", modifiers = ["bold"] }
+"ui.text.symlink" = { fg = "charcoal", modifiers = ["italic"] }
+
+"ui.gutter" = { fg = "muted", bg = "paper" }
+"ui.gutter.selected" = { fg = "ink", bg = "cursorline" }
+"ui.linenr" = { fg = "muted", bg = "paper" }
+"ui.linenr.selected" = { fg = "ink", bg = "cursorline", modifiers = ["bold"] }
+"ui.statusline" = { fg = "ink", bg = "paper", modifiers = ["bold"] }
+"ui.statusline.inactive" = { fg = "muted", bg = "paper" }
+"ui.statusline.normal" = { fg = "ink", bg = "paper", modifiers = ["bold"] }
+"ui.statusline.insert" = { fg = "charcoal", bg = "paper", modifiers = ["bold"] }
+"ui.statusline.select" = { fg = "ink", bg = "paper", modifiers = ["bold"] }
+"ui.statusline.separator" = { fg = "muted", bg = "paper" }
+
+"ui.bufferline" = { fg = "muted", bg = "paper" }
+"ui.bufferline.active" = { fg = "ink", bg = "paper", modifiers = ["bold", "underlined"] }
+"ui.bufferline.background" = { fg = "muted", bg = "paper" }
+"ui.window" = { fg = "line", bg = "paper" }
+"ui.popup" = { fg = "ink", bg = "paper" }
+"ui.popup.info" = { fg = "ink", bg = "highlight" }
+"ui.help" = { fg = "ink", bg = "paper" }
+"ui.picker.header" = { fg = "paper", bg = "ink", modifiers = ["bold"] }
+"ui.picker.header.column" = { fg = "paper", bg = "ink", modifiers = ["bold"] }
+"ui.picker.header.column.active" = { fg = "ink", bg = "paper", modifiers = ["bold"] }
+
+"ui.menu" = { fg = "ink", bg = "paper" }
+"ui.menu.selected" = { fg = "paper", bg = "ink", modifiers = ["bold"] }
+"ui.menu.scroll" = { fg = "paper", bg = "muted" }
+"ui.selection" = { fg = "ink", bg = "selection" }
+"ui.selection.primary" = { fg = "paper", bg = "ink" }
+"ui.highlight" = { fg = "ink", bg = "highlight" }
+"ui.cursorline" = { bg = "cursorline" }
+"ui.cursorline.primary" = { bg = "cursorline" }
+"ui.cursorline.secondary" = { bg = "cursorline" }
+"ui.cursor" = { fg = "paper", bg = "ink" }
+"ui.cursor.normal" = { fg = "paper", bg = "ink" }
+"ui.cursor.insert" = { fg = "ink", bg = "paper" }
+"ui.cursor.select" = { fg = "paper", bg = "charcoal" }
+"ui.cursor.match" = { fg = "ink", bg = "selection", modifiers = ["bold"] }
+"tabstop" = { fg = "ink", bg = "highlight", modifiers = ["bold"] }
+"ui.virtual.ruler" = { bg = "cursorline" }
+"ui.virtual.whitespace" = { fg = "line" }
+"ui.virtual.indent-guide" = { fg = "line" }
+"ui.virtual.inlay-hint" = { fg = "muted", modifiers = ["italic"] }
+"ui.virtual.inlay-hint.parameter" = { fg = "muted", modifiers = ["italic"] }
+"ui.virtual.inlay-hint.type" = { fg = "charcoal", modifiers = ["italic"] }
+"ui.virtual.wrap" = { fg = "muted" }
+"ui.virtual.jump-label" = { fg = "paper", bg = "ink", modifiers = ["bold"] }
+
+# Diagnostics use restrained color, weight, and underline style for quick scanning.
+"error" = { fg = "error-red", modifiers = ["bold"], underline = { color = "error-red", style = "curl" } }
+"warning" = { fg = "warning-orange", modifiers = ["bold"], underline = { color = "warning-orange", style = "dashed" } }
+"info" = { fg = "slate", underline = { color = "slate", style = "dotted" } }
+"hint" = { fg = "muted", modifiers = ["italic"] }
+"diagnostic.error" = { underline = { color = "error-red", style = "curl" } }
+"diagnostic.warning" = { underline = { color = "warning-orange", style = "dashed" } }
+"diagnostic.info" = { underline = { color = "slate", style = "dotted" } }
+"diagnostic.hint" = { modifiers = ["italic"] }
+"diagnostic.unnecessary" = { fg = "muted", modifiers = ["dim"] }
+"diagnostic.deprecated" = { fg = "charcoal", modifiers = ["crossed_out"] }
+
+# Syntax: semantic contrast comes from grayscale, bold, and italic rather than hue.
+"attribute" = { fg = "charcoal", modifiers = ["italic"] }
+"type" = { fg = "ink", modifiers = ["bold"] }
+"type.builtin" = { fg = "ink", modifiers = ["bold", "italic"] }
+"type.parameter" = { fg = "charcoal", modifiers = ["italic"] }
+"type.enum.variant" = { fg = "charcoal", modifiers = ["bold"] }
+"constructor" = { fg = "ink", modifiers = ["bold"] }
+"constant" = { fg = "charcoal", modifiers = ["bold"] }
+"constant.builtin" = { fg = "ink", modifiers = ["bold", "italic"] }
+"constant.character" = { fg = "charcoal" }
+"constant.character.escape" = { fg = "ink", modifiers = ["bold"] }
+"constant.numeric" = { fg = "charcoal" }
+"string" = { fg = "charcoal" }
+"string.regexp" = { fg = "ink", modifiers = ["italic"] }
+"string.special" = { fg = "ink", modifiers = ["bold"] }
+"string.special.path" = { fg = "charcoal", modifiers = ["italic"] }
+"string.special.url" = { fg = "ink", underline = { color = "ink", style = "line" } }
+
+"comment" = { fg = "muted", modifiers = ["italic"] }
+"comment.documentation" = { fg = "slate", modifiers = ["italic"] }
+"comment.unused" = { fg = "muted", modifiers = ["italic", "crossed_out"] }
+"variable" = { fg = "ink" }
+"variable.builtin" = { fg = "charcoal", modifiers = ["italic"] }
+"variable.parameter" = { fg = "charcoal", modifiers = ["italic"] }
+"variable.other.member" = { fg = "charcoal" }
+"label" = { fg = "ink", modifiers = ["bold"] }
+"punctuation" = { fg = "slate" }
+"punctuation.delimiter" = { fg = "muted" }
+"punctuation.bracket" = { fg = "ink" }
+"punctuation.special" = { fg = "charcoal", modifiers = ["bold"] }
+"keyword" = { fg = "ink", modifiers = ["bold"] }
+"keyword.control" = { fg = "ink", modifiers = ["bold"] }
+"keyword.operator" = { fg = "charcoal", modifiers = ["bold"] }
+"keyword.directive" = { fg = "charcoal", modifiers = ["bold", "italic"] }
+"keyword.function" = { fg = "ink", modifiers = ["bold", "italic"] }
+"keyword.storage" = { fg = "ink", modifiers = ["bold"] }
+"operator" = { fg = "charcoal", modifiers = ["bold"] }
+"function" = { fg = "ink", modifiers = ["bold"] }
+"function.builtin" = { fg = "charcoal", modifiers = ["bold", "italic"] }
+"function.method" = { fg = "ink", modifiers = ["bold"] }
+"function.macro" = { fg = "charcoal", modifiers = ["bold", "italic"] }
+"tag" = { fg = "ink", modifiers = ["bold"] }
+"tag.attribute" = { fg = "charcoal", modifiers = ["italic"] }
+"namespace" = { fg = "charcoal", modifiers = ["italic"] }
+"special" = { fg = "ink", modifiers = ["bold"] }
+
+# Markup and version-control states remain grayscale but retain clear hierarchy.
+"markup.heading" = { fg = "ink", modifiers = ["bold"] }
+"markup.bold" = { fg = "ink", modifiers = ["bold"] }
+"markup.italic" = { fg = "charcoal", modifiers = ["italic"] }
+"markup.strikethrough" = { fg = "muted", modifiers = ["crossed_out"] }
+"markup.link.url" = { fg = "ink", underline = { color = "ink", style = "line" } }
+"markup.quote" = { fg = "slate", modifiers = ["italic"] }
+"markup.raw" = { fg = "charcoal" }
+"diff.plus" = { fg = "ink", modifiers = ["bold"] }
+"diff.minus" = { fg = "muted", modifiers = ["dim"] }
+"diff.delta" = { fg = "charcoal", modifiers = ["bold"] }
+"diff.plus.gutter" = { fg = "ink", modifiers = ["bold"] }
+"diff.minus.gutter" = { fg = "muted" }
+"diff.delta.gutter" = { fg = "charcoal", modifiers = ["bold"] }
+
+# Named colors are grayscale except for the diagnostic accents.
+[palette]
+paper = "#ffffff"
+ink = "#111111"
+charcoal = "#333333"
+slate = "#666666"
+muted = "#888888"
+line = "#c7c7c7"
+highlight = "#e5e5e5"
+selection = "#cccccc"
+cursorline = "#f0f0f0"
+warning-orange = "#b45309"
+error-red = "#b91c1c"

@@ -1,0 +1,292 @@
+input {
+    keyboard {
+        repeat-delay 200
+        repeat-rate 75
+    }
+
+    mouse {
+        accel-speed 0.0
+        accel-profile "flat"
+    }
+}
+
+output "eDP-1" {
+    mode "2560x1440@144.000"
+    transform "normal"
+}
+
+layout {
+    gaps 12
+    center-focused-column "always"
+
+    background-color "00000000"
+    
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+
+    default-column-width { proportion 0.66667; }
+
+    focus-ring {
+        off
+    }
+
+    border {
+        width 1
+        active-color "#282826"
+        inactive-color "#c0bcb0"
+        urgent-color "#833f39"
+    }
+
+    shadow {
+        off
+        softness 12
+        spread 2
+        offset x=0 y=0
+        color "#0007"
+    }
+}
+
+overview {
+    // backdrop-color "#dfdbcd"
+    backdrop-color "#dfdbcd"
+    workspace-shadow {
+        off
+    }
+}
+
+spawn-at-startup "mako"
+spawn-at-startup "swaybg" "-i" "/home/lnk0/Pictures/Wallpapers/vilkasss-ink-10177251.jpg" "-m" "fill"
+spawn-at-startup "waybar"
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+prefer-no-csd
+
+// You can change the path where screenshots are saved.
+// A ~ at the front will be expanded to the home directory.
+// The path is formatted with strftime(3) to give you the screenshot date and time.
+screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
+animations {
+    // Uncomment to turn off all animations.
+    // off
+
+    // Slow down all animations by this factor. Values below 1 speed them up instead.
+    // slowdown 3.0
+
+    // >>> eink theme (generated -- edit ~/.config/theme/eink.toml) >>>
+// Window open / close: ink-splash. GENERATED from ~/.config/theme/eink.toml by build.py -- do not edit by hand
+    window-open {
+        duration-ms 700
+        curve "linear"
+        custom-shader r"
+            // Ported from skwd-wall ink-splash transition
+
+            float is_hash(vec2 p) {
+                return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+            }
+
+            float is_noise(vec2 p) {
+                vec2 i = floor(p);
+                vec2 f = fract(p);
+                f = f * f * (3.0 - 2.0 * f);
+                return mix(mix(is_hash(i), is_hash(i + vec2(1.0, 0.0)), f.x),
+                           mix(is_hash(i + vec2(0.0, 1.0)), is_hash(i + vec2(1.0, 1.0)), f.x), f.y);
+            }
+
+            float is_fbm(vec2 p) {
+                float v = 0.0;
+                float amp = 0.5;
+                for (int i = 0; i < 4; i++) {
+                    v += amp * is_noise(p);
+                    p *= 2.1;
+                    amp *= 0.5;
+                }
+                return v;
+            }
+
+            vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+                float p = niri_clamped_progress;
+                vec2 uv = coords_geo.xy;
+                vec3 tc = niri_geo_to_tex * vec3(uv, 1.0);
+                vec4 win = texture2D(niri_tex, tc.st);
+
+                float blob = is_fbm(uv * 3.5);
+                float fingers = is_fbm(uv * 14.0);
+                float distortion = (blob - 0.5) * 0.5 + (fingers - 0.5) * 0.18;
+                vec2 c = uv - vec2(0.5);
+                c.x *= size_geo.x / max(size_geo.y, 0.0001);
+                float d = length(c);
+                float splash_d = d + distortion;
+                float boundary = p * 1.7 - 0.15;
+                float diff = splash_d - boundary;
+                float reveal = smoothstep(0.04, -0.04, diff);
+
+                return win * reveal;
+            }
+        "
+    }
+
+    window-close {
+        duration-ms 550
+        curve "linear"
+        custom-shader r"
+            // Ported from skwd-wall ink-splash transition
+
+            float is_hash(vec2 p) {
+                return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+            }
+
+            float is_noise(vec2 p) {
+                vec2 i = floor(p);
+                vec2 f = fract(p);
+                f = f * f * (3.0 - 2.0 * f);
+                return mix(mix(is_hash(i), is_hash(i + vec2(1.0, 0.0)), f.x),
+                           mix(is_hash(i + vec2(0.0, 1.0)), is_hash(i + vec2(1.0, 1.0)), f.x), f.y);
+            }
+
+            float is_fbm(vec2 p) {
+                float v = 0.0;
+                float amp = 0.5;
+                for (int i = 0; i < 4; i++) {
+                    v += amp * is_noise(p);
+                    p *= 2.1;
+                    amp *= 0.5;
+                }
+                return v;
+            }
+
+            vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+                float p = 1.0 - niri_clamped_progress;
+                vec2 uv = coords_geo.xy;
+                vec3 tc = niri_geo_to_tex * vec3(uv, 1.0);
+                vec4 win = texture2D(niri_tex, tc.st);
+
+                float blob = is_fbm(uv * 3.5);
+                float fingers = is_fbm(uv * 14.0);
+                float distortion = (blob - 0.5) * 0.5 + (fingers - 0.5) * 0.18;
+                vec2 c = uv - vec2(0.5);
+                c.x *= size_geo.x / max(size_geo.y, 0.0001);
+                float d = length(c);
+                float splash_d = d + distortion;
+                float boundary = p * 1.7 - 0.15;
+                float diff = splash_d - boundary;
+                float reveal = smoothstep(0.04, -0.04, diff);
+
+                return win * reveal;
+            }
+        "
+    }
+// <<< eink theme <<<
+}
+
+window-rule {
+    geometry-corner-radius 0
+    clip-to-geometry true
+}
+
+
+
+layer-rule {
+    match namespace="^wallpaper$"
+    place-within-backdrop true
+}
+
+
+binds {
+    Mod+Shift+Slash { show-hotkey-overlay; }
+
+    Mod+T hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }
+    Mod+B hotkey-overlay-title="Open a Browser: glide" { spawn "glide-bin"; }
+
+    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+ -l 1.0"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"; }
+    XF86AudioMute        allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    XF86AudioPlay        allow-when-locked=true { spawn-sh "playerctl play-pause"; }
+    XF86AudioStop        allow-when-locked=true { spawn-sh "playerctl stop"; }
+    XF86AudioPrev        allow-when-locked=true { spawn-sh "playerctl previous"; }
+    XF86AudioNext        allow-when-locked=true { spawn-sh "playerctl next"; }
+    XF86MonBrightnessUp   allow-when-locked=true { spawn-sh "ddcutil --noverify setvcp 10 + 10"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn-sh "ddcutil --noverify setvcp 10 - 10"; }
+
+    Mod+O repeat=false { toggle-overview; }
+    Mod+D repeat=false { close-window; }
+
+    Mod+H     { focus-column-left; }
+    Mod+J     { focus-window-down; }
+    Mod+K     { focus-window-up; }
+    Mod+L     { focus-column-right; }
+
+    Mod+Ctrl+H     { move-column-left; }
+    Mod+Ctrl+J     { move-window-down; }
+    Mod+Ctrl+K     { move-window-up; }
+    Mod+Ctrl+L     { move-column-right; }
+
+    Mod+U              { focus-workspace-down; }
+    Mod+I              { focus-workspace-up; }
+    Mod+Ctrl+U         { move-column-to-workspace-down; }
+    Mod+Ctrl+I         { move-column-to-workspace-up; }
+
+    Mod+Shift+U         { move-workspace-down; }
+    Mod+Shift+I         { move-workspace-up; }
+
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+    Mod+5 { focus-workspace 5; }
+    Mod+6 { focus-workspace 6; }
+    Mod+7 { focus-workspace 7; }
+    Mod+8 { focus-workspace 8; }
+    Mod+9 { focus-workspace 9; }
+    Mod+Ctrl+1 { move-column-to-workspace 1; }
+    Mod+Ctrl+2 { move-column-to-workspace 2; }
+    Mod+Ctrl+3 { move-column-to-workspace 3; }
+    Mod+Ctrl+4 { move-column-to-workspace 4; }
+    Mod+Ctrl+5 { move-column-to-workspace 5; }
+    Mod+Ctrl+6 { move-column-to-workspace 6; }
+    Mod+Ctrl+7 { move-column-to-workspace 7; }
+    Mod+Ctrl+8 { move-column-to-workspace 8; }
+    Mod+Ctrl+9 { move-column-to-workspace 9; }
+
+    Mod+BracketLeft  { consume-or-expel-window-left; }
+    Mod+BracketRight { consume-or-expel-window-right; }
+
+    Mod+Comma  { consume-window-into-column; }
+    Mod+Period { expel-window-from-column; }
+
+    Mod+R { switch-preset-column-width; }
+    Mod+Shift+R { switch-preset-column-width-back; }
+
+    Mod+Ctrl+Shift+R { switch-preset-window-height; }
+    Mod+Ctrl+R { reset-window-height; }
+
+    Mod+F { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+Ctrl+F { expand-column-to-available-width; }
+
+    Mod+C { center-column; }
+
+    Mod+Minus { set-column-width "-10%"; }
+    Mod+Equal { set-column-width "+10%"; }
+
+    Mod+Shift+Minus { set-window-height "-10%"; }
+    Mod+Shift+Equal { set-window-height "+10%"; }
+
+    Mod+V       { toggle-window-floating; }
+    Mod+Shift+V { switch-focus-between-floating-and-tiling; }
+
+    Mod+Shift+S { screenshot; }
+    Mod+Ctrl+S { screenshot-screen; }
+    Mod+Alt+S { screenshot-window; }
+
+    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+
+    Mod+Shift+E { quit; }
+    Ctrl+Alt+Delete { quit; }
+}

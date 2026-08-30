@@ -1,0 +1,77 @@
+# e-ink — the single source of truth for every themed surface on this machine.
+#
+# Edit THIS file, then run:  python3 ~/.config/theme/build.py
+#           audit the result: python3 ~/.config/theme/build.py --audit
+#
+# Nothing downstream is hand-maintained; every generated file says so in its
+# own header. Editing a generated file is always the wrong move — it will be
+# silently overwritten on the next build.
+#
+# ---------------------------------------------------------------------------
+# WHY THESE NUMBERS
+#
+# An E Ink Carta panel is a 4-bit device: exactly 16 gray levels exist, full
+# stop. So the palette is not a list of colors. It is a 16-step ramp plus a
+# mapping of semantic roles onto steps of that ramp. Every downstream theme
+# draws from the same 16 values, which is what keeps thirteen applications
+# looking like one system instead of thirteen near-misses.
+#
+# PAPER IS MATCHED TO THE DESKTOP WALLPAPER.
+# ~/Pictures/Wallpapers/vilkasss-ink-10177251.jpg — an ink-wash painting on
+# warm cream stock. Its field colour measures #fffaea (R−B +21, 70% of the
+# image is warm), which converts to oklch(0.9847, 0.0217, 92.5) and round-trips
+# back exactly, in gamut. l_max, chroma and hue are simply that colour.
+#
+# THE CAST TAPERS.
+# chroma runs from 0.0217 at paper down to 0.003 at ink. Applying the paper's
+# full chroma to the whole ramp would tint the text too — ink would land near
+# #2b271b, a sepia brown. Real cream stock does the opposite: the warmth is in
+# the sheet and the ink stays near-neutral. Here ink is #282826, R−B +2.
+#
+# The ramp is DERIVED, not stored: build.py computes it from the parameters
+# below. Change one and every surface on the machine moves together, still
+# perfectly consistent, in one command.
+# ---------------------------------------------------------------------------
+
+[ramp]
+space      = "oklch"
+levels     = 16
+hue        = 92.5      # warm cream, from the wallpaper
+chroma     = 0.0217    # at paper
+chroma_min = 0.003    # at ink; omit this key for a constant cast
+l_min      = 0.275     # darkest ink   -> 14.15:1 against paper
+l_max      = 0.9847    # paper == #fffaea, the wallpaper's exact field colour
+
+# Earlier settings, kept as documented starting points:
+#   neutral, matched to the previous wallpaper
+#       hue = 0.0, chroma = 0.0, l_max = 0.9777        (paper #f8f8f8)
+#   Carta panel cast
+#       hue = 140.0, chroma = 0.0042, l_max = 0.932    (paper #e7e9e6)
+#   physically faithful panel range
+#       l_min = 0.365                                  (about 8.87:1)
+
+[roles]
+# Semantic role -> ramp level. Only these ten are referenced by name
+# downstream; emitters may still reach for any raw level when a surface needs
+# an in-between tone (btop gradients, yazi mode chips, hunk diff fills).
+ink        = 0   # body text, keywords, functions       #282826  14.15:1  AAA
+charcoal   = 2   # strings, parameters, namespaces      #41403c   9.94:1  AAA
+slate      = 4   # punctuation, doc comments, quotes    #5b5954   6.70:1  AA
+muted      = 5   # comments, line numbers, inlay hints  #686661   5.49:1  AA
+faint      = 9   # whitespace marks, indent guides      #a29f95  decoration
+rule       = 11  # hairlines, borders, separators       #c0bcb0  decoration
+selection  = 12  # selection fill                       #cfcbbf  decoration
+highlight  = 13  # match / menu-selected fill           #dfdbcd  decoration
+cursorline = 14  # current-line fill                    #efeadb  decoration
+paper      = 15  # page background                      #fffaea  = wallpaper
+
+[accents]
+# The only off-ramp values in the entire system, and the only strong hue.
+#
+# A real monochrome panel cannot show either — they are kept because catching
+# an error in peripheral vision genuinely matters more than purity. To pay for
+# the exception they are separated in LUMINANCE as well as hue (1.52:1), so
+# they stay distinguishable when the theme is read as pure gray. Anywhere they
+# appear, weight or underline style carries the same signal independently.
+error   = "#833f39"   # 7.35:1  AAA
+warning = "#8f6737"   # 4.83:1  AA; always paired with bold + dashed underline

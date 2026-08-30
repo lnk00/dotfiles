@@ -1,0 +1,80 @@
+# ~/.config is a dumping ground. Ignore everything; opt in explicitly.
+# A new app's files will NOT show up in `git status` until added here.
+#
+# Note: gitignore has no trailing comments -- a `#` after a pattern is part
+# of the pattern. Every comment here is on its own line.
+*
+
+# --- repo metadata ---
+!/.gitignore
+!/README.md
+!/.githooks/
+!/.githooks/**
+
+# --- shell ---
+!/fish/
+!/fish/**
+# machine-local $fish_user_paths, rewritten by fish on every change
+/fish/fish_variables
+
+# --- wayland desktop ---
+!/niri/
+!/niri/**
+!/jay/
+!/jay/**
+!/waybar/
+!/waybar/**
+!/mako/
+!/mako/**
+
+# --- terminal + editor ---
+!/ghostty/
+!/ghostty/**
+!/helix/
+!/helix/**
+
+# --- cli tools ---
+!/yazi/
+!/yazi/**
+!/btop/
+!/btop/**
+!/glow/
+!/glow/**
+!/lazygit/
+!/lazygit/**
+!/hunk/
+!/hunk/**
+# cli version cache
+/hunk/state.json
+!/spotify-player/
+!/spotify-player/**
+# gh: config.yml only. gh/hosts.yml holds a live OAuth token -- never allow it.
+# The dir must be un-ignored before a file inside it can be re-included.
+!/gh/
+/gh/*
+!/gh/config.yml
+
+# --- theme build system (see theme/README.md) ---
+!/theme/
+!/theme/**
+
+# --- glide browser: config only. glide/glide/ is a 255 MB profile ---
+!/glide/
+!/glide/config/
+!/glide/config/**
+!/glide/glide.ts
+!/glide/glide.ts.pre-eink
+!/glide/tsconfig.json
+
+# --- system ---
+!/systemd/
+!/systemd/**
+!/wireplumber/
+!/wireplumber/**
+!/environment.d/
+!/environment.d/**
+!/mimeapps.list
+!/user-dirs.dirs
+!/user-dirs.locale
+# okularrc is deliberately absent: it stores a [Recent Files] list
+!/okularpartrc

@@ -1,0 +1,43 @@
+# e-ink for spotify-player. GENERATED from ~/.config/theme/eink.toml by build.py -- do not edit by hand
+
+[[themes]]
+name = "eink"
+
+[themes.palette]
+background = "#fffaea"
+foreground = "#282826"
+black = "#282826"
+red = "#833f39"
+green = "#41403c"
+yellow = "#8f6737"
+blue = "#5b5954"
+magenta = "#41403c"
+cyan = "#5b5954"
+white = "#c0bcb0"
+bright_black = "#686661"
+bright_red = "#833f39"
+bright_green = "#282826"
+bright_yellow = "#8f6737"
+bright_blue = "#282826"
+bright_magenta = "#5b5954"
+bright_cyan = "#686661"
+bright_white = "#282826"
+
+[themes.component_style]
+block_title = { fg = "Black" }
+border = { fg = "White" }
+playback_status = { fg = "Black" }
+playback_track = { fg = "Black" }
+playback_album = { fg = "Magenta" }
+playback_genres = { fg = "Blue" }
+playback_metadata = { fg = "BrightBlack" }
+playback_progress_bar = { bg = "BrightBlack", fg = "Black" }
+playback_progress_bar_unfilled = { bg = "White", fg = "BrightBlack" }
+current_playing = { fg = "Black", modifiers = ["Italic"] }
+page_desc = { fg = "Black" }
+playlist_desc = { fg = "BrightBlack" }
+table_header = { fg = "Blue" }
+selection = { fg = "Black", modifiers = ["Underlined"] }
+secondary_row = { bg = "White" }
+lyrics_played = { fg = "BrightBlack" }
+lyrics_playing = { fg = "Black", modifiers = ["Italic"] }

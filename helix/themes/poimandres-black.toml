@@ -1,0 +1,17 @@
+# poimandres-black: poimandres syntax colors on the near-black (#111111) background
+# from monochrome-dark. Background-derived surfaces (cursorline, popup, selection,
+# focus, indent guides) are darkened by the same delta as bg so contrast stays subtle.
+inherits = "poimandres"
+
+"ui.cursorline" = { bg = "cursorline" }
+"ui.statusline" = { fg = "offWhite", bg = "bg" }
+"ui.popup" = { bg = "popup" }
+"ui.virtual.indent-guide" = "indent-guide"
+
+[palette]
+bg = "#111111"
+cursorline = "#1a1b24"
+popup = "#17181f"
+focus = "#262833"
+selection = "#272b3d"
+indent-guide = "#232633"

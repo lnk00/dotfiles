@@ -1,0 +1,141 @@
+keymap = """
+    xkb_keymap {
+        xkb_keycodes { include "evdev+aliases(qwerty)" };
+        xkb_types    { include "complete"              };
+        xkb_compat   { include "complete"              };
+        xkb_symbols  { include "pc+us+inet(evdev)"     };
+    };
+    """
+
+on-graphics-initialized = [
+    { type = "exec", exec = "mako" },
+    { type = "exec", exec = "wl-tray-bridge" },
+]
+
+show-bar = false
+repeat-rate = { rate = 75, delay = 200 }
+idle.minutes = 0
+
+[shortcuts]
+logo-h = "focus-left"
+logo-j = "focus-down"
+logo-k = "focus-up"
+logo-l = "focus-right"
+
+logo-shift-h = "move-left"
+logo-shift-j = "move-down"
+logo-shift-k = "move-up"
+logo-shift-l = "move-right"
+
+ctrl-shift-h = { type = "resize", dx2 = -100 }
+ctrl-shift-l = { type = "resize", dx2 = 100 }
+ctrl-shift-j = { type = "resize", dy2 = 100 }
+ctrl-shift-k = { type = "resize", dy2 = -100 }
+
+logo-ctrl-d = "split-horizontal"
+logo-ctrl-v = "split-vertical"
+
+logo-w = "close"
+
+logo-shift-t = "toggle-split"
+logo-shift-m = "toggle-mono"
+logo-shift-f = "toggle-floating"
+logo-shift-a = "toggle-fullscreen"
+
+logo-t = { type = "exec", exec = "ghostty" }
+logo-b = { type = "exec", exec = "glide-bin" }
+logo-p = { type = "exec", exec = "bemenu-run" }
+
+logo-shift-r = "reload-config-toml"
+
+ctrl-1 = { type = "show-workspace", name = "1" }
+ctrl-2 = { type = "show-workspace", name = "2" }
+ctrl-3 = { type = "show-workspace", name = "3" }
+ctrl-4 = { type = "show-workspace", name = "4" }
+ctrl-5 = { type = "show-workspace", name = "5" }
+ctrl-6 = { type = "show-workspace", name = "6" }
+ctrl-7 = { type = "show-workspace", name = "7" }
+ctrl-8 = { type = "show-workspace", name = "8" }
+ctrl-9 = { type = "show-workspace", name = "9" }
+ctrl-10 = { type = "show-workspace", name = "10" }
+ctrl-11 = { type = "show-workspace", name = "11" }
+ctrl-12 = { type = "show-workspace", name = "12" }
+
+ctrl-shift-1 = { type = "move-to-workspace", name = "1" }
+ctrl-shift-2 = { type = "move-to-workspace", name = "2" }
+ctrl-shift-3 = { type = "move-to-workspace", name = "3" }
+ctrl-shift-4 = { type = "move-to-workspace", name = "4" }
+ctrl-shift-5 = { type = "move-to-workspace", name = "5" }
+ctrl-shift-6 = { type = "move-to-workspace", name = "6" }
+ctrl-shift-7 = { type = "move-to-workspace", name = "7" }
+ctrl-shift-8 = { type = "move-to-workspace", name = "8" }
+ctrl-shift-9 = { type = "move-to-workspace", name = "9" }
+ctrl-shift-10 = { type = "move-to-workspace", name = "10" }
+ctrl-shift-11 = { type = "move-to-workspace", name = "11" }
+ctrl-shift-12 = { type = "move-to-workspace", name = "12" }
+
+logo-shift-s = {
+    type = "exec",
+    exec = {
+        shell = "grim -g \"$(slurp)\" \"$HOME/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png\"",
+    },
+}
+
+logo-c = {
+    type = "exec",
+    exec = {
+        prog = "wtype",
+        args = ["-M", "ctrl", "-k", "c", "-m", "ctrl"],
+        tag = "wtype",
+    },
+}
+logo-v = {
+    type = "exec",
+    exec = {
+        prog = "wtype",
+        args = ["-M", "ctrl", "-k", "v", "-m", "ctrl"],
+        tag = "wtype",
+    },
+}
+
+[[clients]]
+match.tag = "wtype"
+capabilities = ["virtual-keyboard"]
+
+[[clients]]
+match.tag = "pp-clipboard"
+capabilities = ["data-control"]
+
+[[clients]]
+match.any = [
+    { comm = "grim" },
+    { comm = "slurp" },
+]
+capabilities = ["screencopy", "layer-shell"]
+
+[theme]
+bg-color = "#dfdbcd"
+bar-bg-color = "#fffaea"
+border-color = "#c0bcb0"
+separator-color = "#c0bcb0"
+unfocused-title-bg-color = "#efeadb"
+unfocused-title-text-color = "#686661"
+focused-title-bg-color = "#dfdbcd"
+focused-title-text-color = "#282826"
+show-window-icons = false
+bar-position = "bottom"
+font = "GeistMono NF Bold 12"
+
+[[windows]]
+match.title-regex = "^feh"
+initial-tile-state = "floating"
+
+[[windows]]
+match.title-regex = "LearnOpenGL"
+initial-tile-state = "floating"
+
+# Disable pointer acceleration (1:1 raw motion) for all mice.
+[[inputs]]
+match.is-pointer = true
+accel-profile = "flat"
+accel-speed = 0.0

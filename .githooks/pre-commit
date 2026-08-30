@@ -1,0 +1,25 @@
+#!/bin/sh
+# Generated theme files must match theme/eink.toml. See theme/README.md.
+#
+# theme/build.py writes ~37 targets across helix, ghostty, yazi, btop, lazygit,
+# spotify, glow, fish, glide, mako, niri, jay and hunk. Committing a hand-edit
+# to one of them would be silently reverted by the next build, so refuse it.
+root=$(git rev-parse --show-toplevel)
+
+if ! command -v python3 >/dev/null 2>&1; then
+    echo "pre-commit: python3 not found, skipping theme drift check" >&2
+    exit 0
+fi
+
+if ! python3 "$root/theme/build.py" --check; then
+    cat >&2 <<'MSG'
+
+theme drift: a generated file no longer matches theme/eink.toml.
+
+  python3 theme/build.py     # rebuild every target
+  git add -u                 # restage
+
+Edit theme/eink.toml, never the generated files. To bypass once: --no-verify.
+MSG
+    exit 1
+fi

@@ -1,0 +1,248 @@
+/* waybar -- HAND-WRITTEN. This is the file to edit.
+ *
+ * Colours come from eink-colors.css, which is generated from
+ * ~/.config/theme/eink.toml. Never write a literal hex in here: the palette's
+ * build.py --audit asserts that every colour on disk is a value from the ramp,
+ * and a literal would both fail that and silently drift the next time the ramp
+ * is retuned.
+ */
+
+@import url("eink-colors.css");
+
+* {
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+  /* The clock, the torii and the window title are the only typeset things on
+     the bar -- the marks below are drawn, not set. GeistMono is the one face
+     the rest of the system uses, and 12px is load-bearing: every text module
+     inherits it, and a larger one would grow its line box, grow the bar, and
+     put slack back under #workspaces. See the note above #workspaces. */
+  font-family: "GeistMono Nerd Font", monospace;
+  font-size: 12px;
+}
+
+/* No bar surface at all. A full-width strip is exactly the kind of large fill
+   the palette avoids, and leaving it out keeps the ink-wash wallpaper whole.
+   The only painted object on this bar is the pill. */
+window#waybar {
+  background: transparent;
+}
+
+/* ---- the mark row ------------------------------------------------------ */
+
+/* No container: no fill, no hairline, no radius. The marks sit directly on the
+   wallpaper and the ring around the focused dot is the only enclosure. Nothing
+   here is decoration -- margin-top is the entire vertical placement, and the
+   bar's "height" in config.jsonc is what balances it.
+
+   Space above the dots is margin-top. Space below them is whatever bar height
+   is left underneath, PLUS niri's 12px gap before the first window. So to sit
+   optically centred:  height = 2 * margin-top + 2.
+   The clock constrains this too. Its glyph centre sits at margin + 8.5 (17px
+   line box), the dots' at margin + 6.5, so the clock margin must be 2 less to
+   align. Solving that against the balance rule gives the only integer answer:
+   dots 13, clock 11, height 28 -- 13px above, 13px below, centres identical. */
+#workspaces {
+  margin-top: 13px;
+  /* Not cosmetic -- this is what keeps the dots round. GTK stretches the box to
+     its full allocation, so if margin-top + 14 + margin-bottom != the bar
+     height, the buttons absorb the slack vertically and go 1px oval. The clock
+     forcing the bar to 28 is what left 1px over. INVARIANT:
+        margin-top + 14 + margin-bottom == height   (config.jsonc) */
+  margin-bottom: 1px;
+}
+
+/* ---- the marks --------------------------------------------------------- */
+
+/* Drawn as CSS circles rather than set as glyphs: there is no Font Awesome on
+ * this machine and no humanist face to set dots in, so a glyph would make the
+ * bar depend on a font that could be uninstalled.
+ *
+ * GTK3 min-width/min-height size the CONTENT box, so border adds to the outer
+ * size. Every state below is tuned so outer + margin == 20px, which is what
+ * stops the dots shifting sideways as focus moves.
+ *
+ * The base rule is the OCCUPIED state: waybar's niri module has .empty,
+ * .focused, .active, .urgent and .current_output -- but no .occupied. A
+ * workspace with windows on it is simply the absence of .empty.
+ */
+/* format is "", but GTK still allocates a line box for the empty label, and
+   its 12px line-height -- not the dots -- was forcing a 39px minimum bar. The
+   bar renders no text, so the label should occupy nothing. */
+#workspaces label {
+  font-size: 0px;
+}
+
+#workspaces button {
+  padding: 0;
+  margin: 0 3px;                    /* 14 + 6 = 20 pitch */
+  min-width: 8px;
+  min-height: 8px;
+  border-radius: 999px;
+  /* A transparent spacer, not decoration. GTK stretches box children to match
+     the tallest sibling, so when only .focused carried a 3px ring the other
+     dots were pulled to 14px tall while staying 8px wide -- little capsules,
+     not dots. Giving every state the same 3px border makes all four 14x14, so
+     nothing stretches and the marks stay round. background-clip keeps the fill
+     inside the spacer. */
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  background-color: @slate;         /* occupied: the absence of .empty */
+}
+
+/* Empty: hollow. An inset shadow is the only way to stroke a ring INSIDE the
+   spacer -- a border would draw at the outer edge, 14px across. This is a
+   drawing primitive, not a drop shadow; the system's shadows are still off. */
+#workspaces button.empty {
+  background-color: transparent;
+  box-shadow: inset 0 0 0 1px @faint;
+}
+
+/* Focused: an ink mark in a light ring. The treatment ui.menu.selected already
+ * gets in Helix -- fill plus weight, never an invert. The solid ink block stays
+ * reserved for jump labels and the block cursor.
+ *
+ * .active (visible on its output) is deliberately NOT styled: with one monitor
+ * it always coincides with .focused, and on a second monitor letting it read as
+ * merely occupied is correct -- only one workspace actually has focus.
+ */
+#workspaces button.focused {
+  border-color: @highlight;
+  background-color: @ink;
+}
+
+/* Urgent. The palette allows hue here, and the fill is a redundant signal on
+   top of it, so this survives being read as pure gray. */
+#workspaces button.urgent {
+  background-color: @error;
+  box-shadow: none;
+}
+
+/* Clicking a dot switches workspace; suppress GTK's hover/active chrome so the
+   mark stays a mark. */
+#workspaces button:hover {
+  background-color: @charcoal;
+  box-shadow: none;
+  text-shadow: none;
+}
+#workspaces button.focused:hover {
+  background-color: @ink;
+}
+#workspaces button.empty:hover {
+  background-color: transparent;
+  box-shadow: inset 0 0 0 1px @muted;
+}
+
+/* ---- the mark on the left ---------------------------------------------- */
+
+/* The torii is glyph text, so it obeys the same rule as the clock: margin-top
+ * 2px less than the dots' to put its optical centre on theirs. It stays at the
+ * inherited 12px font-size deliberately -- a larger glyph grows the line box,
+ * which grows the bar, which puts slack back under #workspaces and turns the
+ * dots oval again. charcoal rather than ink keeps ink meaning "focused/now".
+ *
+ * margin-left 12px mirrors the clock's right margin, so both sit on the same
+ * line as niri's window gaps rather than on the screen edge.
+ */
+#custom-logo {
+  color: @charcoal;
+  margin-left: 12px;
+  margin-top: 11px;
+}
+
+/* ---- the window title -------------------------------------------------- */
+
+/* Glyph text, so the same 2px-less rule as the clock and the torii applies --
+ * margin-top 11px puts its optical centre on the dots'. It inherits the 12px
+ * font-size for the reason given at the top of this file: anything larger
+ * grows the bar and turns the dots oval.
+ *
+ * @muted, not @ink. The focused dot is already the bar's one @ink mark for
+ * "now", and the title is the same kind of secondary context the date is --
+ * so it takes the date's value and the hierarchy stays two-level. Bump it to
+ * @charcoal if it reads too faint against the wallpaper.
+ *
+ * The separator is DRAWN, not typeset -- same reasoning as the workspace dots.
+ * GeistMono is a strict 7px grid at this size (every glyph advances 7px, and so
+ * does every Unicode space: en, thin, hair, four-per-em all measure 7px), so a
+ * dash put inside the label could only ever sit on 7px or 14px gaps. 12px --
+ * the figure that matches the screen edge and niri's window gaps -- is simply
+ * not reachable with a character. A background-image is, to the pixel.
+ *
+ * Drawing it here rather than as its own custom/ module is also what keeps it
+ * honest: a custom module with a static format never hides, so the dash would
+ * dangle after the torii on a workspace with nothing focused. As part of
+ * #custom-window it appears and disappears with the title it separates.
+ *
+ * The geometry, left to right:  12px gap | 7px rule | 12px gap | title
+ * padding-left is the whole 31px of that; the rule is painted at 12px into it.
+ *
+ * margin-left is optical compensation, and it is measured, not guessed. The
+ * torii is a Nerd Font glyph that overhangs its cell: its ink is 11px wide
+ * (x 12..22 in a screenshot) while its advance is only the 7px this font gives
+ * every character, so its box ends at 19 but the eye sees ink to 22. Spacing
+ * off the box put 12px after the glyph BOX and only 8px after the glyph. The
+ * 4px puts the gap back where it is actually seen: ink to rule 12, rule to
+ * title 12, screen edge to ink 12.
+ * "center" is the label's vertical centre, which lands at 11 + 8.5 = 19.5px --
+ * exactly the dots' centre at 13 + 6.5. The same line the clock sits on.
+ *
+ * @rule, a step lighter than the @muted title and the @charcoal torii: a
+ * separator should recede below both of the things it separates. Getting that
+ * value needs the rule to be its own drawable -- a dash inside the label would
+ * inherit the title's colour, and the only way round that is a pango span with
+ * a literal hex, which the header of this file forbids.
+ */
+#custom-window {
+  color: @muted;
+  margin-top: 11px;
+  margin-left: 4px;                 /* torii ink overhangs its cell by 4px */
+  padding-left: 31px;               /* 12 + 7 + 12 */
+  background-image: linear-gradient(to right, @rule, @rule);
+  background-size: 7px 1px;
+  background-position: 12px center;
+  background-repeat: no-repeat;
+}
+
+/* Mid-resolve. The script sets this class on every frame but the last, so the
+ * title develops out of the ghost field at @faint and only hardens to @muted
+ * once it has settled -- the value step is the ink drying, and it is the whole
+ * reason the effect reads as an e-ink refresh rather than as a glitch.
+ *
+ * The colour lives here rather than in the script because a pango span would
+ * need a literal hex, and build.py --audit rejects any colour on disk that is
+ * not a name from the generated ramp.
+ *
+ * No transition property: e-ink settles in visible steps, so the frames are
+ * the animation. Letting GTK tween between them would smooth out exactly the
+ * quality being reproduced.
+ */
+#custom-window.resolving {
+  color: @faint;
+}
+
+/* ---- the clock --------------------------------------------------------- */
+
+/* Two instances of the clock module, so the hierarchy between date and time is
+ * carried by the ramp rather than by size or fill: the time is ink, the date
+ * sits two steps back at muted. That is the palette's rule -- signal comes from
+ * weight and value, and hue is a last resort -- applied to type.
+ *
+ * margin-right 12px puts the right edge on the same line as niri's window gap,
+ * so the clock lines up with the windows underneath it rather than with the
+ * screen edge.
+ */
+#clock {
+  color: @ink;
+  margin-right: 12px;
+  /* 2px less than the dots' margin, which is what puts the glyph centre on the
+     dot centre -- with no margin at all GTK centres the label in the full bar
+     and the clock floats 5px high. See the note above #workspaces. */
+  margin-top: 11px;
+}
+
+#clock.date {
+  color: @muted;
+  margin-right: 10px;
+}

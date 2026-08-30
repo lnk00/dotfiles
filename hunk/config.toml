@@ -1,0 +1,62 @@
+theme = "eink"
+mode = "stack"
+line_numbers = true
+wrap_lines = false
+hunk_headers = true
+menu_bar = true
+agent_notes = true
+copy_decorations = false
+cursor_line = "row"
+
+# >>> eink theme (generated -- edit ~/.config/theme/eink.toml) >>>
+[themes.eink]
+base = "github-light"
+label = "E-Ink"
+background = "#fffaea"
+panel = "#fffaea"
+panelAlt = "#efeadb"
+border = "#c0bcb0"
+accent = "#282826"
+accentMuted = "#5b5954"
+text = "#282826"
+muted = "#686661"
+addedBg = "#efeadb"
+removedBg = "#cfcbbf"
+movedAddedBg = "#dfdbcd"
+movedRemovedBg = "#c0bcb0"
+contextBg = "#fffaea"
+addedContentBg = "#dfdbcd"
+removedContentBg = "#c0bcb0"
+contextContentBg = "#fffaea"
+addedSignColor = "#282826"
+removedSignColor = "#5b5954"
+lineNumberBg = "#fffaea"
+lineNumberFg = "#a29f95"
+selectedHunk = "#dfdbcd"
+badgeAdded = "#282826"
+badgeRemoved = "#5b5954"
+badgeNeutral = "#686661"
+fileNew = "#282826"
+fileDeleted = "#5b5954"
+fileRenamed = "#41403c"
+fileModified = "#282826"
+fileUntracked = "#686661"
+noteBorder = "#c0bcb0"
+noteBackground = "#efeadb"
+noteTitleBackground = "#dfdbcd"
+noteTitleText = "#282826"
+
+[themes.eink.syntaxScopes]
+"comment" = "#686661"
+"string" = "#41403c"
+"keyword" = "#282826"
+"entity.name.function" = "#282826"
+"entity.name.type" = "#282826"
+"constant.numeric" = "#41403c"
+"constant.language" = "#41403c"
+"variable" = "#282826"
+"variable.parameter" = "#41403c"
+"punctuation" = "#5b5954"
+"keyword.operator" = "#41403c"
+"invalid" = "#833f39"
+# <<< eink theme <<<

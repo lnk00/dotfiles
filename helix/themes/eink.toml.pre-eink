@@ -1,0 +1,204 @@
+# eink: an E Ink Carta panel simulated on an emissive display.
+#
+# This is not "monochrome with different grays". It encodes four physical
+# constraints of electrophoretic displays:
+#
+#   1. 4-bit panels. Exactly 16 gray levels exist. Every value below is drawn
+#      from one ramp: oklch(L: 0.275 -> 0.932, C: 0.0042, h: 140), 16 steps.
+#      No off-ramp value appears anywhere in this file.
+#   2. Reflective, not emissive. Carta is ~44% white / ~2.5% black, so the
+#      range is compressed to 12.13:1. There is no #ffffff and no #000000.
+#   3. The substrate has a faint cool-green cast. Hence h=140 at C=0.0042.
+#   4. Large fills ghost on repaint. Full-invert blocks (bg = ink) are
+#      replaced by light fills plus weight. ui.virtual.jump-label is the one
+#      deliberate exception, so jump targets stay unmistakable.
+#
+# Signal is carried by weight, rule and proofreader's mark first, hue last.
+# Both accents are separated in *luminance* (1.63:1) as well as hue, so they
+# stay tellable apart when read as pure gray.
+#
+# KNOB: a physically exact Carta simulation (44%/2.5% reflectance) puts ink at
+# 8.87:1, not 12.13:1 -- noticeably softer than this. To go fully faithful,
+# change `ink` in [palette] to "#3d3e3c" (i.e. ramp level 2). Everything else
+# still holds; you lose some headroom between ink and charcoal.
+
+inherits = "default"
+
+# Interface
+"ui.background" = { fg = "ink", bg = "paper" }
+"ui.background.separator" = { fg = "rule", bg = "paper" }
+"ui.text" = { fg = "ink" }
+"ui.text.focus" = { fg = "ink", bg = "highlight", modifiers = ["bold"] }
+"ui.text.inactive" = { fg = "muted", bg = "paper" }
+"ui.text.info" = { fg = "ink", bg = "highlight", modifiers = ["bold"] }
+"ui.text.directory" = { fg = "ink", modifiers = ["bold"] }
+"ui.text.symlink" = { fg = "charcoal", modifiers = ["italic"] }
+
+"ui.gutter" = { fg = "muted", bg = "paper" }
+"ui.gutter.selected" = { fg = "ink", bg = "cursorline" }
+"ui.linenr" = { fg = "muted", bg = "paper" }
+"ui.linenr.selected" = { fg = "ink", bg = "cursorline", modifiers = ["bold"] }
+
+# Modes are distinguished by mark, not by fill -- a mode indicator changes on
+# every keystroke-level switch, and a colour-swapped slab is exactly the kind
+# of small high-frequency repaint that ghosts.
+"ui.statusline" = { fg = "ink", bg = "paper", modifiers = ["bold"] }
+"ui.statusline.inactive" = { fg = "muted", bg = "paper" }
+"ui.statusline.normal" = { fg = "ink", bg = "paper", modifiers = ["bold"] }
+"ui.statusline.insert" = { fg = "ink", bg = "paper", modifiers = ["bold"], underline = { color = "ink", style = "line" } }
+"ui.statusline.select" = { fg = "ink", bg = "paper", modifiers = ["bold", "italic"] }
+"ui.statusline.separator" = { fg = "rule", bg = "paper" }
+
+"ui.bufferline" = { fg = "muted", bg = "paper" }
+"ui.bufferline.active" = { fg = "ink", bg = "paper", modifiers = ["bold", "underlined"] }
+"ui.bufferline.background" = { fg = "muted", bg = "paper" }
+"ui.window" = { fg = "rule", bg = "paper" }
+"ui.popup" = { fg = "ink", bg = "paper" }
+"ui.popup.info" = { fg = "ink", bg = "paper" }
+"ui.help" = { fg = "ink", bg = "paper" }
+
+# Picker headers read as a printed rule rather than a black bar.
+"ui.picker.header" = { fg = "ink", bg = "paper", modifiers = ["bold", "underlined"] }
+"ui.picker.header.column" = { fg = "muted", bg = "paper", modifiers = ["bold", "underlined"] }
+"ui.picker.header.column.active" = { fg = "ink", bg = "paper", modifiers = ["bold", "underlined"] }
+
+"ui.menu" = { fg = "ink", bg = "paper" }
+"ui.menu.selected" = { fg = "ink", bg = "highlight", modifiers = ["bold"] }
+"ui.menu.scroll" = { fg = "muted", bg = "rule" }
+
+# Primary and secondary selections separate by fill weight, and text stays
+# legible inside both.
+"ui.selection" = { fg = "ink", bg = "highlight" }
+"ui.selection.primary" = { fg = "ink", bg = "selection" }
+"ui.highlight" = { fg = "ink", bg = "highlight" }
+"ui.cursorline" = { bg = "cursorline" }
+"ui.cursorline.primary" = { bg = "cursorline" }
+"ui.cursorline.secondary" = { bg = "cursorline" }
+
+# A solid block is the one high-contrast element e-ink renders well: it reads
+# as an inked mark. The insert bar needs bg = ink to render at all.
+"ui.cursor" = { fg = "paper", bg = "ink" }
+"ui.cursor.normal" = { fg = "paper", bg = "ink" }
+"ui.cursor.insert" = { fg = "paper", bg = "ink" }
+"ui.cursor.select" = { fg = "paper", bg = "charcoal" }
+"ui.cursor.match" = { fg = "ink", bg = "highlight", modifiers = ["bold"] }
+
+"tabstop" = { fg = "ink", bg = "highlight" }
+"ui.virtual.ruler" = { bg = "highlight" }
+"ui.virtual.whitespace" = { fg = "rule" }
+"ui.virtual.indent-guide" = { fg = "rule" }
+"ui.virtual.inlay-hint" = { fg = "muted", modifiers = ["italic"] }
+"ui.virtual.inlay-hint.parameter" = { fg = "muted", modifiers = ["italic"] }
+"ui.virtual.inlay-hint.type" = { fg = "slate", modifiers = ["italic"] }
+"ui.virtual.wrap" = { fg = "faint" }
+# The single deliberate invert in the theme.
+"ui.virtual.jump-label" = { fg = "paper", bg = "ink", modifiers = ["bold"] }
+
+# Diagnostics: underline style is the primary carrier, weight second, hue last.
+"error" = { fg = "error-red", modifiers = ["bold"], underline = { color = "error-red", style = "curl" } }
+"warning" = { fg = "warning-orange", modifiers = ["bold"], underline = { color = "warning-orange", style = "dashed" } }
+"info" = { fg = "slate", underline = { color = "slate", style = "dotted" } }
+"hint" = { fg = "muted", modifiers = ["italic"] }
+"diagnostic.error" = { underline = { color = "error-red", style = "curl" } }
+"diagnostic.warning" = { underline = { color = "warning-orange", style = "dashed" } }
+"diagnostic.info" = { underline = { color = "slate", style = "dotted" } }
+"diagnostic.hint" = { modifiers = ["italic"] }
+"diagnostic.unnecessary" = { fg = "muted", modifiers = ["dim"] }
+"diagnostic.deprecated" = { fg = "slate", modifiers = ["crossed_out"] }
+
+# Syntax: hierarchy comes from four text tones plus bold and italic.
+"attribute" = { fg = "charcoal", modifiers = ["italic"] }
+"type" = { fg = "ink", modifiers = ["bold"] }
+"type.builtin" = { fg = "ink", modifiers = ["bold", "italic"] }
+"type.parameter" = { fg = "charcoal", modifiers = ["italic"] }
+"type.enum.variant" = { fg = "charcoal", modifiers = ["bold"] }
+"constructor" = { fg = "ink", modifiers = ["bold"] }
+"constant" = { fg = "charcoal", modifiers = ["bold"] }
+"constant.builtin" = { fg = "ink", modifiers = ["bold", "italic"] }
+"constant.character" = { fg = "charcoal" }
+"constant.character.escape" = { fg = "ink", modifiers = ["bold"] }
+"constant.numeric" = { fg = "charcoal" }
+"string" = { fg = "charcoal" }
+"string.regexp" = { fg = "ink", modifiers = ["italic"] }
+"string.special" = { fg = "ink", modifiers = ["bold"] }
+"string.special.path" = { fg = "charcoal", modifiers = ["italic"] }
+"string.special.url" = { fg = "ink", underline = { color = "ink", style = "line" } }
+
+"comment" = { fg = "muted", modifiers = ["italic"] }
+"comment.documentation" = { fg = "slate", modifiers = ["italic"] }
+"comment.unused" = { fg = "muted", modifiers = ["italic", "crossed_out"] }
+"variable" = { fg = "ink" }
+"variable.builtin" = { fg = "charcoal", modifiers = ["italic"] }
+"variable.parameter" = { fg = "charcoal", modifiers = ["italic"] }
+"variable.other.member" = { fg = "charcoal" }
+"label" = { fg = "ink", modifiers = ["bold"] }
+"punctuation" = { fg = "slate" }
+"punctuation.delimiter" = { fg = "muted" }
+"punctuation.bracket" = { fg = "ink" }
+"punctuation.special" = { fg = "charcoal", modifiers = ["bold"] }
+"keyword" = { fg = "ink", modifiers = ["bold"] }
+"keyword.control" = { fg = "ink", modifiers = ["bold"] }
+"keyword.operator" = { fg = "charcoal", modifiers = ["bold"] }
+"keyword.directive" = { fg = "charcoal", modifiers = ["bold", "italic"] }
+"keyword.function" = { fg = "ink", modifiers = ["bold", "italic"] }
+"keyword.storage" = { fg = "ink", modifiers = ["bold"] }
+"operator" = { fg = "charcoal", modifiers = ["bold"] }
+"function" = { fg = "ink", modifiers = ["bold"] }
+"function.builtin" = { fg = "charcoal", modifiers = ["bold", "italic"] }
+"function.method" = { fg = "ink", modifiers = ["bold"] }
+"function.macro" = { fg = "charcoal", modifiers = ["bold", "italic"] }
+"tag" = { fg = "ink", modifiers = ["bold"] }
+"tag.attribute" = { fg = "charcoal", modifiers = ["italic"] }
+"namespace" = { fg = "charcoal", modifiers = ["italic"] }
+"special" = { fg = "ink", modifiers = ["bold"] }
+
+# Markup follows print convention: heading rank descends by weight then tone.
+"markup.heading" = { fg = "ink", modifiers = ["bold"] }
+"markup.heading.marker" = { fg = "rule" }
+"markup.heading.1" = { fg = "ink", modifiers = ["bold", "underlined"] }
+"markup.heading.2" = { fg = "ink", modifiers = ["bold"] }
+"markup.heading.3" = { fg = "charcoal", modifiers = ["bold"] }
+"markup.heading.4" = { fg = "charcoal", modifiers = ["bold", "italic"] }
+"markup.heading.5" = { fg = "slate", modifiers = ["bold"] }
+"markup.heading.6" = { fg = "slate", modifiers = ["italic"] }
+"markup.bold" = { fg = "ink", modifiers = ["bold"] }
+"markup.italic" = { fg = "charcoal", modifiers = ["italic"] }
+"markup.strikethrough" = { fg = "muted", modifiers = ["crossed_out"] }
+"markup.link" = { fg = "ink" }
+"markup.link.url" = { fg = "charcoal", underline = { color = "rule", style = "line" } }
+"markup.link.label" = { fg = "ink" }
+"markup.link.text" = { fg = "ink", underline = { color = "ink", style = "line" } }
+"markup.list" = { fg = "slate", modifiers = ["bold"] }
+"markup.list.numbered" = { fg = "slate", modifiers = ["bold"] }
+"markup.list.unnumbered" = { fg = "slate", modifiers = ["bold"] }
+"markup.quote" = { fg = "slate", modifiers = ["italic"] }
+"markup.raw" = { fg = "charcoal" }
+"markup.raw.inline" = { fg = "charcoal" }
+"markup.raw.block" = { fg = "charcoal" }
+
+# Diffs use proofreader's marks. There is no green or red to lean on, and
+# grayscale bold-vs-dim alone is too weak to scan down a gutter.
+"diff.plus" = { fg = "ink", underline = { color = "ink", style = "line" } }
+"diff.minus" = { fg = "slate", modifiers = ["crossed_out"] }
+"diff.delta" = { fg = "charcoal", modifiers = ["bold"], underline = { color = "charcoal", style = "dotted" } }
+"diff.plus.gutter" = { fg = "ink", modifiers = ["bold"] }
+"diff.minus.gutter" = { fg = "slate", modifiers = ["bold"] }
+"diff.delta.gutter" = { fg = "charcoal", modifiers = ["bold"] }
+
+# 16-step Carta ramp: oklch(L 0.275 -> 0.932, C 0.0042, h 140).
+# Level index in brackets; contrast measured against `paper`.
+[palette]
+ink        = "#272826"  # L0  12.13:1  AAA
+charcoal   = "#3d3e3c"  # L2   8.81:1  AAA
+slate      = "#545654"  # L4   6.06:1  AA
+muted      = "#606260"  # L5   5.04:1  AA
+faint      = "#949693"  # L9   2.44:1  decoration only
+rule       = "#afb1ae"  # L11  1.77:1  decoration only
+selection  = "#bcbebc"  # L12  1.53:1  fill
+highlight  = "#cacdca"  # L13  1.31:1  fill
+cursorline = "#d9dbd8"  # L14  1.14:1  fill
+paper      = "#e7e9e6"  # L15  ------  background
+# Off-ramp by necessity. Desaturated onto the paper and separated by
+# luminance (1.63:1) so they survive being read as pure gray.
+error-red       = "#833f39"  # 6.29:1  AA
+warning-orange  = "#936c3c"  # 3.86:1  AA-large; always paired with bold + dashed

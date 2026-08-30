@@ -1,0 +1,131 @@
+# e-ink for Yazi. GENERATED from ~/.config/theme/eink.toml by build.py -- do not edit by hand
+
+[mgr]
+cwd = { fg = "#282826", bold = true }
+find_keyword = { fg = "#282826", bg = "#cfcbbf", bold = true }
+find_position = { fg = "#5b5954", bg = "#dfdbcd" }
+symlink_target = { fg = "#5b5954", italic = true }
+marker_copied = { fg = "#fffaea", bg = "#5b5954", bold = true }
+marker_cut = { fg = "#fffaea", bg = "#41403c", bold = true }
+marker_marked = { fg = "#282826", bg = "#cfcbbf", bold = true }
+marker_selected = { fg = "#fffaea", bg = "#282826", bold = true }
+count_copied = { fg = "#fffaea", bg = "#5b5954", bold = true }
+count_cut = { fg = "#fffaea", bg = "#41403c", bold = true }
+count_selected = { fg = "#fffaea", bg = "#282826", bold = true }
+border_symbol = "│"
+border_style = { fg = "#c0bcb0" }
+
+[indicator]
+parent = { reversed = true, bold = true }
+current = { reversed = true, bold = true }
+preview = { fg = "#686661" }
+padding = { open = "▐", close = "▌" }
+
+[tabs]
+active = { fg = "#fffaea", bg = "#282826", bold = true }
+inactive = { fg = "#5b5954", bg = "#dfdbcd" }
+sep_inner = { open = " ", close = " " }
+sep_outer = { open = "", close = "" }
+
+[mode]
+normal_main = { fg = "#fffaea", bg = "#282826", bold = true }
+normal_alt = { fg = "#5b5954", bg = "#dfdbcd" }
+select_main = { fg = "#fffaea", bg = "#41403c", bold = true }
+select_alt = { fg = "#5b5954", bg = "#dfdbcd" }
+unset_main = { fg = "#fffaea", bg = "#5b5954", bold = true }
+unset_alt = { fg = "#5b5954", bg = "#dfdbcd" }
+
+[status]
+overall = { fg = "#41403c", bg = "#efeadb" }
+sep_left = { open = "", close = " " }
+sep_right = { open = " ", close = "" }
+perm_type = { fg = "#5b5954" }
+perm_read = { fg = "#41403c" }
+perm_write = { fg = "#5b5954" }
+perm_exec = { fg = "#282826", bold = true }
+perm_sep = { fg = "#c0bcb0" }
+progress_label = { fg = "#282826", bold = true }
+progress_normal = { fg = "#5b5954", bg = "#cfcbbf" }
+progress_error = { fg = "#833f39", bg = "#cfcbbf", bold = true }
+
+[which]
+cols = 2
+mask = { fg = "#686661" }
+cand = { fg = "#282826", bold = true }
+rest = { fg = "#5b5954" }
+desc = { fg = "#41403c" }
+separator = " → "
+separator_style = { fg = "#c0bcb0" }
+
+[confirm]
+border = { fg = "#c0bcb0" }
+title = { fg = "#282826", bold = true }
+body = { fg = "#41403c" }
+list = { fg = "#5b5954" }
+btn_yes = { fg = "#fffaea", bg = "#282826", bold = true }
+btn_no = { fg = "#282826", bg = "#cfcbbf" }
+btn_labels = [ "Yes", "No" ]
+
+[spot]
+border = { fg = "#c0bcb0" }
+title = { fg = "#282826", bold = true }
+tbl_col = { fg = "#282826", bg = "#cfcbbf", bold = true }
+tbl_cell = { fg = "#41403c", bg = "#efeadb" }
+
+[notify]
+title_info = { fg = "#282826", bold = true }
+title_warn = { fg = "#8f6737", bold = true }
+title_error = { fg = "#833f39", bold = true, underline = true }
+
+[pick]
+border = { fg = "#c0bcb0" }
+active = { fg = "#282826", bg = "#dfdbcd", bold = true }
+inactive = { fg = "#41403c" }
+
+[input]
+border = { fg = "#c0bcb0" }
+title = { fg = "#282826", bold = true }
+value = { fg = "#41403c" }
+selected = { fg = "#282826", bg = "#cfcbbf", bold = true }
+
+[cmp]
+border = { fg = "#c0bcb0" }
+active = { fg = "#282826", bg = "#dfdbcd", bold = true }
+inactive = { fg = "#41403c" }
+
+[tasks]
+border = { fg = "#c0bcb0" }
+title = { fg = "#282826", bold = true }
+hovered = { fg = "#282826", bg = "#dfdbcd", bold = true }
+
+[help]
+on = { fg = "#282826", bold = true }
+run = { fg = "#41403c" }
+desc = { fg = "#5b5954" }
+hovered = { fg = "#282826", bg = "#dfdbcd", bold = true }
+footer = { fg = "#5b5954", italic = true }
+icon_info = "i"
+icon_warn = "!"
+icon_error = "×"
+
+[filetype]
+rules = [
+    { url = "*/", fg = "#282826", bold = true },
+    { url = "*", fg = "#41403c" },
+]
+
+# Neutral glyphs instead of coloured devicons -- a panel has no hues to spend.
+[icon]
+globs = []
+dirs = []
+files = []
+exts = []
+conds = [
+    { if = "orphan", text = "", fg = "#686661" },
+    { if = "link", text = "", fg = "#5b5954" },
+    { if = "hidden & dir", text = "", fg = "#41403c" },
+    { if = "dir", text = "", fg = "#282826" },
+    { if = "exec", text = "󰆍", fg = "#282826" },
+    { if = "block | char | fifo | sock", text = "󰜫", fg = "#5b5954" },
+    { if = "!(dir | link)", text = "󰈔", fg = "#41403c" },
+]

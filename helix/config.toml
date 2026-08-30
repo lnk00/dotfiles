@@ -1,0 +1,9 @@
+theme = "eink"
+
+[editor]
+line-number="relative"
+popup-border="all"
+cursorline = true
+
+[editor.cursor-shape]
+insert = "bar"

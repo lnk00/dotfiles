@@ -1,0 +1,26 @@
+# E-Ink. GENERATED from ~/.config/theme/eink.toml by build.py -- do not edit by hand
+# ANSI red/yellow carry the accents; everything else is the Carta ramp.
+
+palette = 0=#272826
+palette = 1=#833f39
+palette = 2=#3d3e3c
+palette = 3=#936c3c
+palette = 4=#545654
+palette = 5=#3d3e3c
+palette = 6=#545654
+palette = 7=#afb1ae
+palette = 8=#606260
+palette = 9=#833f39
+palette = 10=#272826
+palette = 11=#936c3c
+palette = 12=#272826
+palette = 13=#545654
+palette = 14=#606260
+palette = 15=#272826
+
+background = #e7e9e6
+foreground = #272826
+cursor-color = #272826
+cursor-text = #e7e9e6
+selection-background = #bcbebc
+selection-foreground = #272826

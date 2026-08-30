@@ -1,0 +1,142 @@
+# Poimandres palette on the near-black (#111111) background from theme-dark.toml.
+# Same structure and emphasis as the monochrome theme; only the hues change.
+#
+# Palette: bg #111111 · fg #a6accd · offWhite #e4f0fb · mint #5de4c7
+#          lightBlue #add7ff · desatBlue #91b4d5 · hotRed #d0679d
+#          yellow #fffac2 · dimGray #767c9d · line #404559
+#          surface #17181f · raised #272b3d
+
+[app]
+overall = { bg = "#111111" }
+
+[mgr]
+cwd = { fg = "#add7ff", bold = true }
+find_keyword = { fg = "#fffac2", bg = "#272b3d", bold = true }
+find_position = { fg = "#767c9d", bg = "#272b3d" }
+symlink_target = { fg = "#767c9d", italic = true }
+marker_copied = { fg = "#111111", bg = "#5de4c7", bold = true }
+marker_cut = { fg = "#111111", bg = "#d0679d", bold = true }
+marker_marked = { fg = "#fffac2", bg = "#272b3d", bold = true }
+marker_selected = { fg = "#111111", bg = "#add7ff", bold = true }
+count_copied = { fg = "#111111", bg = "#5de4c7", bold = true }
+count_cut = { fg = "#111111", bg = "#d0679d", bold = true }
+count_selected = { fg = "#111111", bg = "#add7ff", bold = true }
+border_symbol = "│"
+border_style = { fg = "#404559" }
+
+[indicator]
+parent = { reversed = true, bold = true }
+# Keep the hovered item unmistakable against the near-black background.
+current = { reversed = true, bold = true }
+preview = { fg = "#767c9d" }
+padding = { open = "▐", close = "▌" }
+
+[tabs]
+active = { fg = "#111111", bg = "#add7ff", bold = true }
+inactive = { fg = "#767c9d", bg = "#272b3d" }
+sep_inner = { open = " ", close = " " }
+sep_outer = { open = "", close = "" }
+
+# Mode colors match the Helix statusline: normal = lightBlue, select = hotRed, mint = mint.
+[mode]
+normal_main = { fg = "#111111", bg = "#add7ff", bold = true }
+normal_alt = { fg = "#add7ff", bg = "#272b3d" }
+select_main = { fg = "#111111", bg = "#d0679d", bold = true }
+select_alt = { fg = "#d0679d", bg = "#272b3d" }
+unset_main = { fg = "#111111", bg = "#5de4c7", bold = true }
+unset_alt = { fg = "#5de4c7", bg = "#272b3d" }
+
+[status]
+overall = { fg = "#a6accd", bg = "#111111" }
+sep_left = { open = "", close = " " }
+sep_right = { open = " ", close = "" }
+perm_type = { fg = "#91b4d5" }
+perm_read = { fg = "#5de4c7" }
+perm_write = { fg = "#fffac2" }
+perm_exec = { fg = "#d0679d", bold = true }
+perm_sep = { fg = "#404559" }
+progress_label = { fg = "#e4f0fb", bold = true }
+progress_normal = { fg = "#5de4c7", bg = "#272b3d" }
+progress_error = { fg = "#111111", bg = "#d0679d", bold = true }
+
+[which]
+cols = 2
+mask = { fg = "#767c9d" }
+cand = { fg = "#5de4c7", bold = true }
+rest = { fg = "#767c9d" }
+desc = { fg = "#a6accd" }
+separator = " → "
+separator_style = { fg = "#404559" }
+
+[confirm]
+border = { fg = "#91b4d5" }
+title = { fg = "#e4f0fb", bold = true }
+body = { fg = "#a6accd" }
+list = { fg = "#91b4d5" }
+btn_yes = { fg = "#111111", bg = "#5de4c7", bold = true }
+btn_no = { fg = "#a6accd", bg = "#272b3d" }
+btn_labels = [ "Yes", "No" ]
+
+[spot]
+border = { fg = "#91b4d5" }
+title = { fg = "#e4f0fb", bold = true }
+tbl_col = { fg = "#add7ff", bg = "#272b3d", bold = true }
+tbl_cell = { fg = "#a6accd", bg = "#17181f" }
+
+[notify]
+title_info = { fg = "#5de4c7", bold = true }
+title_warn = { fg = "#fffac2", bold = true }
+title_error = { fg = "#d0679d", bold = true, underline = true }
+
+[pick]
+border = { fg = "#91b4d5" }
+active = { fg = "#111111", bg = "#add7ff", bold = true }
+inactive = { fg = "#a6accd", bg = "#17181f" }
+
+[input]
+border = { fg = "#91b4d5" }
+title = { fg = "#e4f0fb", bold = true }
+value = { fg = "#a6accd" }
+selected = { fg = "#111111", bg = "#add7ff", bold = true }
+
+[cmp]
+border = { fg = "#91b4d5" }
+active = { fg = "#111111", bg = "#add7ff", bold = true }
+inactive = { fg = "#a6accd", bg = "#17181f" }
+
+[tasks]
+border = { fg = "#91b4d5" }
+title = { fg = "#e4f0fb", bold = true }
+hovered = { fg = "#111111", bg = "#add7ff", bold = true }
+
+[help]
+on = { fg = "#5de4c7", bold = true }
+run = { fg = "#add7ff" }
+desc = { fg = "#a6accd" }
+hovered = { fg = "#111111", bg = "#add7ff", bold = true }
+footer = { fg = "#767c9d", italic = true }
+icon_info = "i"
+icon_warn = "!"
+icon_error = "×"
+
+[filetype]
+rules = [
+    { url = "*/", fg = "#add7ff", bold = true },
+    { url = "*", fg = "#a6accd" },
+]
+
+# Replace colored devicons with poimandres-tinted glyphs while keeping file-type cues.
+[icon]
+globs = []
+dirs = []
+files = []
+exts = []
+conds = [
+    { if = "orphan", text = "", fg = "#d0679d" },
+    { if = "link", text = "", fg = "#767c9d" },
+    { if = "hidden & dir", text = "", fg = "#767c9d" },
+    { if = "dir", text = "", fg = "#add7ff" },
+    { if = "exec", text = "󰆍", fg = "#5de4c7" },
+    { if = "block | char | fifo | sock", text = "󰜫", fg = "#fffac2" },
+    { if = "!(dir | link)", text = "󰈔", fg = "#a6accd" },
+]
