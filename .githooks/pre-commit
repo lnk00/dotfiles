@@ -11,7 +11,9 @@ if ! command -v python3 >/dev/null 2>&1; then
     exit 0
 fi
 
-if ! python3 "$root/theme/build.py" --check; then
+# Quiet on success; the full per-target report only matters when it fails.
+out=$(python3 "$root/theme/build.py" --check 2>&1) || {
+    printf '%s\n' "$out" >&2
     cat >&2 <<'MSG'
 
 theme drift: a generated file no longer matches theme/eink.toml.
@@ -22,4 +24,4 @@ theme drift: a generated file no longer matches theme/eink.toml.
 Edit theme/eink.toml, never the generated files. To bypass once: --no-verify.
 MSG
     exit 1
-fi
+}
