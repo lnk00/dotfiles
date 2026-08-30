@@ -54,17 +54,6 @@ applied, kept as the per-app revert path. `theme/README.md` explains the rest.
 opted in explicitly. A newly installed app drops its files into `~/.config`
 without ever appearing in `git status`.
 
-That is on purpose — this repo is public, and `~/.config` holds live
-credentials:
-
-- `gh/hosts.yml` — GitHub OAuth token (`gh/config.yml` is tracked; the token file is not)
-- `pulse/cookie` — PulseAudio auth cookie
-- `go/telemetry/` — including an upload token
-
-plus a 255 MB browser profile (`glide/glide/`), `glide/glide.d.ts` (generated),
-`dconf/user` (binary), `okularrc` (recent-files list), `fish/fish_variables`
-(machine-local `$fish_user_paths`) and `hunk/state.json` (version cache).
-
 To add a new config, un-ignore the directory *and* its contents:
 
 ```gitignore
