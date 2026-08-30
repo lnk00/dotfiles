@@ -1,5 +1,7 @@
 # dotfiles
 
+![niri, ghostty running fastfetch, and helix on the e-ink palette](.assets/screenshot.png)
+
 `~/.config` for an Arch + Wayland machine. Niri, fish, Helix, Ghostty — all on one
 e-ink-inspired palette generated from a single file.
 
