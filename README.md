@@ -18,13 +18,23 @@ e-ink-inspired palette generated from a single file.
 
 ## Setup on a new machine
 
+`~/.config` already exists on a fresh install, so `git clone` into it directly
+will refuse. Attach a repo to the existing directory instead:
+
 ```fish
-git clone git@github.com:lnk00/dotfiles.git ~/.config
 cd ~/.config
-git config core.hooksPath .githooks   # hooks are not cloned; this is per-clone
+git init -b main
+git remote add origin git@github.com:lnk00/dotfiles.git
+git fetch origin
+git checkout -f main                  # -f: overwrite the distro defaults
+git config core.hooksPath .githooks   # hooks are never cloned; per-clone setup
 systemctl --user daemon-reload
-python3 theme/build.py --check        # confirm the palette is applied
+python3 theme/build.py --check        # 37 targets, 0 needing attention
 ```
+
+`checkout -f` overwrites any `~/.config` file this repo tracks and leaves
+everything else alone. Run `git checkout main` first without `-f` if you want
+to see what it would clobber.
 
 ## The theme system
 
