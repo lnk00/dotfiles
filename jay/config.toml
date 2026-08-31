@@ -134,6 +134,10 @@ highlight-color = "#28282633"
 match.title-regex = "^feh"
 initial-tile-state = "floating"
 
+[[windows]]
+match.title-regex = "^float"
+initial-tile-state = "floating"
+
 [[inputs]]
 match.is-pointer = true
 accel-profile = "flat"
