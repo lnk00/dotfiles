@@ -8,6 +8,9 @@ keymap = """
     """
 
 on-graphics-initialized = [
+    # Must run first: exports WAYLAND_DISPLAY/DISPLAY into systemd + dbus so
+    # xdg-desktop-portal (and the browser it launches for OAuth links) works.
+    { type = "exec", exec = "jay-session-env" },
     { type = "exec", exec = "mako" },
     { type = "exec", exec = "wl-tray-bridge" },
 ]
@@ -20,6 +23,17 @@ show-bar = true
 repeat-rate = { rate = 75, delay = 200 }
 idle.minutes = 0
 
+# Status bar text (right side of the bar). Ticks exactly on the minute:
+# sleeps `60 - current_second` instead of a flat 60s, so it never drifts.
+# NOTE: `shell = ...` would run under $SHELL, which is fish here, and fish
+# has no `while ...; do ...; done`. So call sh explicitly.
+[status]
+format = "plain"
+exec = { prog = "sh", args = [
+    "-c",
+    "while :; do date '+%a %d %b  %H:%M'; sleep $((60 - $(date +%S))); done",
+] }
+
 [xwayland]
 enabled = true
 scaling-mode = "default"
@@ -29,6 +43,7 @@ logo-shift-r = "reload-config-toml"
 
 logo-t = { type = "exec", exec = "ghostty" }
 logo-b = { type = "exec", exec = "glide-bin" }
+logo-s = { type = "exec", exec = "slack" }
 
 logo-d = "close"
 

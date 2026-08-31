@@ -1,3 +1,11 @@
-
 [Default Applications]
 x-scheme-handler/claude-cli=claude-code-url-handler.desktop
+x-scheme-handler/slack=slack.desktop
+x-scheme-handler/http=glide-browser-bin.desktop
+x-scheme-handler/https=glide-browser-bin.desktop
+text/html=glide-browser-bin.desktop
+application/xhtml+xml=glide-browser-bin.desktop
+x-scheme-handler/about=glide-browser-bin.desktop
+x-scheme-handler/unknown=glide-browser-bin.desktop
+
+[Added Associations]
