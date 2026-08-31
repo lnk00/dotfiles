@@ -167,6 +167,45 @@ def set_key(path: Path, pattern: str, replacement: str, label: str):
     path.write_text(updated)
     results.append(("assigned", label, str(path)))
 
+def set_toml_key(path: Path, section: str, key: str, val: str, label: str):
+    """
+    SHARED target, TOML flavour: rewrite `key = "..."` where it already exists,
+    otherwise insert it at the end of [section]. set_key cannot be used for a
+    key the user has never written -- it reports NOKEY and gives up, and
+    appending the line instead would land it in whichever table happens to come
+    last in the file rather than in the one it belongs to.
+    """
+    path = Path(path)
+    if not path.exists():
+        results.append(("MISSING", label, str(path)))
+        return
+    original = path.read_text()
+    line = f'{key} = "{val}"'
+    updated, n = re.subn(rf'^{re.escape(key)}\s*=\s*".*"$', line, original,
+                         count=1, flags=re.M)
+    inserted = False
+    if n == 0:
+        head = re.search(rf'^\[{re.escape(section)}\]\s*$', original, re.M)
+        if not head:
+            results.append(("NOKEY", label, f"{path}: no [{section}] table"))
+            return
+        nxt = re.search(r'^\[', original[head.end():], re.M)
+        end = head.end() + (nxt.start() if nxt else len(original) - head.end())
+        body = original[head.end():end].rstrip("\n")
+        tail = original[end:]
+        updated = (original[:head.end()] + body + "\n" + line
+                   + ("\n\n" if tail else "\n") + tail)
+        inserted = True
+    if updated == original:
+        results.append(("same", label, str(path)))
+        return
+    if CHECK:
+        results.append(("DRIFT", label, str(path)))
+        return
+    _backup(path)
+    path.write_text(updated)
+    results.append(("inserted" if inserted else "assigned", label, str(path)))
+
 # --------------------------------------------------------------------------
 # Helix
 #
@@ -867,17 +906,73 @@ def emit_niri():
         "
     }}""", "niri:anim", comment="//")
 
+# --------------------------------------------------------------------------
+# jay
+#
+# Schema taken from the shipped parser (jay-toml-config-0.14.0,
+# src/config/parsers/theme.rs): sixteen colour keys, every one optional and
+# every one falling back to jay's own default when absent. Absent is therefore
+# not neutral -- jay's defaults are a dark desktop (background #001019, bar
+# #000000, highlight a purple wash), so an unset key is a dark-theme colour
+# sitting in the middle of a paper one. All sixteen are set here for that
+# reason, not for completeness.
+#
+# Everything separates by VALUE, the way the rest of the system does. The three
+# focus states have no third fill available -- levels 13 and 14 are already
+# spent on focused and unfocused and the ramp has nothing between them -- so
+# focused-inactive keeps the focused FILL and steps only its text down:
+#
+#   ink      on highlight   10.66:1   focused
+#   charcoal on highlight    7.49:1   focused, seat's attention elsewhere
+#   muted    on cursorline   4.77:1   unfocused
+#
+# focused-border-color is set explicitly because jay falls back to border-color
+# for it rather than to anything focus-aware (jay-compositor theme.rs,
+# focused_border_color), so omitting it drops the border cue altogether. ink
+# focused against rule unfocused is the same pair emit_niri writes, which is
+# what makes the two compositors read as one desktop.
+#
+# THREE KEYS ARE FILLS UNDER TEXT THAT CANNOT BE ADJUSTED WITH THEM. jay pins
+# the text of an attention-requested title to unfocused-title-text-color
+# (tree/container.rs) and the label of a captured workspace button to the
+# focused/unfocused title text (tree/output.rs), so an accent fill cannot be
+# paid for by lightening its label: muted on error measures 1.34:1, ink on
+# warning 2.93:1. The accents go there anyway. eink.toml reserves them for
+# exactly this job -- catching a state in peripheral vision matters more than
+# purity -- and read as pure gray they still land as dark slabs (error 7.35:1,
+# warning 4.83:1, 1.52:1 apart), which is the whole signal. What is lost is the
+# title string while the state is up, and it returns the moment the window is
+# focused or the capture ends. Both captured keys take warning; focused and
+# unfocused captured workspaces stay apart by their label colour alone.
+#
+# highlight-color is the drag-target and workspace-switch wash, filled OVER
+# window content (renderer.rs render_highlight), so it is the only value in the
+# system that needs alpha. It darkens instead of glowing for the same reason
+# the niri burn does: every window here is already near paper white, so
+# anything added clips to white and the cue disappears.
+# --------------------------------------------------------------------------
+
 def emit_jay():
     p = CFG / "jay/config.toml"
     for key, val, label in (
-        ("bg-color", highlight, "bg"), ("bar-bg-color", paper, "bar"),
-        ("border-color", rule, "border"), ("separator-color", rule, "sep"),
+        ("bg-color", highlight, "bg"),
+        ("bar-bg-color", paper, "bar"),
+        ("bar-status-text-color", ink, "bartx"),
+        ("border-color", rule, "border"),
+        ("focused-border-color", ink, "fborder"),
+        ("separator-color", rule, "sep"),
         ("unfocused-title-bg-color", cursorline, "utbg"),
         ("unfocused-title-text-color", muted, "uttx"),
         ("focused-title-bg-color", highlight, "ftbg"),
         ("focused-title-text-color", ink, "fttx"),
+        ("focused-inactive-title-bg-color", highlight, "fitbg"),
+        ("focused-inactive-title-text-color", charcoal, "fittx"),
+        ("attention-requested-bg-color", ERROR, "attn"),
+        ("captured-focused-title-bg-color", WARNING, "cftbg"),
+        ("captured-unfocused-title-bg-color", WARNING, "cutbg"),
+        ("highlight-color", ink + "33", "hl"),
     ):
-        set_key(p, rf'^{re.escape(key)}\s*=\s*".*"', f'{key} = "{val}"', f"jay:{label}")
+        set_toml_key(p, "theme", key, val, f"jay:{label}")
 
 # --------------------------------------------------------------------------
 # hunk
@@ -1402,10 +1497,15 @@ def audit():
         if not path.exists():
             print(f"  MISSING {t}"); strays += 1; continue
         txt = path.read_text()
-        found  = {h.lower() for h in re.findall(r"#[0-9a-fA-F]{6}\b", txt)}
+        # The optional trailing pair is alpha (jay's highlight-color). Without
+        # it the token would not match AT ALL -- \b fails against the seventh
+        # hex digit -- so an off-ramp colour could hide behind an alpha suffix
+        # and the audit would report OK. Alpha itself is not a palette value,
+        # so it is dropped before the comparison below.
+        found  = {h.lower() for h in re.findall(r"#[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?\b", txt)}
         found |= {"#" + h.lower() for h in re.findall(r"^set -g \S+ ([0-9a-f]{6})", txt, re.M)}
         found |= {"#" + h.lower() for h in re.findall(r"--background=([0-9a-f]{6})", txt)}
-        bad = sorted(found - allowed)
+        bad = sorted(h for h in found if h[:7] not in allowed)
         total += len(found); strays += len(bad)
         print(f"  {'OK   ' if not bad else 'STRAY'} {t:<34} {len(found):>2}"
               + ("" if not bad else f"  {bad}"))

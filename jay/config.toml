@@ -106,6 +106,14 @@ focused-title-text-color = "#282826"
 show-window-icons = false
 bar-position = "bottom"
 font = "GeistMono NF Bold 12"
+bar-status-text-color = "#282826"
+focused-border-color = "#282826"
+focused-inactive-title-bg-color = "#dfdbcd"
+focused-inactive-title-text-color = "#41403c"
+attention-requested-bg-color = "#833f39"
+captured-focused-title-bg-color = "#8f6737"
+captured-unfocused-title-bg-color = "#8f6737"
+highlight-color = "#28282633"
 
 [[windows]]
 match.title-regex = "^feh"

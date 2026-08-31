@@ -8,8 +8,10 @@ keybind = ctrl+j=scroll_page_lines:3
 keybind = ctrl+k=scroll_page_lines:-3
 keybind = ctrl+v=paste_from_clipboard
 
-keybind = super+alt+backslash=new_split:right
-keybind = super+alt+slash=new_split:down
+keybind = super+alt+equal=new_split:right
+keybind = super+alt+minus=new_split:down
+# keybind = super+alt+backslash=new_split:right
+# keybind = super+alt+slash=new_split:down
 
 keybind = super+alt+h=goto_split:left
 keybind = super+alt+j=goto_split:down
