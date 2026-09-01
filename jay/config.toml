@@ -102,6 +102,17 @@ logo-c = {
 match.tag = "pp-clipboard"
 capabilities = ["data-control"]
 
+# wl-copy/wl-paste need the data-control protocol to set/read the selection.
+# Without it they block forever, which freezes Helix on `space y` (and any
+# other editor/tool that shells out to them and waits).
+[[clients]]
+match.any = [
+    { comm = "wl-copy" },
+    { comm = "wl-paste" },
+]
+match.sandboxed = false
+capabilities = ["data-control"]
+
 [[clients]]
 match.any = [
     { comm = "grim" },
