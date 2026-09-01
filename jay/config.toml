@@ -149,6 +149,39 @@ initial-tile-state = "floating"
 match.title-regex = "^float"
 initial-tile-state = "floating"
 
+# Glide is Firefox-based, and its picture-in-picture player window is titled
+# exactly "Picture-in-Picture" (verified in the browser's own en-US strings).
+# Without a rule jay tiles it like any other toplevel.
+#   initial-tile-state -> float it on map
+#   pin-float          -> it follows you across workspaces (sticky)
+#   *-float-above-fullscreen is a GLOBAL toggle, not per-window, so the latch
+#     (which runs when the window stops matching, i.e. when the PiP closes)
+#     puts it back the way it was.
+# Add `app-id = "glide-glide"` to the match to restrict this to Glide only;
+# as written it also covers Chrome/Chromium PiP, which is titled the same.
+[[windows]]
+name = "pip"
+match = { title = "Picture-in-Picture" }
+initial-tile-state = "floating"
+auto-focus = false
+action = ["pin-float", "enable-float-above-fullscreen"]
+latch = "disable-float-above-fullscreen"
+# jay has no absolute-position action, so floats always map centered on the
+# output. `resize` with dx1 == dx2 translates instead of resizing, so this
+# nudges it to the top-right. The deltas depend on the PiP window's size, so
+# recompute them once with the PiP open (Firefox remembers the size, so the
+# numbers stay good):
+#
+#   jay --json tree query -r root | jq -r '.position.width as $ow
+#     | [.. | objects | select(.title? == "Picture-in-Picture") | .position][0] as $w
+#     | "dx1/dx2 = \($ow - $w.width - 24 - $w.x1), dy1/dy2 = \(24 - $w.y1)"'
+#
+# action = [
+#     "pin-float",
+#     "enable-float-above-fullscreen",
+#     { type = "resize", dx1 = 780, dx2 = 780, dy1 = -560, dy2 = -560 },
+# ]
+
 [[inputs]]
 match.is-pointer = true
 accel-profile = "flat"
