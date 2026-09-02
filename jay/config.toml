@@ -98,6 +98,55 @@ logo-c = {
 }
 
 
+# Media / volume / brightness keys, same behaviour as the niri config.
+# These live in [complex-shortcuts] instead of [shortcuts] because only that
+# table accepts `allow-locked` (fire even while the session is locked) and
+# `repeat` (act again on key repeat). No `shell = ...` here: $SHELL is fish and
+# none of these need a shell anyway, so they run as prog + args directly.
+#
+# `repeat` is on only where holding the key is actually useful. Player controls
+# stay non-repeating so a long press doesn't toggle play/pause 75x a second.
+
+[complex-shortcuts.XF86AudioRaiseVolume]
+allow-locked = true
+repeat = true
+action = { type = "exec", exec = { prog = "wpctl", args = ["set-volume", "@DEFAULT_AUDIO_SINK@", "0.1+", "-l", "1.0"] } }
+
+[complex-shortcuts.XF86AudioLowerVolume]
+allow-locked = true
+repeat = true
+action = { type = "exec", exec = { prog = "wpctl", args = ["set-volume", "@DEFAULT_AUDIO_SINK@", "0.1-"] } }
+
+[complex-shortcuts.XF86AudioMute]
+allow-locked = true
+action = { type = "exec", exec = { prog = "wpctl", args = ["set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"] } }
+
+[complex-shortcuts.XF86AudioPlay]
+allow-locked = true
+action = { type = "exec", exec = { prog = "playerctl", args = ["play-pause"] } }
+
+[complex-shortcuts.XF86AudioStop]
+allow-locked = true
+action = { type = "exec", exec = { prog = "playerctl", args = ["stop"] } }
+
+[complex-shortcuts.XF86AudioPrev]
+allow-locked = true
+action = { type = "exec", exec = { prog = "playerctl", args = ["previous"] } }
+
+[complex-shortcuts.XF86AudioNext]
+allow-locked = true
+action = { type = "exec", exec = { prog = "playerctl", args = ["next"] } }
+
+[complex-shortcuts.XF86MonBrightnessUp]
+allow-locked = true
+repeat = true
+action = { type = "exec", exec = { prog = "ddcutil", args = ["--noverify", "setvcp", "10", "+", "10"] } }
+
+[complex-shortcuts.XF86MonBrightnessDown]
+allow-locked = true
+repeat = true
+action = { type = "exec", exec = { prog = "ddcutil", args = ["--noverify", "setvcp", "10", "-", "10"] } }
+
 [[clients]]
 match.tag = "pp-clipboard"
 capabilities = ["data-control"]
