@@ -379,29 +379,57 @@ local groups = {
 	GitSignsDeleteInline = { bg = p.selection, strikethrough = true },
 	GitSignsCurrentLineBlame = { fg = p.faint, italic = true },
 
-	-- telescope. Borders are square (set in init.lua), so the rule tone is
+	-- snacks.picker. Borders are square (set in init.lua), so the rule tone is
 	-- doing real work here.
-	TelescopeNormal = { fg = p.ink, bg = p.paper },
-	TelescopeBorder = { fg = p.rule, bg = p.paper },
-	TelescopePromptNormal = { fg = p.ink, bg = p.paper },
-	TelescopePromptBorder = { fg = p.rule, bg = p.paper },
-	TelescopePromptPrefix = { fg = p.ink, bold = true },
-	TelescopePromptCounter = { fg = p.muted },
-	TelescopeTitle = { fg = p.ink, bg = p.paper, bold = true, underline = true, sp = p.ink },
-	TelescopePromptTitle = { link = "TelescopeTitle" },
-	TelescopeResultsTitle = { link = "TelescopeTitle" },
-	TelescopePreviewTitle = { link = "TelescopeTitle" },
-	TelescopeSelection = { fg = p.ink, bg = p.highlight, bold = true },
-	TelescopeSelectionCaret = { fg = p.ink, bg = p.highlight, bold = true },
-	TelescopeMultiSelection = { fg = p.ink, bg = p.selection },
-	TelescopeMultiIcon = { fg = p.ink, bold = true },
-	TelescopeMatching = { fg = p.ink, bold = true, underline = true, sp = p.ink },
-	TelescopePreviewLine = { bg = p.cursorline },
-	TelescopeResultsComment = { fg = p.muted, italic = true },
-	TelescopeResultsDiffAdd = { fg = p.ink, bold = true },
-	TelescopeResultsDiffChange = { fg = p.charcoal, bold = true },
-	TelescopeResultsDiffDelete = { fg = p.slate, bold = true },
-	TelescopeResultsDiffUntracked = { fg = p.muted },
+	--
+	-- snacks declares every SnacksPicker* group with `default = true`, linked
+	-- to a stock group (Special, Comment, NonText, Directory, ...), so the
+	-- content columns already follow this palette without help. What needs
+	-- pinning is the chrome: the picker sits on `paper` rather than the
+	-- `cursorline` fill NormalFloat uses, so it reads as a pane of the page
+	-- instead of a card floating over it -- the same split telescope had.
+	--
+	-- Each window derives its own groups from these four
+	-- (SnacksPickerInputBorder -> SnacksPickerBorder, and so on), so setting
+	-- the base is enough to cover input, list, preview and the box frames.
+	SnacksPicker = { fg = p.ink, bg = p.paper },
+	SnacksPickerBorder = { fg = p.rule, bg = p.paper },
+	SnacksPickerTitle = { fg = p.ink, bg = p.paper, bold = true, underline = true, sp = p.ink },
+	SnacksPickerFooter = { link = "SnacksPickerTitle" },
+
+	-- The cursor line *is* the selection in a picker, so it gets the match
+	-- fill rather than the fainter current-line one. snacks points the list
+	-- and preview windows at Visual by default; both are pinned here so the
+	-- selected row in the list and the cursor row in a preview do not disagree.
+	SnacksPickerCursorLine = { fg = p.ink, bg = p.highlight, bold = true },
+	SnacksPickerListCursorLine = { link = "SnacksPickerCursorLine" },
+	SnacksPickerPreviewCursorLine = { bg = p.cursorline },
+
+	-- Matched characters, and the `<Tab>` multi-selection marks.
+	SnacksPickerMatch = { fg = p.ink, bold = true, underline = true, sp = p.ink },
+	SnacksPickerSearch = { fg = p.ink, bg = p.highlight, bold = true },
+	SnacksPickerSelected = { fg = p.ink, bold = true },
+	SnacksPickerUnselected = { fg = p.muted },
+
+	-- Prompt, result counter, and the dirname half of a path -- the parts that
+	-- have to stay quieter than the filename they sit next to.
+	SnacksPickerPrompt = { fg = p.ink, bold = true },
+	SnacksPickerInputSearch = { fg = p.ink },
+	SnacksPickerTotals = { fg = p.muted },
+	SnacksPickerDir = { fg = p.muted },
+	SnacksPickerPathHidden = { fg = p.muted },
+	SnacksPickerPathIgnored = { fg = p.faint },
+	SnacksPickerDimmed = { fg = p.faint },
+	SnacksPickerRule = { fg = p.rule },
+	SnacksPickerTree = { fg = p.rule },
+
+	-- git status column in the files/status pickers, ranked the same way the
+	-- gitsigns gutter above is.
+	SnacksPickerGitStatusAdded = { fg = p.ink, bold = true },
+	SnacksPickerGitStatusModified = { fg = p.charcoal, bold = true },
+	SnacksPickerGitStatusDeleted = { fg = p.slate, bold = true },
+	SnacksPickerGitStatusUntracked = { fg = p.muted },
+	SnacksPickerGitStatusIgnored = { fg = p.faint },
 
 	-- which-key
 	WhichKey = { fg = p.ink, bold = true },
