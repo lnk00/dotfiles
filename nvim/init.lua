@@ -468,11 +468,33 @@ do
 			--  To opt a single picker back in, pass `preview = true` in its opts.
 			preview = false,
 		},
+		extensions = {
+			-- The projects picker (see below) hardcodes a Nerd Font prompt prefix;
+			--  this config runs without one (`vim.g.have_nerd_font = false`).
+			projects = { prompt_prefix = "> " },
+		},
 	})
 
 	-- Enable Telescope extensions if they are installed
 	pcall(require("telescope").load_extension, "fzf")
 	pcall(require("telescope").load_extension, "ui-select")
+
+	-- [[ project.nvim ]]
+	-- Automatically sets the cwd to the root of the project the current buffer
+	--  belongs to (LSP root first, `patterns` as a fallback), and keeps a
+	--  history of every project visited so they can be jumped back into.
+	--
+	-- `:Project` opens an interactive menu, `:checkhealth project` explains
+	--  what the detection did. See `:help project.txt`.
+	vim.pack.add({ gh("DrKJeff16/project.nvim") })
+	require("project").setup({
+		-- Show `~/dev/foo` instead of `/home/lnk0/dev/foo` in the picker.
+		telescope = { tilde = true },
+	})
+
+	-- Registers `:Telescope projects`. Loaded after `project.setup()` so the
+	--  picker sees the options above.
+	pcall(require("telescope").load_extension, "projects")
 
 	-- See `:help telescope.builtin`
 	local builtin = require("telescope.builtin")
@@ -486,6 +508,9 @@ do
 	vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "[S]earch [R]esume" })
 	vim.keymap.set("n", "<leader>s.", builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
 	vim.keymap.set("n", "<leader>sc", builtin.commands, { desc = "[S]earch [C]ommands" })
+	-- In the projects picker: `f` find files, `s` grep, `b` browse, `r` recents,
+	--  `w` change cwd only, `R` rename, `d` forget. See `:help project.txt`.
+	vim.keymap.set("n", "<leader>sp", "<Cmd>Telescope projects<CR>", { desc = "[S]earch [P]rojects" })
 	vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
 
 	-- Add Telescope-based LSP pickers when an LSP attaches to a buffer.
