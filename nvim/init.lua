@@ -13,7 +13,7 @@ do
 	vim.g.maplocalleader = " "
 
 	-- Set to true if you have a Nerd Font installed and selected in the terminal
-	vim.g.have_nerd_font = false
+	vim.g.have_nerd_font = true
 
 	-- [[ Setting options ]]
 	--  See `:help vim.o`
@@ -140,6 +140,13 @@ do
 	})
 
 	vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
+
+	-- Close the current buffer without tearing down the window layout.
+	-- mini.bufremove keeps the split alive and swaps in the alternate buffer,
+	-- unlike a plain `:bdelete` which closes the window along with the buffer.
+	vim.keymap.set("n", "<leader>bc", function()
+		require("mini.bufremove").delete(0, false)
+	end, { desc = "[B]uffer [C]lose" })
 
 	-- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 	-- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -314,6 +321,8 @@ do
 		spec = {
 			{ "<leader>s", group = "[S]earch", mode = { "n", "v" } },
 			{ "<leader>t", group = "[T]oggle" },
+			{ "<leader>b", group = "[B]uffer" },
+			{ "<leader>g", group = "[G]it" },
 			{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } }, -- Enable gitsigns recommended keymaps first
 			{ "gr", group = "LSP Actions", mode = { "n" } },
 		},
@@ -512,6 +521,7 @@ do
 	--  `w` change cwd only, `R` rename, `d` forget. See `:help project.txt`.
 	vim.keymap.set("n", "<leader>sp", "<Cmd>Telescope projects<CR>", { desc = "[S]earch [P]rojects" })
 	vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
+	vim.keymap.set("n", "<leader>f", builtin.find_files, { desc = "[ ] Search Files" })
 
 	-- Add Telescope-based LSP pickers when an LSP attaches to a buffer.
 	-- If you later switch picker plugins, this is where to update these mappings.
@@ -557,20 +567,12 @@ do
 		end,
 	})
 
-	-- Override default behavior and theme when searching
-	vim.keymap.set("n", "<leader>/", function()
-		-- You can pass additional configuration to Telescope to change the theme, layout, etc.
-		-- NOTE: themes (dropdown/ivy/cursor) ship their own `borderchars`, so
-		--  `defaults.borderchars` above does not apply to them - override per theme.
-		builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
-			previewer = false,
-			borderchars = {
-				prompt = { "─", "│", " ", "│", "┌", "┐", "│", "│" },
-				results = { "─", "│", "─", "│", "├", "┤", "┘", "└" },
-				preview = square_border,
-			},
-		}))
-	end, { desc = "[/] Fuzzily search in current buffer" })
+	vim.keymap.set(
+		"n",
+		"<leader>/",
+		builtin.current_buffer_fuzzy_find,
+		{ desc = "[/] Fuzzily search in current buffer" }
+	)
 
 	-- It's also possible to pass additional configuration options.
 	--  See `:help telescope.builtin.live_grep()` for information about particular keys
@@ -598,7 +600,40 @@ do
 	})
 end
 -- ============================================================
--- SECTION 6: LSP
+-- SECTION 6: GIT
+-- Neogit, the magit-style git interface
+-- ============================================================
+do
+	-- [[ Neogit ]]
+	-- A full git interface in a buffer: stage hunks, write commits, rebase,
+	--  push, browse logs. `<leader>gg` opens the status view, which is the
+	--  entry point for everything else -- press `?` inside it for the map.
+	--
+	-- Placed after Telescope on purpose: Neogit picks its pickers at setup
+	--  time, so telescope.nvim has to already be on the runtimepath.
+	--
+	-- plenary.nvim is a hard dependency, already installed with Telescope.
+	vim.pack.add({
+		gh("nvim-lua/plenary.nvim"),
+		gh("sindrets/diffview.nvim"),
+		gh("NeogitOrg/neogit"),
+	})
+
+	require("neogit").setup({
+		graph_style = "unicode",
+		integrations = {
+			telescope = true,
+			diffview = true,
+		},
+	})
+
+	vim.keymap.set("n", "<leader>gg", function()
+		require("neogit").open()
+	end, { desc = "[G]it status (Neo[g]it)" })
+end
+
+-- ============================================================
+-- SECTION 7: LSP
 -- LSP keymaps, server configuration, Mason tools installations
 -- ============================================================
 do
@@ -885,7 +920,7 @@ do
 end
 
 -- ============================================================
--- SECTION 7: FORMATTING
+-- SECTION 8: FORMATTING
 -- conform.nvim setup and keymap
 -- ============================================================
 do
@@ -913,14 +948,10 @@ do
 			javascript = { "prettierd", "prettier", stop_after_first = true },
 		},
 	})
-
-	vim.keymap.set({ "n", "v" }, "<leader>f", function()
-		require("conform").format({ async = true })
-	end, { desc = "[F]ormat buffer" })
 end
 
 -- ============================================================
--- SECTION 8: AUTOCOMPLETE & SNIPPETS
+-- SECTION 9: AUTOCOMPLETE & SNIPPETS
 -- blink.cmp and luasnip setup
 -- ============================================================
 -- NOTE: Autocompletion is handled by Neovim's built-in LSP completion, enabled
@@ -1007,7 +1038,7 @@ end
 -- end
 
 -- ============================================================
--- SECTION 9: TREESITTER
+-- SECTION 10: TREESITTER
 -- Parser installation, syntax highlighting, folds, indentation
 -- ============================================================
 do
@@ -1078,7 +1109,7 @@ do
 end
 
 -- ============================================================
--- SECTION 10: OPTIONAL EXAMPLES / NEXT STEPS
+-- SECTION 11: OPTIONAL EXAMPLES / NEXT STEPS
 -- kickstart.plugins.* examples
 -- ============================================================
 do
