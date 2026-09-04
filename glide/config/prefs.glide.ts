@@ -4,8 +4,8 @@
 
 // A blank page that is #111111 rather than about:blank's hardcoded white.
 // Note: this path assumes the config lives at ~/.config/glide.
-// const BLANK_PAGE = `file://${glide.path.home_dir}/.config/glide/config/blank.html`;
-const BLANK_PAGE = `https://duckduckgo.com`;
+const BLANK_PAGE = `file://${glide.path.home_dir}/.config/glide/config/blank.html`;
+// const BLANK_PAGE = `https://duckduckgo.com`;
 
 // Home page: the Home button, <Alt-Home>, and startup
 // (browser.startup.page is 1 = open homepage).
