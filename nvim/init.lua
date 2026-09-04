@@ -505,6 +505,36 @@ do
 			--  telescope-ui-select.nvim used to do. It is already the default;
 			--  spelled out because it is the reason that plugin is gone.
 			ui_select = true,
+
+			-- `<Tab>`/`<S-Tab>` walk the list, nothing more.
+			--
+			--  Out of the box they are `select_and_next`/`select_and_prev`,
+			--  which toggle the row into a multi-selection *and* move -- so
+			--  tabbing down five rows to reach a file leaves all five marked,
+			--  and `<CR>` then opens every one of them. (Telescope bound
+			--  `toggle_selection + move_selection_worse` the same way; it just
+			--  never drew a mark, so the behaviour went unnoticed.)
+			--
+			--  The toggle keeps a home on `<C-Space>`, and `<C-a>` still
+			--  selects everything. Sources that give `<Tab>` a job of their own
+			--  -- `git_status` and `git_diff` stage with it -- still win here,
+			--  because source config is merged over this.
+			win = {
+				input = {
+					keys = {
+						["<Tab>"] = { "list_down", mode = { "i", "n" } },
+						["<S-Tab>"] = { "list_up", mode = { "i", "n" } },
+						["<C-Space>"] = { "select_and_next", mode = { "i", "n" } },
+					},
+				},
+				list = {
+					keys = {
+						["<Tab>"] = { "list_down", mode = { "n", "x" } },
+						["<S-Tab>"] = { "list_up", mode = { "n", "x" } },
+						["<C-Space>"] = { "select_and_next", mode = { "n", "x" } },
+					},
+				},
+			},
 		},
 	})
 
