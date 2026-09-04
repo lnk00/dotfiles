@@ -1,6 +1,6 @@
 # e-ink
 
-One palette, thirteen applications.
+One palette, fifteen applications.
 
 ```
 ~/.config/theme/eink.toml     <- the only file you edit
@@ -26,6 +26,7 @@ build.
 | target | file |
 |---|---|
 | helix   | `helix/themes/eink.toml` |
+| nvim    | `nvim/colors/eink.lua` |
 | ghostty | `ghostty/themes/E-Ink` |
 | yazi    | `yazi/theme-eink.toml`, copied to `yazi/theme.toml` |
 | btop    | `btop/themes/eink.theme` |
@@ -45,6 +46,7 @@ or in one exact key; everything you wrote around it survives a rebuild.
 | jay    | the eight keys of `[theme]` |
 | hunk   | `[themes.eink]` block, and `theme =` |
 | glide  | one `glide.include` line in `glide.ts` |
+| nvim   | one `colorscheme` line in `init.lua` |
 
 Plus the `theme = ...` line in helix, ghostty, btop, spotify and glow.
 
@@ -60,6 +62,10 @@ mv ~/.config/mako/config.pre-eink ~/.config/mako/config
 The previous monochrome themes are untouched and still selectable:
 `monochrome-light` in Helix, `Monochrome Light` in Ghostty,
 `yazi/theme-light.toml`.
+
+Neovim is the exception, since it had no theme before this one: reverting it is
+deleting the marked block in `nvim/init.lua`, which puts it back on Neovim's
+own `default`.
 
 ## The rules the palette encodes
 

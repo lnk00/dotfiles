@@ -13,8 +13,8 @@
 # An E Ink Carta panel is a 4-bit device: exactly 16 gray levels exist, full
 # stop. So the palette is not a list of colors. It is a 16-step ramp plus a
 # mapping of semantic roles onto steps of that ramp. Every downstream theme
-# draws from the same 16 values, which is what keeps thirteen applications
-# looking like one system instead of thirteen near-misses.
+# draws from the same 16 values, which is what keeps fifteen applications
+# looking like one system instead of fifteen near-misses.
 #
 # PAPER IS MATCHED TO THE DESKTOP WALLPAPER.
 # ~/Pictures/Wallpapers/vilkasss-ink-10177251.jpg — an ink-wash painting on

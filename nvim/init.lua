@@ -337,10 +337,18 @@ do
 	-- Like many other themes, this one has different styles, and you could load
 	-- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
 	-- vim.cmd.colorscheme 'tokyonight-night'
+	--
+	-- This machine uses e-ink instead: one palette generated into every themed
+	-- application from ~/.config/theme/eink.toml. It is loaded in the block
+	-- just below this section. See ~/.config/theme/README.md.
 
 	-- Highlight todo, notes, etc in comments
 	vim.pack.add({ gh("folke/todo-comments.nvim") })
-	require("todo-comments").setup({ signs = false })
+	-- `wide_fg` marks the keyword and its comment leader in colour rather
+	-- than behind a filled block -- see ~/.config/theme/README.md. The
+	-- TODO/FIX/NOTE tones themselves come from the Diagnostic* groups the
+	-- e-ink colorscheme defines, so they follow the palette already.
+	require("todo-comments").setup({ signs = false, highlight = { keyword = "wide_fg" } })
 
 	-- [[ mini.nvim ]]
 	--  A collection of various small independent plugins/modules
@@ -393,6 +401,12 @@ do
 	-- ... and there is more!
 	--  Check out: https://github.com/nvim-mini/mini.nvim
 end
+
+-- >>> eink theme (generated -- edit ~/.config/theme/eink.toml) >>>
+-- The colorscheme itself is generated into nvim/colors/eink.lua and is
+-- loaded by name like any other theme. Nothing to configure here.
+vim.cmd.colorscheme("eink")
+-- <<< eink theme <<<
 
 -- ============================================================
 -- SECTION 5: SEARCH & NAVIGATION

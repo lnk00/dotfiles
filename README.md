@@ -40,7 +40,7 @@ to see what it would clobber.
 
 ## The theme system
 
-One palette in `theme/eink.toml` renders into ~37 targets across thirteen
+One palette in `theme/eink.toml` renders into 47 targets across fifteen
 applications. Edit that file, then `python3 theme/build.py`. Never hand-edit a
 generated file — the next build overwrites it.
 
