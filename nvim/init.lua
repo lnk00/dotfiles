@@ -689,6 +689,20 @@ do
 		gh("NeogitOrg/neogit"),
 	})
 
+	-- [[ Diffview ]]
+	-- Neogit opens diffs through diffview, but diffview does not bind `q` to
+	--  anything outside of its option/help popups. Bind it in the diff view and
+	--  both file panels so leaving a diff feels like leaving Neogit's status
+	--  buffer: one `q` and the whole tabpage is gone.
+	local diffview_quit = { "n", "q", "<Cmd>DiffviewClose<CR>", { desc = "Close Diffview" } }
+	require("diffview").setup({
+		keymaps = {
+			view = { diffview_quit },
+			file_panel = { diffview_quit },
+			file_history_panel = { diffview_quit },
+		},
+	})
+
 	require("neogit").setup({
 		graph_style = "unicode",
 		integrations = {
@@ -914,6 +928,7 @@ do
 		gopls = {},
 		rust_analyzer = {},
 		ts_ls = {},
+		svelte = {},
 		stylua = {},
 		ols = {},
 		-- Special Lua Config, as recommended by neovim help docs
@@ -1123,17 +1138,25 @@ do
 	-- Ensure basic parsers are installed. `regex` is not a filetype anything
 	--  here opens, so the FileType auto-install below never reaches it, but
 	--  snacks.picker uses it to highlight the pattern in the grep input.
+	--  Likewise `css`/`scss`/`javascript`/`typescript` are injected languages
+	--  (e.g. the `<script lang="ts">` and `<style>` blocks of a .svelte file),
+	--  and the FileType auto-install below only ever sees the outer filetype.
 	local parsers = {
 		"bash",
 		"c",
+		"css",
 		"diff",
 		"html",
+		"javascript",
 		"lua",
 		"luadoc",
 		"markdown",
 		"markdown_inline",
 		"query",
 		"regex",
+		"scss",
+		"svelte",
+		"typescript",
 		"vim",
 		"vimdoc",
 	}
