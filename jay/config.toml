@@ -44,6 +44,7 @@ logo-shift-r = "reload-config-toml"
 logo-t = { type = "exec", exec = "ghostty" }
 logo-b = { type = "exec", exec = "glide-bin" }
 logo-s = { type = "exec", exec = "slack" }
+logo-n = { type = "exec", exec = "neovide" }
 
 logo-d = "close"
 

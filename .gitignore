@@ -34,6 +34,8 @@
 !/ghostty/**
 !/helix/
 !/helix/**
+!/nvim/
+!/nvim/**
 
 # --- cli tools ---
 !/yazi/
