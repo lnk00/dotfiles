@@ -277,7 +277,7 @@ end
 
 -- ============================================================
 -- SECTION 4: UI / CORE UX PLUGINS
--- guess-indent, gitsigns, which-key, colorscheme, todo-comments, mini modules
+-- guess-indent, gitsigns, which-key, colorscheme, todo-comments, mini modules, flash
 -- ============================================================
 do
 	-- [[ Installing and Configuring Plugins ]]
@@ -325,6 +325,7 @@ do
 			{ "<leader>g", group = "[G]it" },
 			{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } }, -- Enable gitsigns recommended keymaps first
 			{ "gr", group = "LSP Actions", mode = { "n" } },
+			{ "gs", group = "[S]urround", mode = { "n", "x" } },
 		},
 	})
 
@@ -387,10 +388,56 @@ do
 
 	-- Add/delete/replace surroundings (brackets, quotes, etc.)
 	--
-	-- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
-	-- - sd'   - [S]urround [D]elete [']quotes
-	-- - sr)'  - [S]urround [R]eplace [)] [']
-	require("mini.surround").setup()
+	-- NOTE: these live under the `gs` prefix, not the upstream `s`, because
+	-- flash.nvim below claims bare `s` for jumping. Sharing `s` would make
+	-- every flash jump wait `timeoutlen` to see if `sa`/`sd`/`sr` follows.
+	-- This is the same split LazyVim uses.
+	--
+	-- - gsaiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
+	-- - gsd'   - [S]urround [D]elete [']quotes
+	-- - gsr)'  - [S]urround [R]eplace [)] [']
+	require("mini.surround").setup({
+		mappings = {
+			add = "gsa",
+			delete = "gsd",
+			find = "gsf",
+			find_left = "gsF",
+			highlight = "gsh",
+			replace = "gsr",
+			update_n_lines = "gsn",
+		},
+	})
+
+	-- [[ flash.nvim ]]
+	-- Jump anywhere on screen by typing the characters you are aiming at and
+	-- then the label that appears next to the match. Also labels the built-in
+	-- `f`/`t`/`F`/`T` motions (and takes over `;`/`,` for repeating them) --
+	-- set `modes = { char = { enabled = false } }` below to keep those vanilla.
+	-- Labels during `/` search are off by default; `<C-s>` toggles them on.
+	--
+	-- Unlike lazy.nvim specs, `vim.pack` has no `keys` table, so the keymaps
+	-- from the plugin's README are declared by hand here.
+	vim.pack.add({ gh("folke/flash.nvim") })
+	require("flash").setup({})
+
+	vim.keymap.set({ "n", "x", "o" }, "s", function()
+		require("flash").jump()
+	end, { desc = "Flash" })
+	vim.keymap.set({ "n", "x", "o" }, "S", function()
+		require("flash").treesitter()
+	end, { desc = "Flash Treesitter" })
+	-- Operate on a target elsewhere without moving the cursor there: `yr` then
+	-- flash to the region, e.g. `yriw` yanks a word across the screen.
+	vim.keymap.set("o", "r", function()
+		require("flash").remote()
+	end, { desc = "Remote Flash" })
+	vim.keymap.set({ "o", "x" }, "R", function()
+		require("flash").treesitter_search()
+	end, { desc = "Treesitter Search" })
+	-- Toggle flash labels on/off while already typing a `/` search.
+	vim.keymap.set("c", "<C-s>", function()
+		require("flash").toggle()
+	end, { desc = "Toggle Flash Search" })
 
 	-- Simple and easy statusline.
 	--  You could remove this setup call if you don't like it,
