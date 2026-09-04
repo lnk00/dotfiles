@@ -406,11 +406,6 @@ end
 -- The colorscheme itself is generated into nvim/colors/eink.lua and is
 -- loaded by name like any other theme. Nothing to configure here.
 vim.cmd.colorscheme("eink")
-
--- Frame every float that does not bring its own border, so hover (K),
--- signature help and the diagnostic float get the rule tone drawn around
--- them. Square, to match the telescope pickers above.
-vim.o.winborder = "single"
 -- <<< eink theme <<<
 
 -- ============================================================

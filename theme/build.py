@@ -445,14 +445,21 @@ def emit_helix():
 
 NVIM_BODY = '''
 local groups = {
-	-- Editor surface. Every panel is paper; separation is hairline and
-	-- weight, never a second shade of gray behind a whole region.
+	-- Editor surface. The page is paper; the two surfaces that are chrome
+	-- rather than text -- the statusline band and the transient LSP floats --
+	-- sit one step down on cursorline, the same fill the current line uses.
+	-- Nothing else takes a second shade behind a whole region.
 	Normal = { fg = p.ink, bg = p.paper },
 	NormalNC = { fg = p.ink, bg = p.paper },
-	NormalFloat = { fg = p.ink, bg = p.paper },
-	FloatBorder = { fg = p.rule, bg = p.paper },
-	FloatTitle = { fg = p.ink, bg = p.paper, bold = true, underline = true, sp = p.ink },
-	FloatFooter = { fg = p.muted, bg = p.paper },
+
+	-- Hover (K), signature help, the diagnostic float and the completion doc
+	-- window all render on NormalFloat. On paper they were indistinguishable
+	-- from the buffer behind them, so they take the chrome fill; the border
+	-- cells match the body or the ring reads as a gap.
+	NormalFloat = { fg = p.ink, bg = p.cursorline },
+	FloatBorder = { fg = p.rule, bg = p.cursorline },
+	FloatTitle = { fg = p.ink, bg = p.cursorline, bold = true, underline = true, sp = p.ink },
+	FloatFooter = { fg = p.muted, bg = p.cursorline },
 	WinSeparator = { fg = p.rule, bg = p.paper },
 	VertSplit = { link = "WinSeparator" },
 	EndOfBuffer = { fg = p.faint },
@@ -507,10 +514,13 @@ local groups = {
 	QuickFixLine = { bg = p.highlight, bold = true },
 	SnippetTabstop = { fg = p.ink, bg = p.highlight },
 
-	-- Statusline, tabline, winbar. Mode is a mark, not a fill: see the
-	-- MiniStatusline groups at the bottom for the four styles.
-	StatusLine = { fg = p.ink, bg = p.paper, bold = true },
-	StatusLineNC = { fg = p.muted, bg = p.paper },
+	-- Statusline, tabline, winbar. The band takes the chrome fill so it
+	-- reads as a strip rather than as more page; the MODE within it is still
+	-- a mark, not a second fill -- see the MiniStatusline groups at the
+	-- bottom. Tabline and winbar stay on paper: they sit against the buffer,
+	-- not under it.
+	StatusLine = { fg = p.ink, bg = p.cursorline, bold = true },
+	StatusLineNC = { fg = p.muted, bg = p.cursorline },
 	StatusLineTerm = { link = "StatusLine" },
 	StatusLineTermNC = { link = "StatusLineNC" },
 	WinBar = { fg = p.ink, bg = p.paper, bold = true },
@@ -601,7 +611,7 @@ local groups = {
 	LspInlayHint = { fg = p.muted, bg = p.paper, italic = true },
 	LspCodeLens = { fg = p.muted, italic = true },
 	LspCodeLensSeparator = { fg = p.rule },
-	LspInfoBorder = { fg = p.rule, bg = p.paper },
+	LspInfoBorder = { fg = p.rule, bg = p.cursorline },
 
 	-- Syntax, legacy vocabulary. Hierarchy comes from four text tones plus
 	-- bold and italic; there is no fifth tone and no hue.
@@ -826,20 +836,22 @@ local groups = {
 	MasonWarning = { fg = p.warning, bold = true },
 	MasonHeading = { fg = p.ink, bold = true, underline = true, sp = p.ink },
 
-	-- mini.statusline. The mode chip repaints on every mode switch, which is
-	-- exactly the small high-frequency fill that ghosts, so mode is carried
-	-- by underline STYLE on paper -- the same trick the Helix statusline
-	-- uses, extended to cover Neovim's six modes.
-	MiniStatuslineModeNormal = { fg = p.ink, bg = p.paper, bold = true },
-	MiniStatuslineModeInsert = { fg = p.ink, bg = p.paper, bold = true, underline = true, sp = p.ink },
-	MiniStatuslineModeVisual = { fg = p.ink, bg = p.paper, bold = true, italic = true },
-	MiniStatuslineModeReplace = { fg = p.ink, bg = p.paper, bold = true, undercurl = true, sp = p.ink },
-	MiniStatuslineModeCommand = { fg = p.ink, bg = p.paper, bold = true, underdouble = true, sp = p.ink },
-	MiniStatuslineModeOther = { fg = p.ink, bg = p.paper, bold = true, underdotted = true, sp = p.ink },
-	MiniStatuslineDevinfo = { fg = p.slate, bg = p.paper },
-	MiniStatuslineFilename = { fg = p.charcoal, bg = p.paper },
-	MiniStatuslineFileinfo = { fg = p.muted, bg = p.paper },
-	MiniStatuslineInactive = { fg = p.muted, bg = p.paper },
+	-- mini.statusline draws the band, so every section carries the chrome
+	-- fill; a chip left on paper would be a hole in the strip. The mode chip
+	-- repaints on every mode switch, which is exactly the small
+	-- high-frequency fill that ghosts, so mode is carried by underline STYLE
+	-- over that one fill -- the same trick the Helix statusline uses,
+	-- extended to cover Neovim's six modes.
+	MiniStatuslineModeNormal = { fg = p.ink, bg = p.cursorline, bold = true },
+	MiniStatuslineModeInsert = { fg = p.ink, bg = p.cursorline, bold = true, underline = true, sp = p.ink },
+	MiniStatuslineModeVisual = { fg = p.ink, bg = p.cursorline, bold = true, italic = true },
+	MiniStatuslineModeReplace = { fg = p.ink, bg = p.cursorline, bold = true, undercurl = true, sp = p.ink },
+	MiniStatuslineModeCommand = { fg = p.ink, bg = p.cursorline, bold = true, underdouble = true, sp = p.ink },
+	MiniStatuslineModeOther = { fg = p.ink, bg = p.cursorline, bold = true, underdotted = true, sp = p.ink },
+	MiniStatuslineDevinfo = { fg = p.slate, bg = p.cursorline },
+	MiniStatuslineFilename = { fg = p.charcoal, bg = p.cursorline },
+	MiniStatuslineFileinfo = { fg = p.muted, bg = p.cursorline },
+	MiniStatuslineInactive = { fg = p.muted, bg = p.cursorline },
 
 	-- mini.surround / mini.icons. The icon groups are named after hues this
 	-- palette does not have; each is folded onto the nearest text tone so a
@@ -894,7 +906,10 @@ def emit_nvim():
 -- to the desktop wallpaper exactly; the warm cast tapers from chroma
 -- {_r['chroma']} at paper to {_c_ink} at ink, so the page is cream and the text on it
 -- stays near-neutral, as on real stock. Large fills ghost on repaint, so
--- weight, rule and proofreader's mark carry signal instead of slabs.
+-- weight, rule and proofreader's mark carry signal instead of slabs; the two
+-- exceptions are chrome rather than text -- the statusline band and the
+-- transient LSP floats sit on cursorline so they read as something other
+-- than more page.
 
 vim.cmd.highlight("clear")
 if vim.fn.exists("syntax_on") == 1 then
@@ -926,10 +941,21 @@ local p = {{
 {term}
 '''
     write(CFG / "nvim/colors/eink.lua", head + NVIM_BODY + tail, "nvim")
+    # `winborder` is geometry rather than colour, but it belongs to the theme
+    # for the same reason ghostty's font-thicken does: a hairline frame is how
+    # this palette separates a panel from the page, and FloatBorder has nothing
+    # to draw without it. Neovim's built-in K and <C-k> pass no border of their
+    # own, so the global default is the only lever that reaches them. "single"
+    # is the same square box telescope draws from `square_border` in init.lua.
     splice(CFG / "nvim/init.lua",
            '-- The colorscheme itself is generated into nvim/colors/eink.lua and is\n'
            '-- loaded by name like any other theme. Nothing to configure here.\n'
-           'vim.cmd.colorscheme("eink")',
+           'vim.cmd.colorscheme("eink")\n'
+           '\n'
+           '-- Frame every float that does not bring its own border, so hover (K),\n'
+           "-- signature help and the diagnostic float get the rule tone drawn around\n"
+           '-- them. Square, to match the telescope pickers above.\n'
+           'vim.o.winborder = "single"',
            "nvim:assign", comment="--")
 
 # --------------------------------------------------------------------------
