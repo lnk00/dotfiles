@@ -179,6 +179,37 @@ do
 		vim.api.nvim_buf_clear_namespace(0, vim.api.nvim_create_namespace("nvim.multicursor"), 0, -1)
 	end, { desc = "Clear multicursors" })
 
+	-- Drop a multicursor on every match of a pattern inside the visual selection.
+	-- `\%V` restricts the search to the last visual area (`:help /\%V`) and `1Q`
+	-- places a cursor at every match of the last search pattern (`:help Q`).
+	--
+	-- This leaves visual mode and opens the real `/` cmdline prefilled with `\%V`
+	-- (so incremental highlighting, history and `<C-r><C-w>` all still work), then
+	-- places the cursors once the search is accepted. Leaving visual mode first is
+	-- required: `/` while visual is active extends the selection instead of
+	-- searching. Charwise/linewise both work, and `<C-v>` restricts by column too.
+	--
+	-- Clear the cursors with <C-,>, restore them with `gQ`.
+	--
+	-- NOTE: several cursors on one line lose edits when the edit shifts columns
+	-- (`:help mcursor-limitations`); use `:'<,'>s/\%Vpat//g` for that case.
+	vim.keymap.set("x", "<leader>m", function()
+		vim.api.nvim_create_autocmd("CmdlineLeave", {
+			once = true,
+			callback = function()
+				-- Skip when the search was cancelled, or left empty (`\%V` alone).
+				if vim.v.event.abort or vim.fn.getcmdline() == [[\%V]] then
+					return
+				end
+				-- The search itself only runs after the cmdline closes, so `1Q` has to
+				-- be queued rather than called here. The "i" flag puts it at the head
+				-- of the typeahead, ahead of anything typed right after <CR>.
+				vim.api.nvim_feedkeys("1Q", "ni", false)
+			end,
+		})
+		return [[<Esc>/\%V]]
+	end, { expr = true, desc = "[M]ulticursor at matches in selection" })
+
 	-- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 	-- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 	-- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
