@@ -171,6 +171,14 @@ do
 	vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 	vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
+	-- Clear multicursors. The stock <C-l> default mapping does this (see
+	-- `:help CTRL-L-default`), but the window-navigation map above shadows it,
+	-- so rebind the multicursor part to <C-,>. Requires a terminal that sends
+	-- distinct keycodes for <C-,> (kitty keyboard protocol, e.g. ghostty).
+	vim.keymap.set({ "n", "i" }, "<C-,>", function()
+		vim.api.nvim_buf_clear_namespace(0, vim.api.nvim_create_namespace("nvim.multicursor"), 0, -1)
+	end, { desc = "Clear multicursors" })
+
 	-- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 	-- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 	-- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
