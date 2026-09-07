@@ -75,3 +75,9 @@ paper      = 15  # page background                      #fffaea  = wallpaper
 # appear, weight or underline style carries the same signal independently.
 error   = "#833f39"   # 7.35:1  AAA
 warning = "#8f6737"   # 4.83:1  AA; always paired with bold + dashed underline
+
+[wallpaper]
+# The desktop plate, and the thing l_max above was measured from. build.py
+# points niri's swaybg at whichever one the active palette names, so the
+# desktop cannot be left wearing the other mode's sky.
+image = "~/Pictures/Wallpapers/vilkasss-ink-10177251.jpg"

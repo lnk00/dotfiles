@@ -1,10 +1,10 @@
 -- e-ink for Neovim -- an E Ink Carta panel simulated on an emissive display.
--- GENERATED from ~/.config/theme/eink.toml by build.py -- do not edit by hand
+-- GENERATED from ~/.config/theme/eink-dark.toml by build.py -- do not edit by hand
 --
 -- 4-bit panel: 16 gray levels, no more. Reflective, so the range stops at
--- 14.15:1 -- neither pure white nor pure black appears. Paper is matched
+-- 14.22:1 -- neither pure white nor pure black appears. Paper is matched
 -- to the desktop wallpaper exactly; the warm cast tapers from chroma
--- 0.0217 at paper to 0.003 at ink, so the page is cream and the text on it
+-- 0.016 at paper to 0.003 at ink, so the page is cream and the text on it
 -- stays near-neutral, as on real stock. Large fills ghost on repaint, so
 -- weight, rule and proofreader's mark carry signal instead of slabs; the two
 -- exceptions are chrome rather than text -- the statusline band and the
@@ -22,37 +22,37 @@ vim.o.termguicolors = true
 vim.o.background = "light"
 vim.g.colors_name = "eink"
 
--- 16-step Carta ramp: oklch(L 0.275 -> 0.9847, C 0.0217, h 92.5).
+-- 16-step Carta ramp: oklch(L 0.195 -> 0.915, C 0.016, h 92.5).
 --
---   ink        L0   #282826  14.15:1  AAA
---   charcoal   L2   #41403c   9.94:1  AAA
---   slate      L4   #5b5954   6.70:1  AA
---   muted      L5   #686661   5.49:1  AA
---   faint      L9   #a29f95   2.54:1  decoration
---   rule       L11  #c0bcb0   1.82:1  decoration
---   selection  L12  #cfcbbf   1.55:1  decoration
---   highlight  L13  #dfdbcd   1.33:1  decoration
---   cursorline L14  #efeadb   1.15:1  decoration
---   paper      L15  #fffaea  -------  the page itself
---   error      off  #833f39   7.35:1  AAA
---   warning    off  #8f6737   4.83:1  AA; always bold + dashed
+--   ink        L15  #e3e3e1  14.22:1  AAA
+--   charcoal   L13  #c5c4c0  10.47:1  AAA
+--   slate      L11  #a7a5a1   7.43:1  AAA
+--   muted      L10  #989792   6.24:1  AA
+--   faint      L6   #605e58   2.82:1  decoration
+--   rule       L4   #46443d   1.87:1  decoration
+--   selection  L3   #3a3830   1.56:1  decoration
+--   highlight  L2   #2e2b24   1.29:1  decoration
+--   cursorline L1   #222018   1.12:1  decoration
+--   paper      L0   #17150d  -------  the page itself
+--   error      off  #e88b82   7.35:1  AAA
+--   warning    off  #a97a41   4.83:1  AA; always bold + dashed
 --
 -- The two accents are the only off-ramp values and the only hue in the
 -- system, separated by luminance (1.52:1) so they survive being read
 -- as pure gray.
 local p = {
-	ink = "#282826",
-	charcoal = "#41403c",
-	slate = "#5b5954",
-	muted = "#686661",
-	faint = "#a29f95",
-	rule = "#c0bcb0",
-	selection = "#cfcbbf",
-	highlight = "#dfdbcd",
-	cursorline = "#efeadb",
-	paper = "#fffaea",
-	error = "#833f39",
-	warning = "#8f6737",
+	ink = "#e3e3e1",
+	charcoal = "#c5c4c0",
+	slate = "#a7a5a1",
+	muted = "#989792",
+	faint = "#605e58",
+	rule = "#46443d",
+	selection = "#3a3830",
+	highlight = "#2e2b24",
+	cursorline = "#222018",
+	paper = "#17150d",
+	error = "#e88b82",
+	warning = "#a97a41",
 }
 
 local groups = {
@@ -520,19 +520,19 @@ end
 -- :terminal, bound to the same ANSI table Ghostty gets, so a command run
 -- inside Neovim and the same command run in the bare terminal are coloured
 -- identically.
-vim.g.terminal_color_0 = "#282826"
-vim.g.terminal_color_1 = "#833f39"
-vim.g.terminal_color_2 = "#41403c"
-vim.g.terminal_color_3 = "#8f6737"
-vim.g.terminal_color_4 = "#5b5954"
-vim.g.terminal_color_5 = "#41403c"
-vim.g.terminal_color_6 = "#5b5954"
-vim.g.terminal_color_7 = "#c0bcb0"
-vim.g.terminal_color_8 = "#686661"
-vim.g.terminal_color_9 = "#833f39"
-vim.g.terminal_color_10 = "#282826"
-vim.g.terminal_color_11 = "#8f6737"
-vim.g.terminal_color_12 = "#282826"
-vim.g.terminal_color_13 = "#5b5954"
-vim.g.terminal_color_14 = "#686661"
-vim.g.terminal_color_15 = "#282826"
+vim.g.terminal_color_0 = "#222018"
+vim.g.terminal_color_1 = "#e88b82"
+vim.g.terminal_color_2 = "#c5c4c0"
+vim.g.terminal_color_3 = "#a97a41"
+vim.g.terminal_color_4 = "#a7a5a1"
+vim.g.terminal_color_5 = "#c5c4c0"
+vim.g.terminal_color_6 = "#a7a5a1"
+vim.g.terminal_color_7 = "#a7a5a1"
+vim.g.terminal_color_8 = "#989792"
+vim.g.terminal_color_9 = "#e88b82"
+vim.g.terminal_color_10 = "#e3e3e1"
+vim.g.terminal_color_11 = "#a97a41"
+vim.g.terminal_color_12 = "#e3e3e1"
+vim.g.terminal_color_13 = "#a7a5a1"
+vim.g.terminal_color_14 = "#989792"
+vim.g.terminal_color_15 = "#e3e3e1"

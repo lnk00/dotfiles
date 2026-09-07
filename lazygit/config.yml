@@ -1,29 +1,29 @@
-# e-ink for lazygit. GENERATED from ~/.config/theme/eink.toml by build.py -- do not edit by hand
+# e-ink for lazygit. GENERATED from ~/.config/theme/eink-dark.toml by build.py -- do not edit by hand
 gui:
   theme:
     activeBorderColor:
-      - "#282826"
+      - "#e3e3e1"
       - bold
     inactiveBorderColor:
-      - "#c0bcb0"
+      - "#46443d"
     searchingActiveBorderColor:
-      - "#282826"
+      - "#e3e3e1"
       - bold
     optionsTextColor:
-      - "#686661"
+      - "#989792"
     selectedLineBgColor:
-      - "#dfdbcd"
+      - "#2e2b24"
     inactiveViewSelectedLineBgColor:
-      - "#efeadb"
+      - "#222018"
     cherryPickedCommitFgColor:
-      - "#fffaea"
+      - "#17150d"
     cherryPickedCommitBgColor:
-      - "#41403c"
+      - "#c5c4c0"
     markedBaseCommitFgColor:
-      - "#fffaea"
+      - "#17150d"
     markedBaseCommitBgColor:
-      - "#5b5954"
+      - "#a7a5a1"
     unstagedChangesColor:
-      - "#833f39"
+      - "#e88b82"
     defaultFgColor:
-      - "#282826"
+      - "#e3e3e1"

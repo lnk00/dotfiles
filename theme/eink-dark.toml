@@ -1,0 +1,100 @@
+# e-ink dark — the same system, read the other way round.
+#
+# Edit THIS file, then run:  python3 ~/.config/theme/build.py dark
+#           back to daylight: python3 ~/.config/theme/build.py light
+#           audit the result:  python3 ~/.config/theme/build.py --audit
+#
+# One palette is live at a time. Both write the same files, so switching is a
+# rebuild rather than a second set of themes to keep in sync.
+#
+# ---------------------------------------------------------------------------
+# WHY THESE NUMBERS
+#
+# Everything eink.toml argues for still holds — one derived 16-step ramp, roles
+# mapped onto steps of it, hue only as two accents that are also separated by
+# luminance, contrast carried by weight and rule rather than by slabs of fill.
+# What changes is polarity, and polarity alone: the role table below is
+# eink.toml's mirrored through the middle of the ramp (level n becomes 15 − n),
+# which is why the two modes cannot drift apart. Every emitter in build.py is
+# written in role names, so nothing downstream knows which way is up.
+#
+# THE HONEST PART: this is not an E Ink palette.
+# A Carta panel cannot show it — the device is reflective, it has no light of
+# its own to withhold, and there is no such thing as a dark reflective page.
+# The name is kept because the discipline is kept. What is being simulated here
+# is not the panel; it is the ink-wash painting seen at night: the same sheet,
+# the same pigment, a different amount of light in the room.
+#
+# PAPER IS THE NIGHT SHEET.
+# oklch(0.195, 0.016, 92.5) -> #17150d. Same hue as the light palette, held in
+# common on purpose so the two modes read as one family rather than as a theme
+# and its negative. Chroma is well under the light palette's 0.0217: at this
+# luminance the same number lands in olive, and a background is the one surface
+# with no chance to be corrected by anything next to it. #17150d measures
+# R−B +10 against the light paper's +21 — warm black, not brown.
+#
+# THE CAST STILL TAPERS, AND STILL TOWARD THE PAPER.
+# Warmth lives in the sheet; the ink stays near-neutral. chroma is the value at
+# whichever level is `paper` and chroma_min the value at whichever is `ink`, so
+# the taper follows the roles rather than the index and needs no restating
+# here. Ink lands #e3e3e1, R−B +2, exactly as in daylight.
+#
+# INK IS NOT WHITE, FOR THE SAME REASON PAPER WAS NOT.
+# l_max 0.915, not 1.0. Full-white text on a near-black field haloes, which is
+# the emissive counterpart of the ghosting that set l_min 0.275 in daylight.
+# Range comes out 14.22:1 against the light palette's 14.15:1 — the two modes
+# are the same distance from end to end, which is the point.
+# ---------------------------------------------------------------------------
+
+[ramp]
+space      = "oklch"
+levels     = 16
+hue        = 92.5      # unchanged: the light palette's wallpaper hue
+chroma     = 0.016     # at paper (level 0 here)
+chroma_min = 0.003     # at ink; identical to daylight, ink is ink
+l_min      = 0.195     # the page itself   -> #17150d
+l_max      = 0.915     # brightest ink     -> #e3e3e1, 14.22:1
+
+# Earlier settings, kept as documented starting points:
+#   nearer the light palette's proportions, at the cost of an olive page
+#       chroma = 0.020                                 (paper #18150a)
+#   a shallower night, for a bright room
+#       l_min = 0.235, l_max = 0.895                   (about 11.4:1)
+
+[roles]
+# eink.toml's table with every level mirrored (n -> 15 − n). The ordering the
+# light palette encodes survives intact: cursorline is still the subtlest fill
+# and selection still the strongest, they are simply now measured up from the
+# page instead of down from it.
+ink        = 15  # body text, keywords, functions       #e3e3e1  14.22:1  AAA
+charcoal   = 13  # strings, parameters, namespaces      #c5c4c0  10.47:1  AAA
+slate      = 11  # punctuation, doc comments, quotes    #a7a5a1   7.43:1  AAA
+muted      = 10  # comments, line numbers, inlay hints  #989792   6.24:1  AA
+faint      =  6  # whitespace marks, indent guides      #605e58  decoration
+rule       =  4  # hairlines, borders, separators       #46443d  decoration
+selection  =  3  # selection fill                       #3a3830  decoration
+highlight  =  2  # match / menu-selected fill           #2e2b24  decoration
+cursorline =  1  # current-line fill                    #222018  decoration
+paper      =  0  # page background                      #17150d
+
+[accents]
+# Defined by the contrast ratio they hold against paper, not by eye: the light
+# palette's 7.35:1 and 4.83:1 reproduced exactly, at the same two hues, from
+# the other side. That preserves the 1.52:1 luminance separation between them,
+# which is what keeps them apart when the theme is read as pure gray, and it
+# means an error is exactly as loud at night as it is at noon.
+#
+# Chroma is raised a little (0.115 / 0.095 against 0.0949 / 0.0825): at these
+# luminances the light palette's numbers read as dirty white rather than as
+# red and ochre. Anywhere they appear, weight or underline style carries the
+# same signal independently.
+error   = "#e88b82"   # 7.35:1  AAA
+warning = "#a97a41"   # 4.83:1  AA; always paired with bold + dashed underline
+
+[wallpaper]
+# Derived, not found: there is no dark version of an ink-wash on cream stock,
+# because cream stock is what it is. wallpaper.py re-inks the daylight plate
+# onto this palette's own ramp, so the field of the picture is this file's
+# `paper` and its densest passage stops at `faint`. Regenerate with:
+#     python3 ~/.config/theme/wallpaper.py
+image = "~/Pictures/Wallpapers/vilkasss-ink-10177251-night.jpg"

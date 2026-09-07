@@ -1,19 +1,32 @@
 # e-ink
 
-One palette, fifteen applications.
+One palette, fifteen applications. Two polarities.
 
 ```
-~/.config/theme/eink.toml     <- the only file you edit
-~/.config/theme/build.py      <- renders it into everything else
+~/.config/theme/eink.toml       <- the light palette; the file you edit
+~/.config/theme/eink-dark.toml  <- the same system after dark
+~/.config/theme/build.py        <- renders whichever is active into everything else
+~/.config/theme/wallpaper.py    <- re-inks the desktop plate for the dark palette
+~/.config/theme/active          <- written by build.py: which one is on disk
 ```
 
 Change a value, then:
 
 ```fish
-python3 ~/.config/theme/build.py            # apply everywhere
+python3 ~/.config/theme/build.py            # rebuild the active palette
+python3 ~/.config/theme/build.py dark       # switch the machine to dark
+python3 ~/.config/theme/build.py light      # switch it back
 python3 ~/.config/theme/build.py --check    # report drift, write nothing
 python3 ~/.config/theme/build.py --audit    # assert every colour on disk is from the ramp
 ```
+
+One palette is live at a time. Both write the same files under the same theme
+names, so switching is a rebuild rather than a second set of themes to keep in
+sync — and `--check` and `--audit` read `active` so they compare against
+whichever palette actually produced what is on disk.
+
+Applications differ in how fast they notice. Ghostty, Helix, Neovim, yazi and
+mako reload on their next launch; niri and waybar want a restart of the bar.
 
 `--check` exits non-zero if any target has drifted from the palette, so it
 works as a pre-commit hook once these files are in a dotfiles repo.
@@ -52,12 +65,17 @@ Plus the `theme = ...` line in helix, ghostty, btop, spotify and glow.
 
 ## Reverting
 
-Every file was copied to `<name>.pre-eink` the first time it was touched, and
-those copies are never overwritten. To put one application back:
+`~/.config` is a git repository and every target is tracked in it, which is the
+whole backup story:
 
 ```fish
-mv ~/.config/mako/config.pre-eink ~/.config/mako/config
+git -C ~/.config checkout -- mako/config
 ```
+
+The build used to leave a `<name>.pre-eink` copy beside every file it touched.
+That is gone: it put a second stale copy of every config on disk to duplicate
+what git already held, and it was not even reliable — several of those copies
+had been taken *after* a build and contained the theme they claimed to predate.
 
 The previous monochrome themes are untouched and still selectable:
 `monochrome-light` in Helix, `Monochrome Light` in Ghostty,
@@ -87,3 +105,61 @@ proofreader's mark rather than by slabs of fill.
 
 The ramp is derived from four numbers in `[ramp]`, not stored. Change `l_min`
 and every surface on the machine moves together in one command.
+
+## Dark
+
+`eink-dark.toml` keeps every one of those rules and changes exactly one thing:
+polarity. Its role table is the light one mirrored through the middle of the
+ramp — level *n* becomes 15 − *n* — so the two modes cannot drift apart, and
+every emitter in `build.py` is written in role names only, which is why none of
+them needed a line changed to gain a dark theme.
+
+What is *not* mirrored, and why:
+
+- **Chroma at paper**, 0.016 rather than 0.0217. At L 0.195 the light number
+  lands in olive, and a background has nothing beside it to correct the eye.
+- **`l_max` 0.915, not 1.0.** White text on a near-black field haloes; that is
+  the emissive counterpart of the ghosting that kept ink off black in daylight.
+  End-to-end range comes out 14.22:1 against the light palette's 14.15:1.
+- **The accents.** Same two hues, and the same contrast ratios against paper
+  (7.35:1 and 4.83:1), so an error is exactly as loud at night as at noon and
+  the 1.52:1 luminance separation between the two survives. Their chroma is
+  raised — at these luminances the light values read as dirty white.
+
+It is worth saying plainly that this is not an E Ink palette: a reflective
+panel has no light of its own to withhold, so there is no dark Carta page. What
+carries over is the discipline, not the device.
+
+## The wallpaper
+
+The desktop shows through window gaps and behind the overview, so it is a
+themed surface like any other and each palette names its own plate in
+`[wallpaper]`. `build.py` points niri's swaybg line at whichever is active.
+
+There is no dark version of this painting to go and find — it is ink on cream
+stock, and cream stock is what it is. So `wallpaper.py` derives one:
+
+```fish
+python3 ~/.config/theme/wallpaper.py    # only needed if the dark palette moves
+```
+
+It reads the daylight plate as a single channel of ink density, inverts it in
+oklab L rather than in sRGB bytes (inverting the stored bytes drags the mist —
+which is most of this picture — far too bright), and re-inks it onto the dark
+palette's own ramp between `paper` and `faint`.
+
+Two decisions in there are worth keeping if it is ever regenerated:
+
+- **The ceiling is `faint`, not `ink`.** Inversion does something the original
+  never did: in daylight the bright mass is the field and the ink is sparse, so
+  flipping it makes the mountains the bright mass and a window ends up sitting
+  on a glowing white slab. Held at `faint` they come back as mist, which is
+  what the palette says decoration is for.
+- **There is grain on it.** Ceilinged that low the whole image lives inside
+  about twenty-three 8-bit codes, and a sky crossing one code every sixty
+  pixels is exactly the shape that bands. The noise puts the transition back
+  under the threshold. That it also reads as the tooth of the paper is luck.
+
+Note which way the derivation runs in each mode. In daylight the palette comes
+from the wallpaper — `l_max` *is* the painting's field colour. After dark the
+wallpaper comes from the palette. Same two things, agreeing from either end.

@@ -1,21 +1,21 @@
-background-color=#fffaea
-border-color=#c0bcb0
-text-color=#282826
+background-color=#17150d
+border-color=#46443d
+text-color=#e3e3e1
 icons=0
 outer-margin=16, 0
 default-timeout=5000
 ignore-timeout=1
 
-# >>> eink theme (generated -- edit ~/.config/theme/eink.toml) >>>
+# >>> eink theme (generated -- edit ~/.config/theme/eink-dark.toml) >>>
 border-size=1
-progress-color=over #dfdbcd
+progress-color=over #2e2b24
 
 [urgency=low]
-text-color=#5b5954
-border-color=#c0bcb0
+text-color=#a7a5a1
+border-color=#46443d
 
 [urgency=high]
-text-color=#282826
-border-color=#833f39
+text-color=#e3e3e1
+border-color=#e88b82
 border-size=2
 # <<< eink theme <<<

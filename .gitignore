@@ -67,7 +67,6 @@
 !/glide/config/
 !/glide/config/**
 !/glide/glide.ts
-!/glide/glide.ts.pre-eink
 !/glide/tsconfig.json
 
 # --- system ---

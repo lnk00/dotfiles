@@ -17,15 +17,47 @@ Two kinds of target:
            assignment lines). Patched surgically, between sentinel markers or
            by exact key, so hand-written settings around them survive.
 
-Every file is copied to `<name>.pre-eink` the first time it is touched, so
-reverting is `mv` and nothing here is destructive.
+Nothing here keeps its own backups. ~/.config is a git repository and every
+target is tracked in it, so `git checkout -- <file>` already does the job that
+a sidecar copy would, without leaving a second stale copy of every config on
+disk. Regenerating is one command anyway; the palette, not the output, is the
+thing worth preserving.
 """
-import math, re, shutil, sys, tomllib
+import math, re, sys, tomllib
 from pathlib import Path
 
 CFG   = Path.home() / ".config"
-SRC   = CFG / "theme" / "eink.toml"
 CHECK = "--check" in sys.argv
+
+# Two palettes, one generator. They are the same system in two polarities: the
+# role table in the dark file is the light file's mirrored through the middle
+# of the ramp, and every emitter below is written in role names only, so the
+# whole machine flips without a single line here knowing which way is up.
+#
+#     python3 build.py dark     switch the machine to the dark palette
+#     python3 build.py light    switch it back
+#     python3 build.py          rebuild whichever is currently active
+#
+# One palette is live at a time -- the generated files and the marked blocks in
+# the shared ones are the same paths either way, so a switch is a rebuild, not
+# a second set of themes. ACTIVE records which one produced what is on disk,
+# so a later --check or --audit compares against the right palette instead of
+# reporting every file as drifted.
+PALETTES = {"light": "eink.toml", "dark": "eink-dark.toml"}
+ACTIVE   = CFG / "theme" / "active"
+
+def _mode():
+    for a in sys.argv[1:]:
+        if a in PALETTES:
+            return a
+    if ACTIVE.exists():
+        m = ACTIVE.read_text().strip()
+        if m in PALETTES:
+            return m
+    return "light"
+
+MODE = _mode()
+SRC  = CFG / "theme" / PALETTES[MODE]
 
 # --------------------------------------------------------------------------
 # Ramp derivation. The palette file stores four numbers; the 16 gray levels
@@ -70,9 +102,17 @@ _r = P["ramp"]
 # and the ink stays near-neutral. Omit it and chroma is constant, as before.
 _c_ink = _r.get("chroma_min", _r["chroma"])
 _steps = _r["levels"] - 1
+# The cast is anchored to the two ends of the *role* table, not to the two ends
+# of the index, so it tapers the same way in either polarity: full chroma at
+# whichever level is paper, near-neutral at whichever level is ink. In the
+# light palette paper is level 15 and this is the plain 0->15 interpolation it
+# has always been; in the dark one paper is level 0 and the taper simply runs
+# the other way. Same two numbers, same meaning, both times.
+_i_paper, _i_ink = P["roles"]["paper"], P["roles"]["ink"]
 RAMP = [
-    oklch_to_hex(_r["l_min"]  + (_r["l_max"]  - _r["l_min"]) * i / _steps,
-                 _c_ink       + (_r["chroma"] - _c_ink)      * i / _steps,
+    oklch_to_hex(_r["l_min"]  + (_r["l_max"] - _r["l_min"]) * i / _steps,
+                 _c_ink       + (_r["chroma"] - _c_ink)
+                              * (i - _i_ink) / (_i_paper - _i_ink),
                  _r["hue"])
     for i in range(_r["levels"])
 ]
@@ -85,7 +125,7 @@ ink, charcoal, slate, muted = R["ink"], R["charcoal"], R["slate"], R["muted"]
 faint, rule, selection      = R["faint"], R["rule"], R["selection"]
 highlight, cursorline, paper = R["highlight"], R["cursorline"], R["paper"]
 
-BANNER = "GENERATED from ~/.config/theme/eink.toml by build.py -- do not edit by hand"
+BANNER = f"GENERATED from ~/.config/theme/{SRC.name} by build.py -- do not edit by hand"
 
 # ANSI 0-15, bound once and shared by every terminal-shaped surface: Ghostty
 # and Neovim's :terminal. Red and yellow carry the two accents, so any CLI that
@@ -95,17 +135,23 @@ BANNER = "GENERATED from ~/.config/theme/eink.toml by build.py -- do not edit by
 ANSI = [ink, ERROR, charcoal, WARNING, slate, charcoal, slate, rule,
         muted, ERROR, ink, WARNING, ink, slate, muted, ink]
 
+# Two of those sixteen are not free to mirror with the rest. Slot 0 and slot 7
+# are the terminal's own words for "black" and "white", and a program that asks
+# for them means the page end and the text end -- not a role. In the light
+# palette the mirror-blind values happen to be right (ink is the dark end, rule
+# the light one); flip the ramp and they both point at the wrong end, which is
+# how a TUI ends up drawing a bright block where it wanted a background, or
+# near-invisible white-on-black text. So they are pinned by polarity here, and
+# every other slot goes on following its role.
+DARK = P["roles"]["paper"] < P["roles"]["ink"]
+if DARK:
+    ANSI[0], ANSI[7] = cursorline, slate
+
 # --------------------------------------------------------------------------
 # Write / patch helpers
 # --------------------------------------------------------------------------
 
 results = []   # (status, target, note)
-
-def _backup(path: Path):
-    """Preserve the pre-theme original exactly once. Never overwritten after."""
-    bak = path.with_name(path.name + ".pre-eink")
-    if path.exists() and not bak.exists() and not CHECK:
-        shutil.copy2(path, bak)
 
 def write(path: Path, content: str, label: str):
     """OWNED target: the file belongs to the theme in its entirety."""
@@ -120,7 +166,6 @@ def write(path: Path, content: str, label: str):
         results.append(("DRIFT", label, str(path)))
         return
     path.parent.mkdir(parents=True, exist_ok=True)
-    _backup(path)
     path.write_text(content)
     results.append(("new" if old is None else "wrote", label, str(path)))
 
@@ -130,11 +175,16 @@ def splice(path: Path, body: str, label: str, comment="#", tag="eink"):
     if absent. Everything the user wrote outside the markers is preserved.
     """
     path = Path(path)
-    begin = f"{comment} >>> {tag} theme (generated -- edit ~/.config/theme/eink.toml) >>>"
+    begin = f"{comment} >>> {tag} theme (generated -- edit ~/.config/theme/{SRC.name}) >>>"
     end   = f"{comment} <<< {tag} theme <<<"
     block = f"{begin}\n{body.strip()}\n{end}"
     original = path.read_text() if path.exists() else ""
-    pattern = re.compile(re.escape(begin) + r".*?" + re.escape(end), re.S)
+    # Match on the opening sentinel only as far as the tag: the rest of that
+    # line names the palette file, which changes when the machine switches
+    # polarity. Anchoring the search to the full line would fail to find the
+    # block written by the other palette and append a second one beside it.
+    pattern = re.compile(re.escape(f"{comment} >>> {tag} theme") + r".*?"
+                         + re.escape(end), re.S)
     if pattern.search(original):
         updated = pattern.sub(lambda _: block, original)
     else:
@@ -147,7 +197,6 @@ def splice(path: Path, body: str, label: str, comment="#", tag="eink"):
         results.append(("DRIFT", label, str(path)))
         return
     path.parent.mkdir(parents=True, exist_ok=True)
-    _backup(path)
     path.write_text(updated)
     results.append(("spliced", label, str(path)))
 
@@ -171,7 +220,6 @@ def set_key(path: Path, pattern: str, replacement: str, label: str):
     if CHECK:
         results.append(("DRIFT", label, str(path)))
         return
-    _backup(path)
     path.write_text(updated)
     results.append(("assigned", label, str(path)))
 
@@ -210,7 +258,6 @@ def set_toml_key(path: Path, section: str, key: str, val: str, label: str):
     if CHECK:
         results.append(("DRIFT", label, str(path)))
         return
-    _backup(path)
     path.write_text(updated)
     results.append(("inserted" if inserted else "assigned", label, str(path)))
 
@@ -2050,6 +2097,28 @@ def emit_waybar():
             )
 
 # --------------------------------------------------------------------------
+# WALLPAPER
+#
+# The one target that is a file rather than a colour, and the reason it is here
+# at all: the desktop shows through window gaps and the overview backdrop, so a
+# palette that flipped every surface and left the sky behind them would be a
+# half-flip. Each palette names its own plate; this points swaybg at it.
+# --------------------------------------------------------------------------
+
+def emit_wallpaper():
+    img = Path(P["wallpaper"]["image"]).expanduser()
+    if not img.exists():
+        # Worth failing on rather than warning about: niri would start swaybg
+        # with a path that is not there, and a desktop with no wallpaper at all
+        # looks enough like a working one to go unnoticed for a while.
+        results.append(("MISSING", "wallpaper", f"{img} -- run wallpaper.py"))
+        return
+    set_key(CFG / "niri/config.kdl",
+            r'^spawn-at-startup "swaybg".*$',
+            f'spawn-at-startup "swaybg" "-i" "{img}" "-m" "fill"',
+            "wallpaper")
+
+# --------------------------------------------------------------------------
 
 AUDIT_TARGETS = [
     "helix/themes/eink.toml", "nvim/colors/eink.lua",
@@ -2085,17 +2154,19 @@ def audit():
               + ("" if not bad else f"  {bad}"))
     print(f"\n  {total} colour references across {len(AUDIT_TARGETS)} files, "
           f"{strays} not from the ramp")
-    print(f"  paper {RAMP[-1]}   ink {RAMP[0]}   range {contrast(RAMP[0], RAMP[-1]):.2f}:1")
+    print(f"  {MODE}: paper {paper}   ink {ink}   "
+          f"range {contrast(ink, paper):.2f}:1")
     if strays:
         sys.exit(1)
 
 def main():
     for fn in (emit_helix, emit_nvim, emit_ghostty, emit_yazi, emit_btop, emit_mako,
                emit_niri, emit_jay, emit_hunk, emit_lazygit, emit_spotify,
-               emit_glow, emit_fish, emit_glide, emit_waybar):
+               emit_glow, emit_fish, emit_glide, emit_waybar, emit_wallpaper):
         fn()
 
-    print(f"e-ink  |  ramp oklch(L {_r['l_min']}->{_r['l_max']}, C {_r['chroma']}, h {_r['hue']})"
+    print(f"e-ink {MODE}  |  ramp oklch(L {_r['l_min']}->{_r['l_max']}, "
+          f"C {_r['chroma']}, h {_r['hue']})"
           f"  |  ink/paper {contrast(ink, paper):.2f}:1")
     print("-" * 72)
     width = max(len(t) for _, t, _ in results)
@@ -2109,6 +2180,11 @@ def main():
     print(f"  {len(results)} targets, {problems} needing attention")
     if problems:
         sys.exit(1)
+    # Only now, with every target written, is it true that the disk came from
+    # this palette. Recording it earlier would make a failed build lie to the
+    # next --check about what it should be comparing against.
+    if not CHECK:
+        ACTIVE.write_text(MODE + "\n")
 
 if __name__ == "__main__":
     audit() if "--audit" in sys.argv else main()
