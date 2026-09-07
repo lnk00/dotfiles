@@ -70,25 +70,65 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		--
 		-- The <Tab>/<S-Tab>/<CR> mappings are global; see lua/core/keymaps.lua.
 		if client and client:supports_method("textDocument/completion", event.buf) then
-			-- By default `autotrigger` only fires on the server's `triggerCharacters`
-			-- (e.g. `.` and `:`), so typing a bare identifier shows nothing. Extend the
-			-- trigger set with word characters to get a menu on every keypress of a word.
-			--
-			-- NOTE: This must happen *before* `vim.lsp.completion.enable`.
-			--  Only word characters are added here -- servers advertise their own
-			--  triggers on top (lua_ls, for instance, already includes space and
-			--  tab). Drop this block if you'd rather only complete after `.` and
-			--  the server's own triggers, or if a chatty server feels slow.
-			local provider = client.server_capabilities.completionProvider
-			if provider then
-				local triggers = provider.triggerCharacters or {}
-				for char in ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"):gmatch(".") do
-					table.insert(triggers, char)
-				end
-				provider.triggerCharacters = triggers
-			end
-
+			-- `autotrigger` only fires on the server's own `triggerCharacters` (`.`,
+			-- `:`, ...), so typing a bare identifier shows nothing. Enable it for those,
+			-- then add word characters ourselves below.
 			vim.lsp.completion.enable(true, client.id, event.buf, { autotrigger = true })
+
+			-- Word-character autotrigger.
+			--
+			-- NOTE: do *not* do this by appending letters to
+			--  `client.server_capabilities.completionProvider.triggerCharacters`, the
+			--  approach `:help lsp-autocompletion` suggests. Neovim then sends
+			--  `triggerKind = TriggerCharacter` with that letter, and any server backed
+			--  by tsserver (svelte, ts_ls) hands it to
+			--  `getCompletionsAtPosition`, which validates it against TypeScript's own
+			--  set (`.`, `"`, `'`, `` ` ``, `/`, `@`, `<`, `#`) and returns *nothing* for
+			--  anything else. Result: completion only after `.`. lua_ls and gopls ignore
+			--  the field, which is why it looks like it works.
+			--
+			-- `vim.lsp.completion.get()` sends `triggerKind = Invoked` instead, which
+			-- every server answers. It also fetches the whole list at the word boundary
+			-- once and lets Neovim filter it as you keep typing ('completeopt' has
+			-- "fuzzy"), rather than a round-trip per keypress.
+			local triggers = vim.tbl_get(client.server_capabilities, "completionProvider", "triggerCharacters") or {}
+			local timer
+
+			vim.api.nvim_create_autocmd("InsertCharPre", {
+				-- One autotrigger per buffer, not one per client: a second LspAttach on
+				-- the same buffer clears this group and re-registers. `get()` requests
+				-- from every enabled client anyway.
+				group = vim.api.nvim_create_augroup("lsp-word-autotrigger-" .. event.buf, { clear = true }),
+				buffer = event.buf,
+				desc = "Trigger LSP completion on word characters",
+				callback = function()
+					local char = vim.v.char
+					-- Leave the server's own triggers to `autotrigger`, and don't fight the
+					-- menu once it is up -- Neovim filters it from here.
+					if not char:match("[%w_]") or vim.list_contains(triggers, char) or vim.fn.pumvisible() ~= 0 then
+						return
+					end
+					if timer then
+						timer:stop()
+						if not timer:is_closing() then
+							timer:close()
+						end
+					end
+					-- InsertCharPre runs *before* the character lands in the buffer; the
+					-- delay lets it (and any further keystrokes) get there first, so the
+					-- request carries the real prefix. Mirrors Neovim's own 25ms.
+					timer = assert(vim.uv.new_timer())
+					timer:start(
+						25,
+						0,
+						vim.schedule_wrap(function()
+							if vim.api.nvim_get_current_buf() == event.buf and vim.fn.mode():find("i") then
+								vim.lsp.completion.get()
+							end
+						end)
+					)
+				end,
+			})
 
 			-- Trigger completion on demand, for when autotrigger hasn't fired.
 			map("<C-Space>", function()

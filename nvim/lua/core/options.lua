@@ -57,3 +57,12 @@ vim.o.confirm = true
 --  fuzzy    - fuzzy-match the menu instead of requiring a prefix match
 -- See `:help 'completeopt'`
 vim.o.completeopt = "menuone,noselect,popup,fuzzy"
+
+-- Silence the `ins-completion` messages ("Pattern not found", "match 1 of 5",
+-- "Back at original", ...). Built-in LSP completion calls `complete()` on every
+-- response, empty ones included, so a server with nothing to say for the
+-- current prefix prints "Pattern not found" into the cmdline -- right under the
+-- bottom-docked menu. Servers that answer per-keystroke (svelte, with the
+-- word-character triggers added on LspAttach) do it on nearly every key.
+-- See `:help 'shortmess'`.
+vim.opt.shortmess:append("c")
