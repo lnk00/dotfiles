@@ -69,6 +69,15 @@
 !/glide/glide.ts
 !/glide/tsconfig.json
 
+# --- gtk: the generated appearance preference only. These dirs also collect
+# bookmarks and per-app state that has no business being versioned.
+!/gtk-3.0/
+/gtk-3.0/*
+!/gtk-3.0/settings.ini
+!/gtk-4.0/
+/gtk-4.0/*
+!/gtk-4.0/settings.ini
+
 # --- system ---
 !/systemd/
 !/systemd/**

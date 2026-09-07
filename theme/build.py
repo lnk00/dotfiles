@@ -23,7 +23,7 @@ a sidecar copy would, without leaving a second stale copy of every config on
 disk. Regenerating is one command anyway; the palette, not the output, is the
 thing worth preserving.
 """
-import math, re, sys, tomllib
+import math, re, subprocess, sys, tomllib
 from pathlib import Path
 
 CFG   = Path.home() / ".config"
@@ -1910,6 +1910,17 @@ def emit_glide():
  * Loaded after styles.glide.ts so it wins on the surfaces both touch.
  */
 
+/* Content colour scheme. Everything below this line styles the browser; these
+ * three lines are about the pages inside it. content-override 2 means follow
+ * the system, content-theme 2 the same for the parts Firefox themes itself,
+ * and ui.systemUsesDarkTheme is what the engine believes when no desktop portal
+ * answers -- niri starts none on its own, so leaving this to the portal alone
+ * would make every website colour depend on whether a D-Bus service happened
+ * to be up. Stated here, it cannot. */
+glide.prefs.set("layout.css.prefers-color-scheme.content-override", 2);
+glide.prefs.set("browser.theme.content-theme", 2);
+glide.prefs.set("ui.systemUsesDarkTheme", {1 if DARK else 0});
+
 glide.styles.add(
   css`
     :root {{
@@ -2054,6 +2065,39 @@ glide.styles.add(
     splice(CFG / "glide/glide.ts",
            'glide.include("config/eink.glide.ts");', "glide:include", comment="//")
 
+    # The new-tab page. Chrome CSS cannot reach it -- it is content, not chrome,
+    # so none of the variables above apply -- and about:blank is hardcoded white
+    # in the engine, which is why prefs.glide.ts points every blank tab at this
+    # file instead. It was hand-written and therefore froze at the light paper;
+    # generating it is what makes a new tab follow the palette like everything
+    # else.
+    write(CFG / "glide/config/blank.html", f"""<!doctype html>
+<!-- New tab. {BANNER} -->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>New Tab</title>
+    <style>
+      :root {{
+        /* Declared, not inferred. This is what the engine paints BEFORE the
+           rule below is applied, and what it hands to scrollbars and form
+           controls; leave it saying light on a dark palette and every new tab
+           opens with a white flash. */
+        color-scheme: {"dark" if DARK else "light"};
+      }}
+
+      html,
+      body {{
+        margin: 0;
+        height: 100%;
+        background: {paper};
+        color: {ink};
+      }}
+    </style>
+  </head>
+  <body></body>
+</html>""", "glide:blank")
+
 # --------------------------------------------------------------------------
 # waybar
 #
@@ -2119,6 +2163,55 @@ def emit_wallpaper():
             "wallpaper")
 
 # --------------------------------------------------------------------------
+# SYSTEM APPEARANCE
+#
+# The only target that is not a file: what the desktop *tells other programs*
+# it is wearing. GTK reads it directly, and xdg-desktop-portal republishes it
+# as org.freedesktop.appearance color-scheme -- which is where a browser looks
+# to decide what `prefers-color-scheme` means for every page it renders.
+#
+# Without this the palette stops at the window frame: the bar, the editor and
+# the terminal all turn over, and every website stays white.
+#
+# Polarity is derived rather than stored, like everything else here -- the
+# roles table already says which end of the ramp is paper.
+# --------------------------------------------------------------------------
+
+SCHEME = "prefer-dark" if DARK else "prefer-light"
+
+def emit_system():
+    scheme = SCHEME
+    # gsettings is a side effect, not a file, so it is read before it is
+    # written: that is what keeps --check honest, and it stops a no-op build
+    # from waking every listener on the bus for a value that already matches.
+    try:
+        current = subprocess.run(
+            ["gsettings", "get", "org.gnome.desktop.interface", "color-scheme"],
+            capture_output=True, text=True, check=True).stdout.strip().strip("'")
+    except (OSError, subprocess.CalledProcessError) as e:
+        results.append(("MISSING", "system:scheme", f"gsettings unavailable ({e})"))
+    else:
+        if current == scheme:
+            results.append(("same", "system:scheme", f"color-scheme {scheme}"))
+        elif CHECK:
+            results.append(("DRIFT", "system:scheme", f"{current} != {scheme}"))
+        else:
+            subprocess.run(["gsettings", "set", "org.gnome.desktop.interface",
+                            "color-scheme", scheme], check=True)
+            results.append(("set", "system:scheme", f"color-scheme {scheme}"))
+
+    # And the file half of the same fact. An application started outside a
+    # session bus -- or one of the several GTK3 programs that never learned to
+    # ask the portal -- reads this instead, and would otherwise draw itself in
+    # the other polarity next to everything that got the message.
+    for ver in ("gtk-3.0", "gtk-4.0"):
+        write(CFG / ver / "settings.ini",
+              f"# {BANNER}\n"
+              f"[Settings]\n"
+              f"gtk-application-prefer-dark-theme={1 if DARK else 0}\n",
+              f"gtk:{ver[-3:]}")
+
+# --------------------------------------------------------------------------
 
 AUDIT_TARGETS = [
     "helix/themes/eink.toml", "nvim/colors/eink.lua",
@@ -2127,6 +2220,7 @@ AUDIT_TARGETS = [
     "jay/config.toml", "hunk/config.toml", "lazygit/config.yml",
     "spotify-player/theme.toml", "glow/eink.json",
     "fish/conf.d/eink-theme.fish", "glide/config/eink.glide.ts",
+    "glide/config/blank.html",
     "waybar/eink-colors.css",
 ]
 
@@ -2162,7 +2256,8 @@ def audit():
 def main():
     for fn in (emit_helix, emit_nvim, emit_ghostty, emit_yazi, emit_btop, emit_mako,
                emit_niri, emit_jay, emit_hunk, emit_lazygit, emit_spotify,
-               emit_glow, emit_fish, emit_glide, emit_waybar, emit_wallpaper):
+               emit_glow, emit_fish, emit_glide, emit_waybar, emit_wallpaper,
+               emit_system):
         fn()
 
     print(f"e-ink {MODE}  |  ramp oklch(L {_r['l_min']}->{_r['l_max']}, "

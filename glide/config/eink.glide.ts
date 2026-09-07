@@ -4,6 +4,17 @@
  * Loaded after styles.glide.ts so it wins on the surfaces both touch.
  */
 
+/* Content colour scheme. Everything below this line styles the browser; these
+ * three lines are about the pages inside it. content-override 2 means follow
+ * the system, content-theme 2 the same for the parts Firefox themes itself,
+ * and ui.systemUsesDarkTheme is what the engine believes when no desktop portal
+ * answers -- niri starts none on its own, so leaving this to the portal alone
+ * would make every website colour depend on whether a D-Bus service happened
+ * to be up. Stated here, it cannot. */
+glide.prefs.set("layout.css.prefers-color-scheme.content-override", 2);
+glide.prefs.set("browser.theme.content-theme", 2);
+glide.prefs.set("ui.systemUsesDarkTheme", 1);
+
 glide.styles.add(
   css`
     :root {

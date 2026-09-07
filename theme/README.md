@@ -47,7 +47,8 @@ build.
 | spotify | `spotify-player/theme.toml` |
 | glow    | `glow/eink.json` |
 | fish    | `fish/conf.d/eink-theme.fish` |
-| glide   | `glide/config/eink.glide.ts` |
+| glide   | `glide/config/eink.glide.ts`, `glide/config/blank.html` |
+| gtk     | `gtk-3.0/settings.ini`, `gtk-4.0/settings.ini` |
 
 Files only partly ours. The theme lives between `>>> eink theme >>>` markers,
 or in one exact key; everything you wrote around it survives a rebuild.
@@ -59,6 +60,7 @@ or in one exact key; everything you wrote around it survives a rebuild.
 | jay    | the eight keys of `[theme]` |
 | hunk   | `[themes.eink]` block, and `theme =` |
 | glide  | one `glide.include` line in `glide.ts` |
+| niri   | the `swaybg` line, pointed at the palette's own wallpaper |
 | nvim   | one `colorscheme` line in `init.lua` |
 
 Plus the `theme = ...` line in helix, ghostty, btop, spotify and glow.
@@ -129,6 +131,30 @@ What is *not* mirrored, and why:
 It is worth saying plainly that this is not an E Ink palette: a reflective
 panel has no light of its own to withhold, so there is no dark Carta page. What
 carries over is the discipline, not the device.
+
+## What the rest of the desktop is told
+
+Two targets are not really files, and both exist for the same reason: a palette
+that stops at the window frame is not a theme. The bar, the editor and the
+terminal can all turn over while every website on the machine stays white.
+
+- **`org.gnome.desktop.interface color-scheme`**, set with `gsettings` to
+  `prefer-dark` or `prefer-light`. GTK reads it directly, and
+  xdg-desktop-portal republishes it as `org.freedesktop.appearance
+  color-scheme` — which is where a browser looks to decide what
+  `prefers-color-scheme` means for every page it renders. It is read before it
+  is written, so `--check` can report it as drift without touching it, and a
+  no-op build does not wake every listener on the bus.
+- **Glide's content prefs**, emitted into `eink.glide.ts`:
+  `layout.css.prefers-color-scheme.content-override` and
+  `browser.theme.content-theme` are set to *follow the system*, and
+  `ui.systemUsesDarkTheme` states the answer outright. That last one is the
+  belt: niri starts no desktop portal on its own, and without it every
+  website's colour would depend on whether a D-Bus service happened to be up.
+
+Sites that support dark mode follow this. Sites that don't are still white,
+because the alternative is forcing a colour scheme on pages that never designed
+for one — a browsing decision, not a theme one.
 
 ## The wallpaper
 
