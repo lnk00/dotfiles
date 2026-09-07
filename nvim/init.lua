@@ -12,6 +12,7 @@ require("core.options") -- leader keys: must precede every vim.pack.add
 require("core.pack") -- PackChanged build hooks: must precede every install
 require("core.diagnostics")
 require("core.autocmds")
+require("core.completion-menu") -- ext_popupmenu: must come after 'completeopt' in core.options
 
 require("plugins.guess-indent")
 require("plugins.gitsigns")
