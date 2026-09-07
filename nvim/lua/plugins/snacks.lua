@@ -61,6 +61,22 @@ require("snacks").setup({
 			},
 		},
 	},
+
+	-- The terminal is not a re-implementation: it is a plain `:terminal`
+	--  buffer (`jobstart(..., { term = true })`) hosted inside a snacks
+	--  window, so everything the builtin terminal does still holds --
+	--  `<C-\><C-n>` to leave insert, then scroll, search and yank the
+	--  scrollback like any other buffer.
+	terminal = {
+		-- Left on (the default), this fires `startinsert` from a `BufEnter`
+		--  autocmd, so leaving the terminal window and coming back drops you
+		--  at the prompt again, throwing away wherever normal mode left the
+		--  cursor. Off, the buffer stays put and reads like a buffer.
+		--
+		--  `start_insert` is untouched: opening a terminal still lands in
+		--  insert mode, which is what you want the first time.
+		auto_insert = false,
+	},
 })
 
 -- Keymap callbacks are wrapped so that indexing `Snacks.picker` -- and with
@@ -143,3 +159,22 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "grt", pick("lsp_type_definitions"), { buffer = buf, desc = "[G]oto [T]ype Definition" })
 	end,
 })
+
+-- Terminal keymaps.
+--
+-- `<leader>t` is the "[T]oggle" group in which-key, so `tt` joins it. The
+--  terminal is keyed on `cmd`, `cwd`, `env` and the count, so `<leader>tt`
+--  reuses the shell already running for this directory rather than stacking
+--  a new one -- and a count opens a second, third, ... (`2<leader>tt`).
+--
+-- `<C-/>` is the same toggle reachable from inside the terminal, where a
+--  space-leader mapping would swallow spaces you meant to type. `<C-_>` is
+--  the same key as sent by terminals that predate the kitty keyboard
+--  protocol; harmless to bind alongside it.
+local function toggle_terminal()
+	Snacks.terminal.toggle()
+end
+
+vim.keymap.set("n", "<leader>tt", toggle_terminal, { desc = "[T]oggle [T]erminal" })
+vim.keymap.set({ "n", "t" }, "<C-/>", toggle_terminal, { desc = "Toggle Terminal" })
+vim.keymap.set({ "n", "t" }, "<C-_>", toggle_terminal, { desc = "Toggle Terminal" })
