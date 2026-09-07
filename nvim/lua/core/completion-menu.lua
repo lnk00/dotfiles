@@ -10,10 +10,13 @@
 -- still driven by `ins-completion` (<c-n>/<c-p>/<c-y>/<c-e>), only the
 -- drawing changes. See `:help vim.ui_attach()` and `:help ui-popupmenu`.
 --
+-- The documentation window ("popup" in 'completeopt') stays Neovim's: it owns
+-- the lazy `completionItem/resolve` round-trip, the markdown Treesitter
+-- highlighting and the fit-to-content sizing, and none of that is worth
+-- reimplementing. We only move it, into a second pane stacked above the item
+-- list -- see `anchor_doc`.
+--
 -- Trade-offs, since we now own the drawing:
---  * "popup" in 'completeopt' has no effect -- Neovim delivers the item's
---    documentation to us (as `info`) rather than opening its own window. The
---    first line is shown in the right-hand column.
 --  * 'pumblend', 'pumwidth', 'pummaxwidth' and 'pumborder' no longer apply.
 --    'pumheight' still does; it caps this window's height.
 --  * `vim.ui_attach` is flagged experimental upstream. If a Neovim update
@@ -30,9 +33,15 @@ vim.opt.wildoptions:remove("pum")
 
 local DEFAULT_HEIGHT = 10
 local MAX_WORD_WIDTH = 40
+local MAX_DOC_HEIGHT = 12
+
+-- A rule along the top edge only. Each pane is closed off below by whatever
+-- sits under it -- the next pane, or the statusline.
+local TOP_RULE = { "", "─", "", "", "", "", "", "" }
 
 local state = { items = {}, selected = -1 }
 local buf, win
+local list_top --- first text row of the list window; where the doc pane stops
 
 local function scratch_buf()
 	if buf and vim.api.nvim_buf_is_valid(buf) then
@@ -49,6 +58,7 @@ local function close()
 		vim.api.nvim_win_close(win, true)
 	end
 	win = nil
+	list_top = nil
 end
 
 -- Every `complete-items` field is free-form server text: LSP `detail` and
@@ -77,12 +87,10 @@ local function format(items)
 	for i, item in ipairs(items) do
 		local word = words[i]
 		local kind = oneline(item[2])
-		-- `menu` is the LSP detail (a type signature, an import path); `info`
-		-- is the documentation. Only a one-line summary of either fits here.
+		-- `menu` is the LSP detail: a type signature, an import path. The
+		-- documentation (`info`) is not repeated here; it gets the pane above,
+		-- in full.
 		local extra = oneline(item[3])
-		if extra == "" then
-			extra = oneline(vim.split(item[4] or "", "\n", { plain = true })[1])
-		end
 		lines[i] = table.concat({
 			" ",
 			word,
@@ -92,6 +100,93 @@ local function format(items)
 		})
 	end
 	return lines
+end
+
+-- Neovim opens the documentation window itself, sized to its content and
+-- anchored beside the cursor -- which, with the item list now at the bottom of
+-- the screen, leaves the docs floating over the code being edited.
+-- `complete_info()` hands us its window id, so move it into a pane directly
+-- above the list.
+--
+-- Nothing announces that window. It is opened by `nvim__complete_set` from
+-- inside `vim.lsp.completion`'s debounced `completionItem/resolve` callback,
+-- long after the popupmenu events that drive everything else here, and with no
+-- autocmd of its own -- not `WinNew`, and not `WinResized`/`WinScrolled`, which
+-- floats never fire. Hence the poll below.
+--
+---@param list_top integer first *text* row of the item list; its rule sits above
+---@return boolean changed whether the window had to be moved
+local function anchor_doc(list_top)
+	-- Neovim only fills "preview_winid" in when "selected" is asked for too --
+	-- see `:help complete_info()`, and how `vim.lsp.completion` reads it back.
+	local doc_win = vim.fn.complete_info({ "selected", "preview_winid" }).preview_winid
+	if not doc_win or doc_win <= 0 or not vim.api.nvim_win_is_valid(doc_win) then
+		return false
+	end
+
+	-- Full width like the list, so a wrapped signature gets the whole line. The
+	-- width has to be committed before the height can be measured: it is what
+	-- decides how the text wraps.
+	local cfg = vim.api.nvim_win_get_config(doc_win)
+	if cfg.width ~= vim.o.columns then
+		vim.api.nvim_win_set_config(doc_win, { width = vim.o.columns })
+		cfg = vim.api.nvim_win_get_config(doc_win)
+	end
+
+	-- Sit clear of the list's own rule, and keep this pane's rule on screen.
+	local top = list_top - 1
+	local height = math.min(vim.api.nvim_win_text_height(doc_win).all, MAX_DOC_HEIGHT)
+	height = math.max(1, math.min(height, top - 1))
+	local row = top - height
+
+	if cfg.relative == "editor" and cfg.row == row and cfg.col == 0 and cfg.height == height then
+		return false
+	end
+
+	vim.wo[doc_win].wrap = true
+	vim.wo[doc_win].linebreak = true
+	vim.api.nvim_win_set_config(doc_win, {
+		relative = "editor",
+		row = row,
+		col = 0,
+		width = vim.o.columns,
+		height = height,
+		border = TOP_RULE,
+		zindex = 200,
+	})
+	return true
+end
+
+-- The poll. Runs only while a completion menu is up, and does nothing beyond a
+-- config read once the pane is where we want it.
+local watch
+local function stop_watch()
+	if watch then
+		watch:stop()
+		if not watch:is_closing() then
+			watch:close()
+		end
+		watch = nil
+	end
+end
+
+local function start_watch()
+	if watch then
+		return
+	end
+	watch = vim.uv.new_timer()
+	watch:start(
+		50,
+		50,
+		vim.schedule_wrap(function()
+			if not list_top or not (win and vim.api.nvim_win_is_valid(win)) then
+				return stop_watch()
+			end
+			if anchor_doc(list_top) then
+				vim.cmd.redraw()
+			end
+		end)
+	)
 end
 
 local function render()
@@ -116,6 +211,7 @@ local function render()
 		close()
 		return
 	end
+	list_top = row
 
 	local config = {
 		relative = "editor",
@@ -124,8 +220,7 @@ local function render()
 		width = vim.o.columns,
 		height = height,
 		style = "minimal",
-		-- A rule along the top only: the statusline already closes it below.
-		border = { "", "─", "", "", "", "", "", "" },
+		border = TOP_RULE,
 		focusable = false,
 		noautocmd = true,
 		zindex = 200,
@@ -149,6 +244,9 @@ local function render()
 		vim.wo[win].cursorline = false
 		vim.api.nvim_win_set_cursor(win, { 1, 0 })
 	end
+
+	anchor_doc(row)
+	start_watch()
 end
 
 -- UI events can arrive in a fast context, where the API is off limits, and
@@ -182,8 +280,10 @@ end)
 
 -- Belt and braces: a mode change that skips popupmenu_hide (an interrupted
 -- insert, a plugin closing completion by hand) must not leave the float up.
+local group = vim.api.nvim_create_augroup("bottom-completion-menu", { clear = true })
+
 vim.api.nvim_create_autocmd({ "InsertLeave", "CompleteDone" }, {
-	group = vim.api.nvim_create_augroup("bottom-completion-menu", { clear = true }),
+	group = group,
 	callback = function()
 		state.items, state.selected = {}, -1
 		schedule_render()
