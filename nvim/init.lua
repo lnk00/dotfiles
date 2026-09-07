@@ -13,6 +13,7 @@ require("core.pack") -- PackChanged build hooks: must precede every install
 require("core.diagnostics")
 require("core.autocmds")
 require("core.completion-menu") -- ext_popupmenu: must come after 'completeopt' in core.options
+require("core.docked-floats") -- hover/signature panes: stack on the menu above
 
 require("plugins.guess-indent")
 require("plugins.gitsigns")

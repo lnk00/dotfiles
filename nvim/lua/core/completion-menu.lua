@@ -48,6 +48,20 @@ local state = { items = {}, selected = -1 }
 local buf, win
 local list_top --- first text row of the list window; where the doc pane stops
 
+local M = {}
+
+--- The row a bottom-docked pane must stop above: the completion list's own top
+--- rule while the menu is up, otherwise the statusline. Used by
+--- core.docked-floats so hover and signature help stack on the menu instead of
+--- landing on top of it.
+---@return integer
+function M.dock_top()
+	if list_top then
+		return list_top - 1
+	end
+	return vim.o.lines - vim.o.cmdheight - (vim.o.laststatus > 0 and 1 or 0)
+end
+
 local function scratch_buf()
 	if buf and vim.api.nvim_buf_is_valid(buf) then
 		return buf
@@ -340,3 +354,5 @@ vim.api.nvim__complete_set = function(index, opts)
 	pcall(highlight_doc, windata.bufnr, windata.winid)
 	return { bufnr = windata.bufnr }
 end
+
+return M
