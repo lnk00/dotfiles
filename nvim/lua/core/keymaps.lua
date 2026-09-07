@@ -115,9 +115,18 @@ vim.keymap.set({ "i", "s" }, "<S-Tab>", complete_key("<C-p>", -1, "<S-Tab>"), {
 -- swallows your line break just because the menu happens to be open.
 --  TIP: To make <CR> accept the top item without pressing <Tab> first, swap
 --  "noselect" for "noinsert" in 'completeopt' (lua/core/options.lua).
+--
+-- NOTE: the newline branch goes through `MiniPairs.cr()`, which opens an
+-- indented block when the cursor sits between a pair (`{|}` -> `{`, body,
+-- `}`). mini.pairs skips mapping <CR> itself when one already exists, but
+-- this file is loaded last, so it has to make that call rather than inherit
+-- it. Falls back to a plain newline if mini.pairs is not loaded.
 vim.keymap.set("i", "<CR>", function()
 	if vim.fn.pumvisible() == 1 and vim.fn.complete_info({ "selected" }).selected ~= -1 then
 		return "<C-y>"
+	end
+	if MiniPairs then
+		return MiniPairs.cr()
 	end
 	return "<CR>"
 end, {

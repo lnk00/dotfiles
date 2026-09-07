@@ -67,3 +67,34 @@ end
 vim.keymap.set("n", "<leader>bc", function()
 	require("mini.bufremove").delete(0, false)
 end, { desc = "[B]uffer [C]lose" })
+
+-- [[ mini.pairs ]] Autoclose brackets and quotes
+--
+-- Insert the closing half as you type the opening one, step over the closer
+-- when you type it yourself, and delete both halves with a single <BS>.
+--
+-- Defaults, worth knowing:
+--  * Quotes (`"`, `'`, `` ` ``) are "closeopen": the same key opens and steps
+--    over, so typing `'` right after `''` lands past the pair rather than
+--    nesting a third quote.
+--  * Nothing pairs after a backslash, so `\(` in a regex stays `\(`, and `'`
+--    does not pair after a letter, so `don't` and Rust lifetimes (`&'a`) are
+--    typed as written.
+--  * <BS> only eats both halves when the cursor sits *between* them; a lone
+--    closer is deleted on its own.
+--
+-- Set `vim.b.minipairs_disable = true` to switch it off for one buffer;
+-- `vim.g.minipairs_disable` for the session. mini.pairs already does that for
+-- the Telescope and fzf prompts.
+require("mini.pairs").setup()
+
+-- Prompt buffers: a picker query is a search pattern, not code, so a typed
+-- `(` should stay a lone `(`. snacks and neogit both prompt in a real buffer,
+-- which is where mini.pairs would otherwise pair.
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "snacks_picker_input", "snacks_input", "NeogitCommitMessage" },
+	callback = function()
+		vim.b.minipairs_disable = true
+	end,
+	desc = "mini.pairs: off in prompt buffers",
+})
