@@ -35,6 +35,11 @@ local DEFAULT_HEIGHT = 10
 local MAX_WORD_WIDTH = 40
 local MAX_DOC_HEIGHT = 12
 
+-- The list draws over the doc pane, so a pane Neovim has resized taller than
+-- our cap is hidden behind it rather than spilling across the statusline.
+local LIST_ZINDEX = 200
+local DOC_ZINDEX = 150
+
 -- A rule along the top edge only. Each pane is closed off below by whatever
 -- sits under it -- the next pane, or the statusline.
 local TOP_RULE = { "", "─", "", "", "", "", "", "" }
@@ -115,11 +120,12 @@ end
 -- floats never fire. Hence the poll below.
 --
 ---@param list_top integer first *text* row of the item list; its rule sits above
+---@param doc_win? integer the window, when the caller already has it
 ---@return boolean changed whether the window had to be moved
-local function anchor_doc(list_top)
+local function anchor_doc(list_top, doc_win)
 	-- Neovim only fills "preview_winid" in when "selected" is asked for too --
 	-- see `:help complete_info()`, and how `vim.lsp.completion` reads it back.
-	local doc_win = vim.fn.complete_info({ "selected", "preview_winid" }).preview_winid
+	doc_win = doc_win or vim.fn.complete_info({ "selected", "preview_winid" }).preview_winid
 	if not doc_win or doc_win <= 0 or not vim.api.nvim_win_is_valid(doc_win) then
 		return false
 	end
@@ -152,7 +158,7 @@ local function anchor_doc(list_top)
 		width = vim.o.columns,
 		height = height,
 		border = TOP_RULE,
-		zindex = 200,
+		zindex = DOC_ZINDEX,
 	})
 	return true
 end
@@ -223,7 +229,7 @@ local function render()
 		border = TOP_RULE,
 		focusable = false,
 		noautocmd = true,
-		zindex = 200,
+		zindex = LIST_ZINDEX,
 	}
 
 	if win and vim.api.nvim_win_is_valid(win) then
@@ -289,3 +295,48 @@ vim.api.nvim_create_autocmd({ "InsertLeave", "CompleteDone" }, {
 		schedule_render()
 	end,
 })
+
+-- Markdown highlighting for the doc pane, which Neovim would otherwise apply
+-- itself. Mirrors `update_popup_window` in `vim/lsp/completion.lua`; we do it
+-- here because the interception below hides the window from that function.
+local function highlight_doc(doc_buf, doc_win)
+	local info = vim.fn.complete_info({ "selected", "items" })
+	local item = info.items and info.items[info.selected + 1]
+	if not item or vim.tbl_get(item, "user_data", "nvim", "lsp", "info_kind") ~= "markdown" then
+		return
+	end
+	vim.wo[doc_win].conceallevel = 2
+	pcall(vim.treesitter.start, doc_buf, "markdown")
+end
+
+-- Placing the pane without a visible flash.
+--
+-- The poll above cannot help with the *first* frame: it necessarily runs after
+-- the window has been drawn beside the cursor, and under Neovide that first
+-- position is then animated across the screen. So intercept the call that
+-- creates the window -- `nvim__complete_set`, whose only caller in the runtime
+-- is `vim/lsp/completion.lua` -- and place the pane inside it. That happens
+-- before Neovim returns to the event loop, so no frame is ever flushed with
+-- the window at its original position.
+--
+-- Dropping `winid` from the result is deliberate: `vim.lsp.completion` calls
+-- `update_popup_window` with it the moment we return, which would resize the
+-- pane to the full, uncapped content height and redo the highlighting we just
+-- applied. With no `winid` that call is a no-op (it starts with a validity
+-- check), and the poll stays as the fallback for everything else -- including
+-- the case where a Neovim update changes this internal function out from under
+-- us and the interception stops running.
+local complete_set = vim.api.nvim__complete_set
+
+---@diagnostic disable-next-line: duplicate-set-field
+vim.api.nvim__complete_set = function(index, opts)
+	local windata = complete_set(index, opts)
+	if not (list_top and windata and windata.winid and vim.api.nvim_win_is_valid(windata.winid)) then
+		return windata
+	end
+
+	-- Best effort: a mistake in here must not break the completion itself.
+	pcall(anchor_doc, list_top, windata.winid)
+	pcall(highlight_doc, windata.bufnr, windata.winid)
+	return { bufnr = windata.bufnr }
+end
