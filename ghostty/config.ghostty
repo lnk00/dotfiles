@@ -28,7 +28,7 @@ keybind = ctrl+alt+l=resize_split:right,100
 
 keybind = super+alt+f=toggle_split_zoom
 
-# >>> eink theme (generated -- edit ~/.config/theme/eink-dark.toml) >>>
+# >>> eink theme (generated -- edit ~/.config/theme/eink.toml) >>>
 font-thicken = true
 cursor-style-blink = false
 # <<< eink theme <<<

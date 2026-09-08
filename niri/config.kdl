@@ -35,9 +35,9 @@ layout {
 
     border {
         width 1
-        active-color "#e3e3e1"
-        inactive-color "#46443d"
-        urgent-color "#e88b82"
+        active-color "#282826"
+        inactive-color "#c0bcb0"
+        urgent-color "#833f39"
     }
 
     shadow {
@@ -50,14 +50,14 @@ layout {
 }
 
 overview {
-    backdrop-color "#2e2b24"
+    backdrop-color "#dfdbcd"
     workspace-shadow {
         off
     }
 }
 
 spawn-at-startup "mako"
-spawn-at-startup "swaybg" "-i" "/home/lnk0/Pictures/Wallpapers/vilkasss-ink-10177251-night.jpg" "-m" "fill"
+spawn-at-startup "swaybg" "-i" "/home/lnk0/Pictures/Wallpapers/vilkasss-ink-10177251.jpg" "-m" "fill"
 spawn-at-startup "waybar"
 
 hotkey-overlay {
@@ -78,8 +78,8 @@ animations {
     // Slow down all animations by this factor. Values below 1 speed them up instead.
     // slowdown 3.0
 
-    // >>> eink theme (generated -- edit ~/.config/theme/eink-dark.toml) >>>
-// Window open / close: ink-splash. GENERATED from ~/.config/theme/eink-dark.toml by build.py -- do not edit by hand
+    // >>> eink theme (generated -- edit ~/.config/theme/eink.toml) >>>
+// Window open / close: ink-splash. GENERATED from ~/.config/theme/eink.toml by build.py -- do not edit by hand
     window-open {
         duration-ms 700
         curve "linear"

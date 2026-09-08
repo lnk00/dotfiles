@@ -1,10 +1,10 @@
 # e-ink -- an E Ink Carta panel simulated on an emissive display.
-# GENERATED from ~/.config/theme/eink-dark.toml by build.py -- do not edit by hand
+# GENERATED from ~/.config/theme/eink.toml by build.py -- do not edit by hand
 #
 # 4-bit panel: 16 gray levels, no more. Reflective, so the range stops
-# at 14.22:1 -- neither pure white nor pure black appears.
+# at 14.15:1 -- neither pure white nor pure black appears.
 # Paper is matched to the desktop wallpaper exactly. The warm cast
-# tapers from chroma 0.016 at paper to 0.003 at ink, so the page is
+# tapers from chroma 0.0217 at paper to 0.003 at ink, so the page is
 # cream and the text on it stays near-neutral, as on real stock.
 # Large fills ghost on repaint, so weight and rule carry signal, not slabs.
 
@@ -171,19 +171,19 @@ inherits = "default"
 "diff.minus.gutter" = { fg = "slate", modifiers = ["bold"] }
 "diff.delta.gutter" = { fg = "charcoal", modifiers = ["bold"] }
 
-# 16-step Carta ramp: oklch(L 0.195 -> 0.915, C 0.016, h 92.5).
+# 16-step Carta ramp: oklch(L 0.275 -> 0.9847, C 0.0217, h 92.5).
 [palette]
-ink        = "#e3e3e1"  # L15 14.22:1  AAA
-charcoal   = "#c5c4c0"  # L13 10.47:1  AAA
-slate      = "#a7a5a1"  # L11  7.43:1  AAA
-muted      = "#989792"  # L10  6.24:1  AA 
-faint      = "#605e58"  # L6   2.82:1     
-rule       = "#46443d"  # L4   1.87:1     
-selection  = "#3a3830"  # L3   1.56:1     
-highlight  = "#2e2b24"  # L2   1.29:1     
-cursorline = "#222018"  # L1   1.12:1     
-paper      = "#17150d"  # L0  ------     
+ink        = "#282826"  # L0  14.15:1  AAA
+charcoal   = "#41403c"  # L2   9.94:1  AAA
+slate      = "#5b5954"  # L4   6.70:1  AA 
+muted      = "#686661"  # L5   5.49:1  AA 
+faint      = "#a29f95"  # L9   2.54:1     
+rule       = "#c0bcb0"  # L11  1.82:1     
+selection  = "#cfcbbf"  # L12  1.55:1     
+highlight  = "#dfdbcd"  # L13  1.33:1     
+cursorline = "#efeadb"  # L14  1.15:1     
+paper      = "#fffaea"  # L15 ------     
 # Off-ramp by necessity, and the only hue in the system. Separated by
 # luminance (1.52:1) so they survive being read as pure gray.
-error-red      = "#e88b82"  #  7.35:1  AA
-warning-orange = "#a97a41"  #  4.83:1  AA-large; always bold + dashed
+error-red      = "#833f39"  #  7.35:1  AA
+warning-orange = "#8f6737"  #  4.83:1  AA-large; always bold + dashed

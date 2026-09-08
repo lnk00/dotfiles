@@ -22,7 +22,7 @@ require("plugins.todo-comments")
 require("plugins.mini") -- mocks nvim-web-devicons for the plugins below
 require("plugins.flash")
 
--- >>> eink theme (generated -- edit ~/.config/theme/eink-dark.toml) >>>
+-- >>> eink theme (generated -- edit ~/.config/theme/eink.toml) >>>
 -- The colorscheme itself is generated into nvim/colors/eink.lua and is
 -- loaded by name like any other theme. Nothing to configure here.
 vim.cmd.colorscheme("eink")

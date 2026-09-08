@@ -16,6 +16,6 @@ glide.include("config/tabs.glide.ts");
 glide.include("config/history.glide.ts");
 glide.include("config/bookmarks.glide.ts");
 
-// >>> eink theme (generated -- edit ~/.config/theme/eink-dark.toml) >>>
+// >>> eink theme (generated -- edit ~/.config/theme/eink.toml) >>>
 glide.include("config/eink.glide.ts");
 // <<< eink theme <<<
