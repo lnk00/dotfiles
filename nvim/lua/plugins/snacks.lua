@@ -7,7 +7,7 @@
 -- Must load before project.nvim and neogit: both resolve their picker at
 --  setup time and need snacks already on the runtimepath.
 --
--- To see everything it knows how to find, press `<leader>ss` (or run
+-- To see everything it knows how to find, press `<leader>sx` (or run
 --  `:lua Snacks.picker()`): that lists every source and opens the one you pick.
 --
 -- The important keymap to use *inside* a picker is `?`, in either the input
@@ -93,7 +93,8 @@ end
 vim.keymap.set("n", "<leader>sh", pick("help"), { desc = "[S]earch [H]elp" })
 vim.keymap.set("n", "<leader>sk", pick("keymaps"), { desc = "[S]earch [K]eymaps" })
 vim.keymap.set("n", "<leader>sf", pick("files"), { desc = "[S]earch [F]iles" })
-vim.keymap.set("n", "<leader>ss", pick("pickers"), { desc = "[S]earch [S]elect Picker" })
+vim.keymap.set("n", "<leader>sx", pick("pickers"), { desc = "[S]earch Select Picker" })
+vim.keymap.set("n", "<leader>ss", pick("lsp_symbols"), { desc = "[S]earch [S]ymbols" })
 vim.keymap.set({ "n", "v" }, "<leader>sw", pick("grep_word"), { desc = "[S]earch current [W]ord" })
 vim.keymap.set("n", "<leader>sg", pick("grep"), { desc = "[S]earch by [G]rep" })
 vim.keymap.set("n", "<leader>sd", pick("diagnostics"), { desc = "[S]earch [D]iagnostics" })
