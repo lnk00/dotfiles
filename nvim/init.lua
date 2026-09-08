@@ -39,6 +39,7 @@ require("plugins.oil")
 require("plugins.git")
 require("plugins.fidget")
 require("plugins.lsp")
+require("plugins.copilot")
 require("plugins.conform")
 require("plugins.treesitter")
 
