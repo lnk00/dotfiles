@@ -6,6 +6,7 @@ require("conform").setup({
 		-- You can specify filetypes to autoformat on save here:
 		local enabled_filetypes = {
 			lua = true,
+			odin = true,
 		}
 		if enabled_filetypes[vim.bo[bufnr].filetype] then
 			return { timeout_ms = 500 }
@@ -18,6 +19,8 @@ require("conform").setup({
 	},
 	-- You can also specify external formatters in here.
 	formatters_by_ft = {
+		lua = { "stylua" },
+		odin = { "odinfmt" },
 		rust = { "rustfmt" },
 		javascript = { "prettierd", "prettier", stop_after_first = true },
 	},
