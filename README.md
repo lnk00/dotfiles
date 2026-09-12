@@ -1,7 +1,7 @@
 # dotfiles
 
-`$HOME` for a Void Linux + Wayland machine. Jay, bash, Neovim, Alacritty and
-qutebrowser, all on an e-ink-inspired monochrome palette.
+`$HOME` for a Void Linux + Wayland machine. Jay, bash, Neovim, Alacritty, kitty
+and qutebrowser, all on an e-ink-inspired monochrome palette.
 
 ## Layout
 
@@ -10,7 +10,7 @@ qutebrowser, all on an e-ink-inspired monochrome palette.
 | `.bashrc` `.bash_profile` `.inputrc` | shell: aliases, PATH, and the dbus + pipewire session bootstrap |
 | `.gitconfig` | identity and GPG signing |
 | `.config/jay/` `.config/mako/` | Wayland compositor and notifications |
-| `.config/alacritty/` `.config/nvim/` | terminal and editor, with themes |
+| `.config/alacritty/` `.config/kitty/` `.config/nvim/` | terminals and editor, with themes |
 | `.config/starship/` `.config/lazygit/` | prompt and git TUI |
 | `.config/qutebrowser/` | browser: config, per-site permissions, quickmarks |
 | `.config/wireplumber/` | bluetooth audio codecs |
