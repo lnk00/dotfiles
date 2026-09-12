@@ -32,7 +32,7 @@ keymap = """
 [shortcuts]
 logo-shift-r = "reload-config-toml"
 
-logo-t = { type = "exec", exec = "alacritty" }
+logo-t = { type = "exec", exec = "kitty" }
 logo-b = { type = "exec", exec = "qutebrowser" }
 
 logo-d = "close"
