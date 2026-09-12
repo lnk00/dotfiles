@@ -1,0 +1,9 @@
+$include /etc/inputrc
+
+"\C-k": history-search-backward
+"\C-j": history-search-forward
+
+"\C-h": backward-char
+"\C-l": forward-char
+
+"\el": clear-screen

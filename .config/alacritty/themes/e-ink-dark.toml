@@ -1,0 +1,35 @@
+# e-ink dark, ported from https://github.com/e-ink-colorscheme/e-ink.nvim
+# (lua/e-ink/palette.lua mono.dark + everforest.dark, mirroring the
+# terminal_color_0-15 mapping in lua/e-ink/syntax.lua)
+
+[colors.primary]
+foreground = "#a4a4a4"
+background = "#333333"
+
+[colors.cursor]
+text = "#333333"
+cursor = "#cccccc"
+
+[colors.selection]
+text = "#333333"
+background = "#545454"
+
+[colors.normal]
+black = "#333333"
+red = "#e67e80"
+green = "#a7c080"
+yellow = "#dbbc7f"
+blue = "#7fbbb3"
+magenta = "#d699b6"
+cyan = "#83c092"
+white = "#7c7c7c"
+
+[colors.bright]
+black = "#868686"
+red = "#e67e80"
+green = "#a7c080"
+yellow = "#dbbc7f"
+blue = "#7fbbb3"
+magenta = "#d699b6"
+cyan = "#83c092"
+white = "#cccccc"

@@ -1,0 +1,12 @@
+[user]
+	name = Damien
+	email = damien@fullenrich.com
+	signingkey = 6A1D9A8390E3D6F4
+[init]
+	defaultBranch = main
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true
+[gpg]
+	program = gpg

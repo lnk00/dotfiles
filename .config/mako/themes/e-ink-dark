@@ -1,0 +1,59 @@
+# e-ink dark for mako
+# Same principle as ~/.config/alacritty/themes/e-ink-dark.toml and the [theme]
+# block in ~/.config/jay/config.toml: a 16-step greyscale ramp carries all
+# structure (surface / border / text), and the muted everforest accents are
+# spent only where a colour means something -- here, urgency.
+#
+#   mono:  #333333 #474747 #4a4a4a #545454 ... #868686 #9a9a9a #b8b8b8 #cccccc
+#   accent: #e67e80 (red / critical)   #4c3743 (bg_red)
+
+font=GeistMono Nerd Font 10
+
+# Raised paper: one step above the desktop bg (#333333), like jay's
+# unfocused title bar.
+background-color=#474747ff
+text-color=#b8b8b8ff
+
+# Flat ink edge, no radius -- nothing on this desktop is rounded.
+border-size=2
+border-color=#868686ff
+border-radius=0
+
+progress-color=over #545454ff
+
+# Summary is the darkest ink, body sits a couple of steps back.
+format=<span foreground="#cccccc"><b>%s</b></span>\n%b
+
+[grouped]
+format=<span foreground="#cccccc"><b>%s</b></span> <span foreground="#868686">(%g)</span>\n%b
+
+# Low: recedes into the background, dim edge.
+[urgency=low]
+background-color=#333333ff
+text-color=#9a9a9aff
+border-color=#545454ff
+format=<span foreground="#b8b8b8">%s</span>\n%b
+
+[urgency=normal]
+background-color=#474747ff
+text-color=#b8b8b8ff
+border-color=#868686ff
+
+# Critical: the one place colour is allowed. everforest bg_red + red edge,
+# and it does not go away on its own.
+[urgency=critical]
+background-color=#4c3743ff
+text-color=#ccccccff
+border-color=#e67e80ff
+default-timeout=0
+
+# Actionable notifications get the "focused" edge, same cue as a focused window.
+[actionable]
+border-color=#ccccccff
+
+# "+N more" placeholder: quietest thing on screen.
+[hidden]
+background-color=#333333ff
+text-color=#868686ff
+border-color=#4a4a4aff
+format=<span foreground="#868686">%h more</span>

@@ -1,0 +1,126 @@
+on-graphics-initialized = [
+    { type = "exec", exec = { prog = "/home/lnk0/.cargo/bin/jay", args = ["randr", "card", "card0", "primary"] } },
+    { type = "exec", exec = { shell = "printf 'select 04:7F:0E:03:5C:AC\\npower on\\nselect 00:41:0E:2C:46:E0\\npower off\\nquit\\n' | bluetoothctl" } },
+    { type = "exec", exec = "mako" },
+]
+
+auto-reload = true
+show-bar = true
+repeat-rate = { rate = 75, delay = 200 }
+idle.minutes = 0
+
+[xwayland]
+enabled = true
+scaling-mode = "default"
+
+[status]
+format = "plain"
+exec = { prog = "sh", args = [
+    "-c",
+    "while :; do date '+%a %d %b  %H:%M'; sleep $((60 - $(date +%S))); done",
+] }
+
+keymap = """
+    xkb_keymap {
+        xkb_keycodes { include "evdev+aliases(qwerty)" };
+        xkb_types    { include "complete"              };
+        xkb_compat   { include "complete"              };
+        xkb_symbols  { include "pc+us+inet(evdev)"     };
+    };
+    """
+
+[shortcuts]
+logo-shift-r = "reload-config-toml"
+
+logo-t = { type = "exec", exec = "alacritty" }
+logo-b = { type = "exec", exec = "qutebrowser" }
+
+logo-d = "close"
+
+logo-h = "focus-left"
+logo-j = "focus-down"
+logo-k = "focus-up"
+logo-l = "focus-right"
+
+logo-ctrl-h = "move-left"
+logo-ctrl-j = "move-down"
+logo-ctrl-k = "move-up"
+logo-ctrl-l = "move-right"
+
+logo-shift-h = { type = "resize", dx1 = -100, dx2 = -100 }
+logo-shift-l = { type = "resize", dx1 = 100, dx2 = 100 }
+logo-shift-j = { type = "resize", dy1 = 100, dy2 = 100 }
+logo-shift-k = { type = "resize", dy1 = -100, dy2 = -100 }
+
+logo-shift-t = "toggle-split"
+logo-shift-m = "toggle-mono"
+logo-shift-f = "toggle-floating"
+logo-shift-a = "toggle-fullscreen"
+
+logo-1 = { type = "show-workspace", name = "1" }
+logo-2 = { type = "show-workspace", name = "2" }
+logo-3 = { type = "show-workspace", name = "3" }
+logo-4 = { type = "show-workspace", name = "4" }
+logo-5 = { type = "show-workspace", name = "5" }
+
+logo-ctrl-1 = { type = "move-to-workspace", name = "1" }
+logo-ctrl-2 = { type = "move-to-workspace", name = "2" }
+logo-ctrl-3 = { type = "move-to-workspace", name = "3" }
+logo-ctrl-4 = { type = "move-to-workspace", name = "4" }
+logo-ctrl-5 = { type = "move-to-workspace", name = "5" }
+
+alt-s = { type = "toggle-overlay", name = "scratchpad" }
+
+logo-shift-s = {
+    type = "exec",
+    exec = {
+        shell = "grim -g \"$(slurp)\" \"$HOME/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png\"",
+    },
+}
+
+[[clients]]
+match.tag = "pp-clipboard"
+capabilities = ["data-control"]
+
+[[clients]]
+match.any = [
+    { comm = "grim" },
+    { comm = "slurp" },
+]
+capabilities = ["screencopy", "layer-shell"]
+
+# mako draws its popups through wlr-layer-shell, which Jay gates per client.
+[[clients]]
+match.comm = "mako"
+capabilities = ["layer-shell"]
+
+[theme]
+bg-color = "#333333"
+bar-bg-color = "#333333"
+border-color = "#868686"
+separator-color = "#868686"
+unfocused-title-bg-color = "#474747"
+unfocused-title-text-color = "#868686"
+focused-title-bg-color = "#545454"
+focused-title-text-color = "#cccccc"
+show-window-icons = false
+bar-position = "bottom"
+font = "GeistMono NF Bold 10"
+bar-status-text-color = "#b8b8b8"
+focused-border-color = "#cccccc"
+focused-inactive-title-bg-color = "#4a4a4a"
+focused-inactive-title-text-color = "#9a9a9a"
+attention-requested-bg-color = "#e67e80"
+captured-focused-title-bg-color = "#e69875"
+captured-unfocused-title-bg-color = "#e69875"
+highlight-color = "#cccccc33"
+
+[[windows]]
+match.title-regex = "^float"
+initial-tile-state = "floating"
+
+[[inputs]]
+match.is-pointer = true
+accel-profile = "flat"
+accel-speed = 0.0
+
