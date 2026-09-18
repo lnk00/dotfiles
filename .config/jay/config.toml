@@ -82,6 +82,16 @@ logo-shift-s = {
 match.tag = "pp-clipboard"
 capabilities = ["data-control"]
 
+# wl-clipboard runs headless, so it can never take keyboard focus and use the
+# focus-gated wl_data_device path -- it needs data-control or it hangs forever.
+# This is what backs Neovim's "+ register (<leader>y / <leader>p).
+[[clients]]
+match.any = [
+    { comm = "wl-copy" },
+    { comm = "wl-paste" },
+]
+capabilities = ["data-control"]
+
 [[clients]]
 match.any = [
     { comm = "grim" },
