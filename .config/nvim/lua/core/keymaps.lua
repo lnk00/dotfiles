@@ -92,6 +92,33 @@ vim.keymap.set("x", "<leader>m", function()
 	return [[<Esc>/\%V]]
 end, { expr = true, desc = "[M]ulticursor at matches in selection" })
 
+-- [[ System Clipboard ]]
+
+-- Helix-style explicit clipboard access: plain `y`/`p` stay on the internal
+-- registers, and <leader> reaches the system clipboard ("+ register).
+--
+-- This is deliberately *not* `set clipboard=unnamedplus`. Sharing the unnamed
+-- register means every `x`, `d` and `c` overwrites whatever you copied from
+-- the browser -- the exact papercut Helix's split avoids.
+--
+-- In normal mode <leader>y is a full operator, so it composes the usual way:
+-- <leader>yy (line), <leader>yiw (word), <leader>yap (paragraph).
+--
+-- NOTE: needs a clipboard provider (`:checkhealth vim.provider`). On Wayland
+-- that is wl-clipboard; without one these silently fail.
+vim.keymap.set({ "n", "x" }, "<leader>y", '"+y', { desc = "[Y]ank to system clipboard" })
+
+-- Matches the stock `Y` == `y$` asymmetry rather than yanking the whole line.
+vim.keymap.set("n", "<leader>Y", '"+y$', { desc = "[Y]ank to end of line to system clipboard" })
+
+vim.keymap.set("n", "<leader>p", '"+p', { desc = "[P]aste from system clipboard (after)" })
+vim.keymap.set("n", "<leader>P", '"+P', { desc = "[P]aste from system clipboard (before)" })
+
+-- `P` rather than `p` in visual mode: `v_P` replaces the selection *without*
+-- yanking it into the register first (`:help v_P`), so the clipboard still
+-- holds what you pasted and you can paste it again over the next selection.
+vim.keymap.set("x", "<leader>p", '"+P', { desc = "[P]aste from system clipboard over selection" })
+
 -- [[ Completion Keymaps ]]
 -- <Tab>/<S-Tab> cycle the popup menu and <CR> accepts the selected item.
 --
