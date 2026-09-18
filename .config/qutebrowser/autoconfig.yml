@@ -18,6 +18,7 @@ settings:
     https://platform.claude.com: access-paste
     https://starship.rs: access-paste
     https://www.figma.com: access-paste
+    https://www.hunk.dev: access-paste
   content.media.audio_capture:
     https://meet.google.com: true
   content.media.audio_video_capture:

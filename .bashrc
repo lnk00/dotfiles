@@ -35,6 +35,7 @@ alias export-package='xbps-query -m | xargs -n1 xbps-uhelper getpkgname | sort >
 alias import-package='sudo xbps-install -Sy $(cat packages.txt)'
 alias ss='source ~/.bashrc'
 alias history='history | fzf'
+alias diff='hunk diff --transparent-bg --mode stack --theme github'
 
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"

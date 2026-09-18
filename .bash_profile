@@ -1,6 +1,6 @@
 # .bash_profile
 
-export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$HOME/.hunk/bin:$PATH"
 
 if [ ! -S "/run/user/$(id -u)/bus" ]; then
     dbus-daemon --session --address="unix:path=/run/user/$(id -u)/bus" --fork
