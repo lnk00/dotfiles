@@ -34,6 +34,7 @@ alias tree='eza -l --git --icons -T'
 alias export-package='xbps-query -m | xargs -n1 xbps-uhelper getpkgname | sort > packages.txt'
 alias import-package='sudo xbps-install -Sy $(cat packages.txt)'
 alias ss='source ~/.bashrc'
+alias history='history | fzf'
 
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
