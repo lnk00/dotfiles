@@ -6,4 +6,5 @@ $include /etc/inputrc
 "\C-h": backward-char
 "\C-l": forward-char
 
-"\el": clear-screen
+# was \el, but kitty binds alt+l to next_tab and eats it.
+"\e\C-l": clear-screen

@@ -11,10 +11,17 @@
 -- on by default), so it never competes with the docked menu in
 -- lua/core/completion-menu.lua. That also means <Tab> and <CR> keep their
 -- meaning from lua/core/keymaps.lua and only ever drive the menu; the
--- suggestion is accepted with <M-l>.
+-- suggestion is accepted with <C-l>.
+--
+-- Accept is <C-l> rather than the upstream <M-l> because kitty now owns
+-- alt+l (next_tab) and never passes it through. <C-l> is free in insert
+-- mode -- the <C-l> in lua/core/keymaps.lua is normal-mode window focus --
+-- and it reads like the ctrl+l = forward-char in ~/.inputrc: take what is
+-- ahead of the cursor. The other M- maps below are untouched; none of them
+-- collide with a kitty binding.
 --
 -- Insert-mode maps, all buffer-local and only while Copilot is attached:
---   <M-l>   accept the whole suggestion
+--   <C-l>   accept the whole suggestion
 --   <M-w>   accept one word of it
 --   <M-j>   accept one line of it
 --   <M-]>   next suggestion            <M-[>  previous suggestion
@@ -27,9 +34,11 @@ vim.pack.add({ "https://github.com/zbirenbaum/copilot.lua" })
 
 require("copilot").setup({
 	suggestion = {
-		-- Suggest as you type, rather than only when <M-l>/<M-]> is pressed.
+		-- Suggest as you type, rather than only when <C-l>/<M-]> is pressed.
 		auto_trigger = true,
 		keymap = {
+			-- Off the upstream <M-l>: kitty binds alt+l to next_tab.
+			accept = "<C-l>",
 			-- Partial accepts are off upstream; both are worth having when the
 			-- suggestion is right for a word or a line and wrong after that.
 			accept_word = "<M-w>",
