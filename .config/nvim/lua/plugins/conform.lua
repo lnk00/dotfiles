@@ -7,6 +7,7 @@ require("conform").setup({
 		local enabled_filetypes = {
 			lua = true,
 			odin = true,
+			zig = true,
 		}
 		if enabled_filetypes[vim.bo[bufnr].filetype] then
 			return { timeout_ms = 500 }
@@ -22,6 +23,7 @@ require("conform").setup({
 		lua = { "stylua" },
 		odin = { "odinfmt" },
 		rust = { "rustfmt" },
+		zig = { "zigfmt" }, -- `zig fmt --stdin`
 		javascript = { "prettierd", "prettier", stop_after_first = true },
 	},
 })
