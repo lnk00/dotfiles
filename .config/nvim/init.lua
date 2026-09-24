@@ -9,13 +9,13 @@
 -- replace this with a directory glob.
 
 require("core.options") -- leader keys: must precede every vim.pack.add
-require("core.centered-cursor")
 require("core.pack") -- PackChanged build hooks: must precede every install
 require("core.diagnostics")
 require("core.completion-menu") -- ext_popupmenu: must come after 'completeopt' in core.options
 require("core.docked-floats") -- hover/signature panes: stack on the menu above
 
 require("plugins.guess-indent")
+require("plugins.stay-centered")
 require("plugins.gitsigns")
 require("plugins.which-key")
 require("plugins.todo-comments")
