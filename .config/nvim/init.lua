@@ -9,6 +9,7 @@
 -- replace this with a directory glob.
 
 require("core.options") -- leader keys: must precede every vim.pack.add
+require("core.centered-cursor")
 require("core.pack") -- PackChanged build hooks: must precede every install
 require("core.diagnostics")
 require("core.completion-menu") -- ext_popupmenu: must come after 'completeopt' in core.options

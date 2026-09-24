@@ -13,7 +13,9 @@ settings:
   content.javascript.clipboard:
     https://app.notion.com: access-paste
     https://code.claude.com: access-paste
+    https://dashboard.sandbox.verisoul.ai: access-paste
     https://github.com: access-paste
+    https://kdheepak.com: access-paste
     https://linear.app: access-paste
     https://platform.claude.com: access-paste
     https://starship.rs: access-paste

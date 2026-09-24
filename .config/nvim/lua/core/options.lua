@@ -44,7 +44,8 @@ vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.o.inccommand = "split"
 
 vim.o.cursorline = true
-vim.o.scrolloff = 10
+-- Keep the cursor line vertically centered.
+vim.o.scrolloff = 999
 
 -- Prompt to save instead of failing on `:q` with unsaved changes.
 vim.o.confirm = true
