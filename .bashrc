@@ -36,6 +36,11 @@ alias import-package='sudo xbps-install -Sy $(cat packages.txt)'
 alias ss='source ~/.bashrc'
 alias history='history | fzf'
 alias diff='hunk diff --transparent-bg --mode stack --theme everforest-dark'
+alias pass='rbw get'
+alias otp='rbw code'
+alias mail='aerc'
+alias pass-generate='rbw generate'
+alias pass-add='rbw add'
 
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
