@@ -4,6 +4,7 @@ config.load_autoconfig()
 # Exclude specific sites here by adding one line per URL pattern:
 config.set('colors.webpage.darkmode.enabled', False, 'http://localhost:*/*')
 config.set('colors.webpage.darkmode.enabled', False, 'https://*.fullenrich.com')
+config.set('colors.webpage.darkmode.enabled', False, 'https://blog.damd.dev')
 
 # Notification permission: pinned here (not just autoconfig.yml) so it survives
 # any autoconfig rewrite. Covers slack.com + every subdomain (app., <workspace>.).
