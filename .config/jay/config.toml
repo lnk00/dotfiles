@@ -5,7 +5,7 @@ on-graphics-initialized = [
 ]
 
 auto-reload = true
-show-bar = true
+show-bar = false
 repeat-rate = { rate = 75, delay = 200 }
 idle.minutes = 0
 
