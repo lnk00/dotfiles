@@ -48,6 +48,7 @@ alias ga='git add .'
 alias gp='git push'
 alias gc='git commit -m'
 alias gs='git switch -c'
+alias music='cliamp --provider ytmusic'
 
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
