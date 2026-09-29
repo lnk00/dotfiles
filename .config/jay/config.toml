@@ -6,6 +6,7 @@ on-graphics-initialized = [
 
 auto-reload = true
 show-bar = false
+show-titles = false
 repeat-rate = { rate = 75, delay = 200 }
 idle.minutes = 0
 
@@ -55,6 +56,7 @@ logo-shift-k = { type = "resize", dy1 = -100, dy2 = -100 }
 logo-shift-t = "toggle-split"
 logo-shift-m = "toggle-mono"
 logo-shift-f = "toggle-floating"
+logo-shift-b = "toggle-titles"
 logo-shift-a = "toggle-fullscreen"
 
 logo-1 = { type = "show-workspace", name = "1" }
