@@ -42,6 +42,10 @@ alias mail='aerc'
 alias pass-generate='rbw generate'
 alias pass-add='rbw add'
 alias now='date "+%A %d %B %Y, %H:%M"'
+alias ga='git add .'
+alias gp='git push'
+alias gc='git commit -m'
+alias gs='git switch -c'
 
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
