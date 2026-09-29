@@ -41,6 +41,7 @@ alias otp='rbw code'
 alias mail='aerc'
 alias pass-generate='rbw generate'
 alias pass-add='rbw add'
+alias now='date "+%A %d %B %Y, %H:%M"'
 
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
