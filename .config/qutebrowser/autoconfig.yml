@@ -6,6 +6,8 @@
 
 config_version: 2
 settings:
+  colors.webpage.bg:
+    global: black
   colors.webpage.darkmode.enabled:
     global: true
   content.desktop_capture:
@@ -44,9 +46,9 @@ settings:
   tabs.show:
     global: never
   url.default_page:
-    global: https://kagi.com/
+    global: https://google.com/
   url.searchengines:
     global:
-      DEFAULT: https://kagi.com/search?q={}
+      DEFAULT: https://google.com/search?q={}
   url.start_pages:
-    global: https://kagi.com
+    global: https://google.com
