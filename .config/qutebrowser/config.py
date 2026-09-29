@@ -9,3 +9,6 @@ config.set('colors.webpage.darkmode.enabled', False, 'https://blog.damd.dev')
 # Notification permission: pinned here (not just autoconfig.yml) so it survives
 # any autoconfig rewrite. Covers slack.com + every subdomain (app., <workspace>.).
 config.set('content.notifications.enabled', True, 'https://*.slack.com')
+
+# <Space><Space> opens the tab picker, same as the default `gt`.
+config.bind('<Space><Space>', 'cmd-set-text -s :tab-select')
