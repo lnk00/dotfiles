@@ -22,7 +22,7 @@
     isNormalUser = true;
     uid = 1000;
     extraGroups = [ "wheel" "networkmanager" "video" "audio" "input" ];
-    hashedPasswordFile = "/etc/nixos/secrets/lnk0.hash";
+    hashedPasswordFile = "/var/lib/secrets/lnk0.hash";
   };
 
   services.greetd = {
