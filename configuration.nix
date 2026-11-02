@@ -62,7 +62,7 @@
     useUserPackages = true;
     extraSpecialArgs = { inherit mangowm zen-browser; };
     backupFileExtension = "hm-bak";
-    users.lnk0 = import ./home.nix;
+    users.lnk0 = import ./home;
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
