@@ -77,6 +77,7 @@ in
     shellAliases.ff = "yazi";
     shellAliases.dd = "lazydocker";
     shellAliases.qq = "lazysql";
+    shellAliases.diff = "hunk diff";
     shellAliases.ls = "eza -l --git --icons";
     shellAliases.la = "eza -l -a --git --icons";
     shellAliases.tree = "eza -l --git --icons -T";

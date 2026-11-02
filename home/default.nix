@@ -10,6 +10,7 @@
     ./helix.nix
     ./yazi.nix
     ./zen.nix
+    ./hunk.nix
   ];
 
   home.stateVersion = "26.05";

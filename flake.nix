@@ -9,10 +9,12 @@
   inputs.zen-browser.url = "github:0xc000022070/zen-browser-flake";
   inputs.zen-browser.inputs.nixpkgs.follows = "nixpkgs";
   inputs.zen-browser.inputs.home-manager.follows = "home-manager";
+  inputs.hunk.url = "github:modem-dev/hunk";
+  inputs.hunk.inputs.nixpkgs.follows = "nixpkgs";
 
-  outputs = { nixpkgs, home-manager, mangowm, zen-browser, ... }: {
+  outputs = { nixpkgs, home-manager, mangowm, zen-browser, hunk, ... }: {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-      specialArgs = { inherit mangowm zen-browser; };
+      specialArgs = { inherit mangowm zen-browser hunk; };
       modules = [
         ./configuration.nix
         home-manager.nixosModules.home-manager

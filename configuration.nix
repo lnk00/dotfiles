@@ -1,4 +1,4 @@
-{ lib, pkgs, mangowm, zen-browser, ... }:
+{ lib, pkgs, mangowm, zen-browser, hunk, ... }:
 
 {
   imports = [ ./hardware-configuration.nix ];
@@ -60,7 +60,7 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    extraSpecialArgs = { inherit mangowm zen-browser; };
+    extraSpecialArgs = { inherit mangowm zen-browser hunk; };
     backupFileExtension = "hm-bak";
     users.lnk0 = import ./home;
   };
