@@ -60,8 +60,9 @@ in
 
   programs.bash = {
     enable = true;
-    shellAliases.sys-rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#nixos";
-    shellAliases.sys-edit = "sudo hx /etc/nixos";
+    # /etc/nixos is owned by lnk0: evaluate as the user, sudo only to activate
+    shellAliases.sys-rebuild = "nixos-rebuild switch --flake /etc/nixos#nixos --sudo";
+    shellAliases.sys-edit = "hx /etc/nixos";
     shellAliases.cat = "bat";
     shellAliases.grep = "rg";
     shellAliases.gg = "lazygit";
