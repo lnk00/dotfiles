@@ -4,6 +4,8 @@ let
   # starship hides a group whose variables are all empty, so git_status uses
   # an invisible-but-present symbol: a dirty tree then shows a bare "*".
   zwsp = builtins.fromJSON ''"\u200b"'';
+  # nf-linux-nixos from the Nerd Font foot uses
+  nixos = builtins.fromJSON ''"\uf313"'';
 in
 {
   programs.fzf = {
@@ -27,6 +29,7 @@ in
         "$git_branch"
         "$git_state"
         "$git_status"
+        "$nix_shell"
         "$character"
       ];
       directory.style = "bright-white";
@@ -54,6 +57,11 @@ in
       git_state = {
         format = "\\([$state( $progress_current/$progress_total)]($style)\\) ";
         style = "bright-black";
+      };
+      nix_shell = {
+        format = "[$symbol]($style) ";
+        symbol = nixos;
+        style = "blue";
       };
     };
   };
