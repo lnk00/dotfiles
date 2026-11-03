@@ -15,6 +15,7 @@
     ./screenshare.nix
     ./fuzzel.nix
     ./mako.nix
+    ./clock.nix
   ];
 
   home.stateVersion = "26.05";

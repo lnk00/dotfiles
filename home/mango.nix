@@ -12,6 +12,7 @@ in
     systemd.enable = false;
     autostart_sh = ''
       ${pkgs.swaybg}/bin/swaybg -m fill -i ${../wallpapers/alone-cloud_dark.png} &
+      ${pkgs.quickshell}/bin/quickshell -c clock &
     '';
     settings = {
       tag_rule = map (id: "id:${toString id},layout_name:scroller") (lib.range 1 9);
@@ -31,8 +32,11 @@ in
       blur_params_brightness = 1.05;
       blur_params_contrast = 0.9;
       blur_params_saturation = 0.85;
-      # slurp (namespace "selection") must stay sharp so you can see what you select
-      layer_rule = [ "layer_name:^selection$,no_blur:1" ];
+      # layers that must stay sharp: slurp ("selection") and the wallpaper clock
+      layer_rule = [
+        "layer_name:^selection$,no_blur:1"
+        "layer_name:^clock$,no_blur:1"
+      ];
 
       focused_opacity = 0.99;
       unfocused_opacity = 0.99;
