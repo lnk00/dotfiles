@@ -13,6 +13,7 @@
     ./tridactyl.nix
     ./hunk.nix
     ./screenshot.nix
+    ./clipboard.nix
     ./screenshare.nix
     ./fuzzel.nix
     ./mako.nix

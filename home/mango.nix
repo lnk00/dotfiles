@@ -13,12 +13,15 @@ in
     autostart_sh = ''
       ${pkgs.swaybg}/bin/swaybg -m fill -i ${../wallpapers/alone-cloud_dark.png} &
       ${pkgs.quickshell}/bin/quickshell -c clock &
+      ${pkgs.wl-clipboard}/bin/wl-paste --watch ${pkgs.cliphist}/bin/cliphist store &
     '';
     settings = {
       tag_rule = map (id: "id:${toString id},layout_name:scroller") (lib.range 1 9);
       scroller_focus_center = 1;
       scroller_default_proportion = 0.5;
       scroller_default_proportion_single = 0.5;
+      # scroller slide between windows; mango's default is 500
+      animation_duration_move = 150;
       repeat_rate = 75;
       repeat_delay = 200;
 
@@ -78,6 +81,7 @@ in
         "SUPER,s,spawn,screenshot full"
         "SUPER+SHIFT,s,spawn,screenshot region"
         "SUPER,space,spawn,fuzzel"
+        "SUPER,v,spawn,clipboard-pick"
       ];
     };
   };
