@@ -73,6 +73,7 @@ in
         "SUPER+CTRL,l,resizewin,+50,0"
         "SUPER,s,spawn,screenshot full"
         "SUPER+SHIFT,s,spawn,screenshot region"
+        "SUPER,space,spawn,fuzzel"
       ];
     };
   };

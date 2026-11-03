@@ -1,10 +1,10 @@
-{ ... }:
+{ lib, ... }:
 
 let
   frost = import ./palette.nix;
 
   # The single system-wide switch: "light" or "dark". Every home module derives
-  # from it, so changing this one word rethemes foot, helix, yazi, mango and fuzzel
+  # from it, so changing this one word rethemes foot, helix, yazi, mango, fuzzel and mako
   # together. foot still carries both palettes and can toggle at runtime.
   variant = "dark";
 in
@@ -13,7 +13,10 @@ in
   # { frost, variant, theme, ... }:
   _module.args = {
     inherit frost variant;
-    theme = frost.${variant};
+    theme = frost.${variant} // {
+      # termAlpha as an RRGGBBAA alpha byte, so layer surfaces frost like foot
+      glass = lib.toLower (lib.toHexString (builtins.floor (frost.${variant}.termAlpha * 255 + 0.5)));
+    };
   };
 
   # The desktop-wide light/dark preference, served over the portal as

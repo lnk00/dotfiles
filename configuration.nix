@@ -73,6 +73,16 @@
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  # configurationLimit only trims the boot menu; this is what frees the store
+  nix.gc = {
+    automatic = true;
+    dates = [ "weekly" ];
+    options = "--delete-older-than 14d";
+  };
+  nix.optimise = {
+    automatic = true;
+    dates = [ "weekly" ];
+  };
 
   system.stateVersion = "26.05";
 }

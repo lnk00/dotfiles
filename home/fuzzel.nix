@@ -1,10 +1,8 @@
-{ lib, theme, ... }:
+{ theme, ... }:
 
 let
   # fuzzel wants bare RRGGBBAA
   solid = c: "${c}ff";
-  # foot's see-through, so mango's layer blur frosts it the same way
-  glass = lib.toLower (lib.toHexString (builtins.floor (theme.termAlpha * 255 + 0.5)));
 in
 {
   programs.fuzzel = {
@@ -19,7 +17,7 @@ in
         inner-pad = 8;
       };
       colors = {
-        background = theme.bg + glass;
+        background = theme.bg + theme.glass;
         text = solid theme.fg;
         message = solid theme.fgDim;
         prompt = solid theme.fgSubtle;
