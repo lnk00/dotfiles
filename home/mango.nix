@@ -31,6 +31,8 @@ in
       blur_params_brightness = 1.05;
       blur_params_contrast = 0.9;
       blur_params_saturation = 0.85;
+      # slurp (namespace "selection") must stay sharp so you can see what you select
+      layer_rule = [ "layer_name:^selection$,no_blur:1" ];
 
       focused_opacity = 0.99;
       unfocused_opacity = 0.99;

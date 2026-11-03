@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, theme, ... }:
 
 let
   # copies to the clipboard and keeps a dated png in ~/Pictures/Screenshots
@@ -14,7 +14,7 @@ let
         full) grim "$file" ;;
         region)
           # slurp exits non-zero on Esc
-          geom=$(slurp) || exit 0
+          geom=$(slurp -w 2 -c '#${theme.accent}ff' -b '#${theme.bg}55' -s '#00000000') || exit 0
           grim -g "$geom" "$file"
           ;;
         *)
