@@ -58,6 +58,12 @@ in
     settings.General.Experimental = true;
   };
 
+  # onboard MediaTek BT (0e8d:0616) keeps logging "ACL packet for unknown connection handle";
+  # deauthorize it so the UGREEN dongle is the only controller
+  services.udev.extraRules = ''
+    SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", ATTR{idProduct}=="0616", ATTR{authorized}="0"
+  '';
+
   programs.gnupg.agent = {
     enable = true;
     pinentryPackage = pkgs.pinentry-tty;
