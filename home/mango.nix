@@ -66,6 +66,19 @@ in
       sloppy_focus = 0;
       cursor_hide_timeout = 5;
 
+      # togglejump: overview with a key hint on every window; press it to focus that window
+      jump_labels = "HJKLASDFGQWERTYUIOPZXCVBNM";
+      jump_label_decorate_font_desc = "JetBrainsMono Nerd Font Mono Bold 16";
+      jump_label_decorate_fg_color = opaque theme.accent;
+      jump_label_decorate_bg_color = opaque theme.bgInset;
+      jump_label_decorate_focus_fg_color = opaque theme.bg;
+      jump_label_decorate_focus_bg_color = opaque theme.accent;
+      jump_label_decorate_border_color = opaque theme.accent;
+      jump_label_decorate_border_width = 2;
+      jump_label_decorate_corner_radius = 8;
+      jump_label_decorate_padding_x = 12;
+      jump_label_decorate_padding_y = 6;
+
       bind = [
         "SUPER,t,spawn,foot"
         "SUPER,d,killclient"
@@ -82,6 +95,7 @@ in
         "SUPER+SHIFT,s,spawn,screenshot region"
         "SUPER,space,spawn,fuzzel"
         "SUPER,v,spawn,clipboard-pick"
+        "SUPER,Tab,togglejump"
       ];
     };
   };
