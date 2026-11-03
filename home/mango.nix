@@ -69,6 +69,8 @@ in
         "SUPER+SHIFT,l,move_client,right"
         "SUPER+CTRL,h,resizewin,-50,0"
         "SUPER+CTRL,l,resizewin,+50,0"
+        "SUPER,s,spawn,screenshot full"
+        "SUPER+SHIFT,s,spawn,screenshot region"
       ];
     };
   };

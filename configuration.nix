@@ -43,6 +43,13 @@
     pulse.enable = true;
   };
 
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+    # exposes headset battery level over D-Bus (shown in bluetui)
+    settings.General.Experimental = true;
+  };
+
   programs.gnupg.agent = {
     enable = true;
     pinentryPackage = pkgs.pinentry-tty;

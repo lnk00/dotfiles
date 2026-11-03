@@ -4,7 +4,7 @@ let
   frost = import ./palette.nix;
 
   # The single system-wide switch: "light" or "dark". Every home module derives
-  # from it, so changing this one word rethemes foot, helix, yazi and mango
+  # from it, so changing this one word rethemes foot, helix, yazi, mango and fuzzel
   # together. foot still carries both palettes and can toggle at runtime.
   variant = "dark";
 in

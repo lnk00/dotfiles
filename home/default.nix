@@ -11,6 +11,9 @@
     ./yazi.nix
     ./zen.nix
     ./hunk.nix
+    ./screenshot.nix
+    ./screenshare.nix
+    ./fuzzel.nix
   ];
 
   home.stateVersion = "26.05";
@@ -22,6 +25,7 @@
     lazydocker
     lazysql
     eza
+    bluetui
   ];
 
   xdg.mimeApps.enable = true;
