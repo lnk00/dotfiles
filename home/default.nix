@@ -10,6 +10,7 @@
     ./helix.nix
     ./yazi.nix
     ./zen.nix
+    ./tridactyl.nix
     ./hunk.nix
     ./screenshot.nix
     ./screenshare.nix
