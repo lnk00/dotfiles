@@ -1,5 +1,13 @@
 { lib, pkgs, mangowm, zen-browser, hunk, ... }:
 
+let
+  # nixpkgs' AppImage sandbox lacks libgpg-error, so Qt's xcb plugin fails and Vial exits at launch
+  vial = pkgs.vial.override {
+    appimageTools = pkgs.appimageTools // {
+      wrapType2 = args: pkgs.appimageTools.wrapType2 (args // { extraPkgs = p: [ p.libgpg-error ]; });
+    };
+  };
+in
 {
   imports = [ ./hardware-configuration.nix ];
 
@@ -55,12 +63,16 @@
     pinentryPackage = pkgs.pinentry-tty;
   };
 
+  # its udev rule hands the Keebart 3w6's hidraw nodes (serial vial:f64c2b3c) to the seat user
+  services.udev.packages = [ vial ];
+
   nixpkgs.config.allowUnfreePredicate = pkg: lib.getName pkg == "claude-code";
   environment.systemPackages = with pkgs; [
     wl-clipboard
     git
     curl
     claude-code
+    vial
   ];
   environment.variables.EDITOR = "hx";
 
