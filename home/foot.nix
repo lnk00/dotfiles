@@ -40,6 +40,14 @@ in
       key-bindings.pipe-scrollback =
         ''[sh -c "f=$(mktemp --suffix=.log) && cat - > \"$f\" && foot hx \"$f\"; rm -f \"$f\""] Mod1+space'';
       key-bindings.color-theme-toggle = "Control+Shift+t";
+      key-bindings.scrollback-up-line = "Mod1+Up";
+      key-bindings.scrollback-down-line = "Mod1+Down";
+      key-bindings.scrollback-up-half-page = "Control+Mod1+Up";
+      key-bindings.scrollback-down-half-page = "Control+Mod1+Down";
+      key-bindings.scrollback-up-page = "Mod1+Page_Up Shift+Page_Up";
+      key-bindings.scrollback-down-page = "Mod1+Page_Down Shift+Page_Down";
+      key-bindings.scrollback-home = "Mod1+Home";
+      key-bindings.scrollback-end = "Mod1+End";
       # Ctrl+i/k/h/l as distinct sequences (else Tab, Backspace, …); shell.nix binds them
       text-bindings."\\x1b[105;5u" = "Control+i";
       text-bindings."\\x1b[107;5u" = "Control+k";
