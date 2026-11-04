@@ -2,6 +2,21 @@
 
 let
   inherit (frost) opaque withAlpha;
+
+  # new foot in the cwd of the focused foot's shell, else $HOME
+  footHere = pkgs.writeShellApplication {
+    name = "foot-here";
+    runtimeInputs = with pkgs; [ mango foot jq procps coreutils ];
+    text = ''
+      dir=$HOME
+      pid=$(mmsg get focusing-client | jq -r 'select(.appid == "foot") | .pid') || true
+      if [ -n "$pid" ] && child=$(pgrep -nP "$pid"); then
+        dir=$(readlink "/proc/$child/cwd") || dir=$HOME
+      fi
+      [ -d "$dir" ] || dir=$HOME
+      exec foot --working-directory="$dir"
+    '';
+  };
 in
 {
   imports = [ mangowm.hmModules.mango ];
@@ -79,7 +94,7 @@ in
       jump_label_decorate_padding_y = 6;
 
       bind = [
-        "SUPER,t,spawn,foot"
+        "SUPER,t,spawn,${footHere}/bin/foot-here"
         "SUPER,d,killclient"
         "SUPER,f,togglemaximizescreen"
         "SUPER,b,spawn,zen-beta"

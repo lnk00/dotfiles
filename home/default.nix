@@ -18,6 +18,7 @@
     ./fuzzel.nix
     ./mako.nix
     ./clock.nix
+    ./btop.nix
   ];
 
   home.stateVersion = "26.05";
