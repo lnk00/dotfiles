@@ -19,6 +19,7 @@
     ./mako.nix
     ./clock.nix
     ./btop.nix
+    ./cliamp.nix
   ];
 
   home.stateVersion = "26.05";

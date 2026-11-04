@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, variant, ... }:
 
 let
   # starship hides a group whose variables are all empty, so git_status uses
@@ -77,6 +77,8 @@ in
     shellAliases.ff = "yazi";
     shellAliases.dd = "lazydocker";
     shellAliases.qq = "lazysql";
+    # like btop, follows `variant`; cliamp.nix ships frost-light and frost-dark
+    shellAliases.music = "cliamp --provider ytmusic --start-theme frost-${variant}";
     shellAliases.diff = "hunk diff";
     shellAliases.ls = "eza -l --git --icons";
     shellAliases.la = "eza -l -a --git --icons";
