@@ -12,7 +12,6 @@ in
     systemd.enable = false;
     autostart_sh = ''
       ${pkgs.swaybg}/bin/swaybg -m fill -i ${../wallpapers/alone-cloud_dark.png} &
-      ${pkgs.quickshell}/bin/quickshell -c clock &
       ${pkgs.wl-clipboard}/bin/wl-paste --watch ${pkgs.cliphist}/bin/cliphist store &
     '';
     settings = {

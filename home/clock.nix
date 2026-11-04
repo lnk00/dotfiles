@@ -1,9 +1,21 @@
-{ pkgs, theme, ... }:
+{ lib, pkgs, theme, ... }:
 
 {
-  # big time top right, date bottom right, on the wallpaper; mango.nix starts it and keeps it unblurred
+  # supervised by systemd: a bare autostart clock died silently twice and stayed gone
+  systemd.user.services.quickshell = {
+    Unit.PartOf = [ "mango-session.target" ];
+    Service.Restart = lib.mkForce "always";
+  };
+
+  # big time top right, date bottom right, on the wallpaper; mango.nix keeps it unblurred
   programs.quickshell = {
     enable = true;
+    activeConfig = "clock";
+    # mango starts mango-session.target itself, even with its HM systemd.enable off
+    systemd = {
+      enable = true;
+      target = "mango-session.target";
+    };
     configs.clock = pkgs.writeTextDir "shell.qml" ''
       import QtQuick
       import Quickshell
