@@ -20,6 +20,7 @@
     ./clock.nix
     ./btop.nix
     ./cliamp.nix
+    ./lazysql.nix
   ];
 
   home.stateVersion = "26.05";
@@ -29,7 +30,6 @@
     bat
     lazygit
     lazydocker
-    lazysql
     eza
     bluetui
   ];
