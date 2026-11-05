@@ -22,6 +22,12 @@ in
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
 
+  services.tailscale = {
+    enable = true;
+    # UDP 41641, lets peers connect directly instead of via DERP relays
+    openFirewall = true;
+  };
+
   time.timeZone = "America/Montevideo";
   i18n.defaultLocale = "en_US.UTF-8";
   console.keyMap = "us";

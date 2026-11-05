@@ -40,6 +40,7 @@ in
       key-bindings.pipe-scrollback =
         ''[sh -c "f=$(mktemp --suffix=.log) && cat - > \"$f\" && foot hx \"$f\"; rm -f \"$f\""] Mod1+space'';
       key-bindings.color-theme-toggle = "Control+Shift+t";
+      key-bindings.show-urls-launch = "Control+Shift+o Mod1+u";
       key-bindings.scrollback-up-line = "Mod1+Up";
       key-bindings.scrollback-down-line = "Mod1+Down";
       key-bindings.scrollback-up-half-page = "Control+Mod1+Up";
