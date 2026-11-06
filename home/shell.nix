@@ -106,6 +106,8 @@ in
     # like btop, follows `variant`; cliamp.nix ships frost-light and frost-dark
     shellAliases.music = "cliamp --provider ytmusic --start-theme frost-${variant}";
     shellAliases.diff = "hunk diff";
+    # no argument: fuzzel picker; wallpaper.nix has the rest
+    shellAliases.wp = "wallpaper";
     shellAliases.ls = "eza -l --git --icons";
     shellAliases.la = "eza -l -a --git --icons";
     shellAliases.tree = "eza -l --git --icons -T";
