@@ -66,7 +66,8 @@
               onHasContentChanged: if (hasContent) fadeIn.start()
             }
           }
-          // roughly mango's blur_params, so it matches fuzzel and mako
+          // greyscale and unlifted, so only the palette's bg tints it: with mango's blur_params
+          // (brighter, a bit of colour) the wallpaper's blue showed through as #1e1e22
           MultiEffect {
             x: -veil.bleed
             y: -veil.bleed
@@ -78,9 +79,7 @@
             blurEnabled: true
             blur: veil.progress
             blurMax: 64
-            brightness: 0.05
-            contrast: -0.1
-            saturation: -0.15
+            saturation: -1
           }
           // lighter than theme.glass: the big text stays readable and more of the blur shows
           Rectangle { anchors.fill: parent; color: "#99${theme.bg}"; opacity: veil.progress }
@@ -95,7 +94,7 @@
               anchors.horizontalCenter: parent.horizontalCenter
               text: Qt.formatDateTime(clock.date, "HH:mm")
               color: "#${theme.fg}"
-              font { family: "JetBrainsMono Nerd Font"; weight: Font.Thin; pixelSize: veil.size }
+              font { family: "JetBrainsMono Nerd Font"; weight: Font.Normal; pixelSize: veil.size }
               topPadding: Math.round(-0.24 * font.pixelSize)
               bottomPadding: Math.round(-0.3 * font.pixelSize)
             }
@@ -104,7 +103,7 @@
               text: Qt.formatDateTime(clock.date, "dddd d MMMM").toLowerCase()
               // halfway from fgDim to fg: set apart from the time, but not by much
               color: Qt.tint("#${theme.fgDim}", "#80${theme.fg}")
-              font { family: "JetBrainsMono Nerd Font"; weight: Font.Light; pixelSize: Math.round(veil.size / 5) }
+              font { family: "JetBrainsMono Nerd Font"; weight: Font.Normal; pixelSize: Math.round(veil.size / 5) }
               topPadding: Math.round(-0.25 * font.pixelSize)
             }
           }
