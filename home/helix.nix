@@ -74,6 +74,18 @@ in
         indent-guides.render = true;
         statusline.mode = { normal = "NORMAL"; insert = "INSERT"; select = "SELECT"; };
       };
+      # space-leader stays on the thumb on the 3w6; x = "execute".
+      keys.normal.space = {
+        # default recipe in the background; output pops up when it exits
+        x = ":sh just";
+        # pick a recipe with fzf and watch it live in a tiled foot window
+        X = ":sh foot -H just --choose";
+        # replaces the space-w window menu; ctrl-w still opens it
+        w = ":write";
+        q = ":quit";
+      };
+      # replaces goto window center
+      keys.normal.g.c = ":buffer-close";
     };
     themes = {
       frost-light = helixTheme frost.light;

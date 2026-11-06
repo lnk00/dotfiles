@@ -1,4 +1,4 @@
-{ lib, variant, ... }:
+{ lib, pkgs, variant, ... }:
 
 let
   # starship hides a group whose variables are all empty, so git_status uses
@@ -6,8 +6,32 @@ let
   zwsp = builtins.fromJSON ''"\u200b"'';
   # nf-linux-nixos from the Nerd Font foot uses
   nixos = builtins.fromJSON ''"\uf313"'';
+
+  # nix develop on the nearest flake above $PWD: a personal, git-untracked
+  # .flake/ (path: skips git, which would hide it) wins over a root flake.nix
+  dev = pkgs.writeShellApplication {
+    name = "dev";
+    runtimeInputs = [ pkgs.coreutils ];
+    text = ''
+      dir=$PWD
+      while :; do
+        if [ -f "$dir/.flake/flake.nix" ]; then
+          exec nix develop "path:$dir/.flake" "$@"
+        fi
+        if [ -f "$dir/flake.nix" ]; then
+          exec nix develop "$dir" "$@"
+        fi
+        [ "$dir" = / ] && break
+        dir=$(dirname "$dir")
+      done
+      echo "dev: no flake.nix or .flake/flake.nix above $PWD" >&2
+      exit 1
+    '';
+  };
 in
 {
+  home.packages = [ dev ];
+
   programs.fzf = {
     enable = true;
     defaultOptions = [ "--height 40%" "--layout reverse" "--border" ];
