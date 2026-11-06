@@ -49,10 +49,9 @@ in
       blur_params_brightness = 1.05;
       blur_params_contrast = 0.9;
       blur_params_saturation = 0.85;
-      # layers that must stay sharp: slurp ("selection") and the wallpaper clock
+      # slurp's "selection" layer must stay sharp; bottom layers like the clock are never blurred
       layer_rule = [
         "layer_name:^selection$,no_blur:1"
-        "layer_name:^clock$,no_blur:1"
       ];
 
       focused_opacity = 0.99;

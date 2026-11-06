@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 let
   # swaps swaybg at runtime and saves the choice; mango.nix's autostart restores it
@@ -6,8 +6,11 @@ let
     name = "wallpaper";
     runtimeInputs = with pkgs; [ fuzzel findutils gnused coreutils procps util-linux ];
     text = ''
-      dir=${../wallpapers}
-      state="''${XDG_STATE_HOME:-$HOME/.local/state}/wallpaper"
+      # the checkout, not a store copy: a new image works without a rebuild,
+      # and a saved path stays valid across rebuilds and gc
+      dir=/etc/nixos/wallpapers
+      # the image on screen, as an absolute path; clock.nix frosts its card from it
+      state=${config.xdg.stateHome}/wallpaper
 
       case "''${1:-}" in
         --restore) name=$(cat "$state" 2>/dev/null) || name=alone-cloud_dark ;;
@@ -18,20 +21,19 @@ let
         *) name=$1 ;;
       esac
 
-      # a name from ../wallpapers (no extension), or any image path
+      # a name from $dir (no extension), or any image path
       if [ -f "$name" ]; then
-        name=$(realpath "$name")
-        file=$name
+        file=$(realpath "$name")
       else
         file=$(find "$dir" -type f -name "$name.*" -print -quit)
         if [ -z "$file" ]; then
-          echo "wallpaper: no '$name' in /etc/nixos/wallpapers" >&2
+          echo "wallpaper: no '$name' in $dir" >&2
           exit 1
         fi
       fi
 
       mkdir -p "$(dirname "$state")"
-      echo "$name" > "$state"
+      echo "$file" > "$state"
 
       # the wrapper keeps the full store path as argv0, so match on that
       mapfile -t old < <(pgrep -f '^/nix/store/[^ ]*/bin/swaybg ')
