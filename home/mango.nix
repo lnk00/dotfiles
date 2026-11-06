@@ -49,9 +49,10 @@ in
       blur_params_brightness = 1.05;
       blur_params_contrast = 0.9;
       blur_params_saturation = 0.85;
-      # slurp's "selection" layer must stay sharp
+      # slurp's "selection" layer must stay sharp; the clock blurs and fades a still of the screen itself
       layer_rule = [
         "layer_name:^selection$,no_blur:1"
+        "layer_name:^clock$,no_blur:1,no_animation:1"
       ];
 
       focused_opacity = 0.99;
