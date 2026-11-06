@@ -11,7 +11,7 @@ in
     Service.Restart = lib.mkForce "always";
   };
 
-  # time over date, top right on the wallpaper, on a frosted card so any wallpaper stays readable
+  # time over date, top right, shown for 3s on SUPER+c (mango.nix)
   programs.quickshell = {
     enable = true;
     activeConfig = "clock";
@@ -22,86 +22,45 @@ in
     };
     configs.clock = pkgs.writeTextDir "shell.qml" ''
       import QtQuick
-      import QtQuick.Effects
       import Quickshell
       import Quickshell.Io
       import Quickshell.Wayland
-      import Quickshell.Widgets
 
       ShellRoot {
         SystemClock { id: clock; precision: SystemClock.Minutes }
 
-        // the image swaybg shows, as an absolute path; wallpaper.nix rewrites it on every switch
-        FileView {
-          id: wallpaper
-          path: "${config.xdg.stateHome}/wallpaper"
-          watchChanges: true
-          onFileChanged: reload()
+        // quickshell ipc -c clock call clock peek
+        IpcHandler {
+          target: "clock"
+          // pressing again while it shows restarts the 3s
+          function peek(): void { card.visible = true; hide.restart() }
         }
+        Timer { id: hide; interval: 3000; onTriggered: card.visible = false }
 
-        // bottom layer: above swaybg, below every window; click-through
+        // overlay: above windows, even fullscreen ones; click-through
         PanelWindow {
           id: card
-          // the blur needs real pixels past the card's edges, or they fade out
-          readonly property int bleed: 64
           // the time's pixel size; the date, padding and spacing scale with it
           readonly property int size: 96
 
+          visible: false
           anchors { top: true; right: true }
           margins { top: ${toString gap_outer_vertical}; right: ${toString gap_outer_horizontal} }
           exclusionMode: ExclusionMode.Ignore
-          WlrLayershell.layer: WlrLayer.Bottom
+          WlrLayershell.layer: WlrLayer.Overlay
           WlrLayershell.namespace: "clock"
           color: "transparent"
           mask: Region {}
           implicitWidth: face.implicitWidth + Math.round(size * 0.38)
           implicitHeight: face.implicitHeight + Math.round(size * 0.33)
 
-          // mango never blurs bottom-layer surfaces, so the card frosts its own crop of the wallpaper
-          ClippingRectangle {
+          // translucent, so mango's layer blur frosts whatever is under it, like fuzzel and mako
+          Rectangle {
             anchors.fill: parent
             radius: 8
-            contentUnderBorder: true
             // same as mango's window borders
             border { width: 2; color: "#cc${theme.border}" }
-            color: "#${theme.bg}"
-
-            // the whole output as swaybg -m fill draws it
-            Image {
-              id: wall
-              visible: false
-              width: card.screen.width
-              height: card.screen.height
-              sourceSize { width: card.screen.width; height: card.screen.height }
-              fillMode: Image.PreserveAspectCrop
-              source: wallpaper.text().trim()
-            }
-            // just the part under the card
-            ShaderEffectSource {
-              id: under
-              visible: false
-              sourceItem: wall
-              sourceRect: Qt.rect(card.screen.width - card.margins.right - card.width - card.bleed,
-                                  card.margins.top - card.bleed,
-                                  card.width + 2 * card.bleed, card.height + 2 * card.bleed)
-            }
-            // roughly mango's blur_params, so it matches fuzzel and mako
-            MultiEffect {
-              x: -card.bleed
-              y: -card.bleed
-              width: card.width + 2 * card.bleed
-              height: card.height + 2 * card.bleed
-              source: under
-              autoPaddingEnabled: false
-              blurEnabled: true
-              blur: 1
-              blurMax: 64
-              brightness: 0.05
-              contrast: -0.1
-              saturation: -0.15
-            }
-            // theme.glass: lighter tints go grey and unreadable on bright wallpapers
-            Rectangle { anchors.fill: parent; color: "#${theme.glass}${theme.bg}" }
+            color: "#${theme.glass}${theme.bg}"
 
             Column {
               id: face

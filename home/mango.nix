@@ -49,7 +49,7 @@ in
       blur_params_brightness = 1.05;
       blur_params_contrast = 0.9;
       blur_params_saturation = 0.85;
-      # slurp's "selection" layer must stay sharp; bottom layers like the clock are never blurred
+      # slurp's "selection" layer must stay sharp
       layer_rule = [
         "layer_name:^selection$,no_blur:1"
       ];
@@ -109,6 +109,7 @@ in
         "SUPER,space,spawn,fuzzel"
         "SUPER,v,spawn,clipboard-pick"
         "SUPER,Tab,togglejump"
+        "SUPER,c,spawn,quickshell ipc -c clock call clock peek"
       ];
     };
   };
