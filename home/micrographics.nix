@@ -84,6 +84,9 @@ let
         readonly property color ink: "#${theme.fg}"
         readonly property color paper: "#${theme.bg}"
         readonly property int px: 22
+        readonly property int weight: Font.Medium
+        // pill and bracket outlines
+        readonly property real stroke: 1.5
         readonly property string family: "JetBrainsMono Nerd Font"
 
         // {temp, code, day} from Open-Meteo, or null until the first answer
@@ -168,10 +171,10 @@ let
         component Word: Text {
           anchors.verticalCenter: parent ? parent.verticalCenter : undefined
           color: win.ink
-          font { family: win.family; weight: Font.ExtraBold; pixelSize: win.px }
+          font { family: win.family; weight: win.weight; pixelSize: win.px }
         }
 
-        // pictograms run a size up, so they weigh as much as the bold capitals
+        // pictograms run a size up, so they weigh as much as the capitals
         component Glyph: Word { font.pixelSize: Math.round(win.px * 1.2) }
 
         // a word in a capsule: filled (ink, paper text) or outlined
@@ -184,7 +187,7 @@ let
           implicitWidth: Math.max(implicitHeight, label.implicitWidth + win.px * 0.8)
           radius: height / 2
           color: filled ? win.ink : "transparent"
-          border { width: filled ? 0 : 2; color: win.ink }
+          border { width: filled ? 0 : win.stroke; color: win.ink }
           Word { id: label; anchors.centerIn: parent; color: pill.filled ? win.paper : win.ink }
         }
 
@@ -200,7 +203,7 @@ let
             preferredRendererType: Shape.CurveRenderer
             ShapePath {
               strokeColor: win.ink
-              strokeWidth: 2
+              strokeWidth: win.stroke
               fillColor: "transparent"
               startX: 1; startY: chip.height
               PathLine { x: 1; y: win.px * 0.45 + 1 }
