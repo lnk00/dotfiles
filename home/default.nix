@@ -21,6 +21,7 @@
     ./fuzzel.nix
     ./mako.nix
     ./clock.nix
+    ./micrographics.nix
     ./btop.nix
     ./fastfetch.nix
     ./cliamp.nix
