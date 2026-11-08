@@ -1,4 +1,4 @@
-{ config, lib, pkgs, frost, variant, theme, ... }:
+{ config, lib, pkgs, frost, scheme, theme, ... }:
 
 let
   inherit (frost) hash;
@@ -10,7 +10,7 @@ let
   # hunk's blend, at hunk's content strengths
   tint = c:
     let
-      t = if variant == "light" then 0.18 else 0.28;
+      t = if scheme == "light" then 0.18 else 0.28;
       channel = s: i: lib.fromHexString (builtins.substring i 2 s);
       mix = i: builtins.floor (channel c i * t + channel v.bg i * (1 - t) + 0.5);
       hex2 = n: lib.fixedWidthString 2 "0" (lib.toLower (lib.toHexString n));

@@ -33,7 +33,7 @@ in
       };
       border = {
         width = 2;
-        radius = 8;
+        radius = theme.radius;
         selection-radius = 4;
       };
     };

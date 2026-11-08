@@ -90,6 +90,7 @@ in
     themes = {
       frost-light = helixTheme frost.light;
       frost-dark = helixTheme frost.dark;
+      frost-eink = helixTheme frost.eink;
     };
   };
 }

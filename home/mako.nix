@@ -16,7 +16,7 @@ in
       border-color = "#${theme.border}cc";
       progress-color = "over ${hash theme.selStrong}";
       border-size = 2;
-      border-radius = 8;
+      border-radius = theme.radius;
       padding = 14;
       margin = 8;
       width = 360;

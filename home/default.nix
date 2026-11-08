@@ -6,6 +6,7 @@
     ./shell.nix
     ./git.nix
     ./mango.nix
+    ./hyprland.nix
     ./foot.nix
     ./helix.nix
     ./yazi.nix
@@ -21,6 +22,7 @@
     ./mako.nix
     ./clock.nix
     ./btop.nix
+    ./fastfetch.nix
     ./cliamp.nix
     ./lazysql.nix
   ];

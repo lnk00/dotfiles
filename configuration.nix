@@ -41,9 +41,12 @@ in
 
   services.greetd = {
     enable = true;
-    settings.default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd mango";
+    # mango stays as a fallback: F2 in tuigreet, then `mango`
+    settings.default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd start-hyprland";
   };
 
+  # the screen_shader (home/hyprland.nix) is what mango can't do; xdph shares the screen
+  programs.hyprland.enable = true;
   programs.mango.enable = true;
   programs.dconf.enable = true;
 

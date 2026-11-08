@@ -8,56 +8,62 @@
 # consumer can cheaply convert from: helix wants "#rrggbb", mango wants
 # "0xrrggbbaa", foot wants it bare. Use the helpers at the bottom.
 #
-# Both variants carry the same token names, so a program's theme is written
+# Every variant carries the same token names, so a program's theme is written
 # once as a function of a variant and then applied to each.
 #
 # earl_grey ships dark only. The dark variant below is a direct port; the
 # light variant is derived from it — same structure, same lavender accent,
-# hues darkened for a pale background.
+# hues darkened for a pale background — and then warmed onto paper, so that
+# toggling the reading-mode shader (hyprland.nix) barely changes it.
 #
 # Dark tokens that earl_grey has no colour for are interpolated from its ramp
 # and marked (+). Its palette names are given for the ones that are verbatim.
 
 rec {
+  # Warmed from the neutral light (old value after each): every grey keeps its
+  # Rec.601 luma but moves onto reading_mode.glsl's ink→paper axis, scaled so
+  # the old bg lands exactly on the shader's paper; the accent and hues go 60%
+  # of the way to that warm grey, so they read at the same contrast but quieter.
   light = {
     # surfaces, pale to deep
-    bg = "f4f4f4";
-    bgAlt = "eaeaea";
-    bgInset = "e0e0e0";
+    bg = "f0ebdb"; # f4f4f4, the shader's paper
+    bgAlt = "e6e1d3"; # eaeaea
+    bgInset = "dcd7ca"; # e0e0e0
     # text, strong to faint
-    fg = "3a3a3a";
-    fgDim = "5e5e5e";
+    fg = "39383a"; # 3a3a3a
+    fgDim = "5c5b59"; # 5e5e5e
     # one step above fgFaint: recessive, but readable on bg (gutter numbers)
-    fgSubtle = "757575";
-    fgFaint = "c4c4c4";
+    fgSubtle = "73716d"; # 757575
+    fgFaint = "c1bdb2"; # c4c4c4
     # structure
-    sel = "d6d6d6";
+    sel = "d2cec1"; # d6d6d6
     # the primary selection, a step past sel so it stays visible
-    selStrong = "bcbcc4";
-    border = "cfcfcf";
-    accent = "5b3fd0";
+    selStrong = "bab6ac"; # bcbcc4
+    border = "cbc7bb"; # cfcfcf
+    accent = "584c86"; # 5b3fd0
     # hues
-    red = "b8484a";
-    orange = "b06a2c";
-    yellow = "96761f";
-    green = "4c8a6a";
-    cyan = "2f8389";
-    blue = "44719f";
-    magenta = "a1559a";
-    brRed = "cc5d5f";
-    brOrange = "c47f3f";
-    brYellow = "a98a30";
-    brGreen = "5f9e7d";
-    brCyan = "439a9f";
-    brBlue = "5885b3";
-    brMagenta = "b36aab";
+    red = "885a59"; # b8484a
+    orange = "8d7055"; # b06a2c
+    yellow = "81734e"; # 96761f
+    green = "637a6b"; # 4c8a6a
+    cyan = "527273"; # 2f8389
+    blue = "596a7b"; # 44719f
+    magenta = "84657e"; # a1559a
+    brRed = "9c6e6c"; # cc5d5f
+    brOrange = "a18467"; # c47f3f
+    brYellow = "94865f"; # a98a30
+    brGreen = "768d7d"; # 5f9e7d
+    brCyan = "678887"; # 439a9f
+    brBlue = "6d7d8d"; # 5885b3
+    brMagenta = "97798f"; # b36aab
     # ansi endpoints
-    black = "3a3a3a";
-    white = "d6d6d6";
-    brBlack = "757575";
-    brWhite = "ffffff";
-    # how much of the blurred wallpaper shows through a terminal
-    termAlpha = 0.85;
+    black = "39383a"; # 3a3a3a
+    white = "d2cec1"; # d6d6d6
+    brBlack = "73716d"; # 757575
+    brWhite = "fbf5e5"; # ffffff
+    # how much of the blurred wallpaper shows through a terminal; 0.85 let bright
+    # wallpaper shapes compete with text on paper
+    termAlpha = 0.95;
   };
 
   dark = {
@@ -91,6 +97,45 @@ rec {
     brBlack = "505050"; # darkgrey
     brWhite = "f0f0f0"; # snow
     termAlpha = 0.8;
+  };
+
+  # E-ink paper, after snes19xx's reading_mode.glsl (hyprland.nix): bg and accent
+  # are its paper and ink, so toggling the shader off barely moves the tone.
+  # Hues are muted until they read on paper at 4.5:1; the shader greys them anyway.
+  # brWhite is the darkest ink, not the lightest paper: every program pairs it
+  # with selStrong as selected text, and "bright" on paper means more ink.
+  eink = {
+    bg = "f0ebdb"; # paper 0.94 0.92 0.86
+    bgAlt = "e7e1cf";
+    bgInset = "ddd6c2";
+    fg = "2b2b2b"; # soft charcoal
+    fgDim = "4f4c45";
+    fgSubtle = "6f6b61";
+    fgFaint = "cbc4ae";
+    sel = "d8cfb6";
+    selStrong = "c4b99c";
+    border = "a8a08a";
+    accent = "1a1a1f"; # ink 0.10 0.10 0.12
+    red = "7a2e2a";
+    orange = "8a5a2c";
+    yellow = "7a6524";
+    green = "4a6a4c";
+    cyan = "3a6b68";
+    blue = "3c5a7a";
+    magenta = "6e3f66";
+    brRed = "944540";
+    brOrange = "a06d3c";
+    brYellow = "8f7a33";
+    brGreen = "5c7d5e";
+    brCyan = "4a7d7a";
+    brBlue = "4f6d8e";
+    brMagenta = "84557a";
+    black = "2b2b2b";
+    white = "d8cfb6";
+    brBlack = "6f6b61";
+    brWhite = "1a1a1f";
+    # e-ink is opaque: no glass, no blur behind it
+    termAlpha = 1.0;
   };
 
   # "eef3f8" -> "#eef3f8"       (helix, most GUI toolkits)

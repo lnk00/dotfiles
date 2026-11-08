@@ -3,7 +3,7 @@
 {
   # supervised by systemd: a bare autostart clock died silently twice and stayed gone
   systemd.user.services.quickshell = {
-    Unit.PartOf = [ "mango-session.target" ];
+    Unit.PartOf = [ "graphical-session.target" ];
     Service.Restart = lib.mkForce "always";
   };
 
@@ -11,10 +11,11 @@
   programs.quickshell = {
     enable = true;
     activeConfig = "clock";
-    # mango starts mango-session.target itself, even with its HM systemd.enable off
+    # mango-session.target (mango starts it itself) and hyprland-session.target (HM) both
+    # bind graphical-session.target, so the clock runs under either compositor
     systemd = {
       enable = true;
-      target = "mango-session.target";
+      target = "graphical-session.target";
     };
     configs.clock = pkgs.writeTextDir "shell.qml" ''
       import QtQuick

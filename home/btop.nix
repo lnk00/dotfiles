@@ -70,6 +70,7 @@ in
     themes = {
       frost-light = btopTheme frost.light;
       frost-dark = btopTheme frost.dark;
+      frost-eink = btopTheme frost.eink;
     };
   };
 }

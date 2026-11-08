@@ -80,13 +80,14 @@ let
   hunkTheme = name:
     let
       v = frost.${name};
-      light = name == "light";
+      scheme = if name == "dark" then "dark" else "light";
+      light = scheme == "light";
       row = tint (if light then 0.12 else 0.2);
       content = tint (if light then 0.18 else 0.28);
       selected = tint (if light then 0.18 else 0.25);
     in
     {
-      base = "github-${name}-default";
+      base = "github-${scheme}-default";
       background = hash v.bg;
       contextBg = hash v.bg;
       contextContentBg = hash v.bg;
@@ -137,6 +138,7 @@ in
       transparent_background = true;
       themes.frost-light = hunkTheme "light";
       themes.frost-dark = hunkTheme "dark";
+      themes.frost-eink = hunkTheme "eink";
     };
   };
 }

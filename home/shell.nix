@@ -42,8 +42,9 @@ in
     options = [ "--cmd" "cd" ];
   };
 
-  # Only ANSI color names, so the prompt follows foot's palette and its
-  # runtime light/dark toggle.
+  # Only ANSI color names and the default foreground, so the prompt follows
+  # foot's palette and its runtime light/dark toggle. No bright-white: on the
+  # light palette it is paper (Claude Code's light-ansi theme needs it light).
   programs.starship = {
     enable = true;
     settings = {
@@ -56,9 +57,9 @@ in
         "$nix_shell"
         "$character"
       ];
-      directory.style = "bright-white";
+      directory.style = "bold";
       character = {
-        success_symbol = "[❯](bright-white)";
+        success_symbol = "[❯](bold)";
         error_symbol = "[❯](red)";
         vimcmd_symbol = "[❮](green)";
       };
@@ -68,8 +69,8 @@ in
         style = "bright-black";
       };
       git_status = {
-        format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](bright-white) ($ahead_behind$stashed)]($style)";
-        style = "bright-white";
+        format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](bold) ($ahead_behind$stashed)]($style)";
+        style = "bold";
         conflicted = zwsp;
         untracked = zwsp;
         modified = zwsp;
