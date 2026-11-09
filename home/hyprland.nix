@@ -1,4 +1,4 @@
-{ config, lib, pkgs, theme, ... }:
+{ config, lib, pkgs, theme, variant, ... }:
 
 let
   cursor = config.home.pointerCursor;
@@ -6,6 +6,9 @@ let
   # light and dark let the wallpaper through (termAlpha < 1), meant to be seen
   # blurred, as under mango; eink is opaque and needs no blur
   frosted = theme.termAlpha < 1;
+
+  # e-ink is still; light and dark slide between columns, as under mango
+  motion = variant != "eink";
 
   hyprctl = "${pkgs.hyprland}/bin/hyprctl";
 
@@ -60,7 +63,7 @@ in
 
       hl.config({
         general = {
-          -- mango's scroller: half-width columns, the focused one centred
+          -- mango's scroller, but wider: columns at 0.65 of the screen, the focused one centred
           layout = "scrolling",
           gaps_in = 8,
           gaps_out = 8,
@@ -72,12 +75,12 @@ in
           },
         },
         scrolling = {
-          column_width = 0.5,
+          column_width = 0.65,
           focus_fit_method = "center",
-          -- a lone window stays half width, as mango's proportion_single did
+          -- a lone window keeps that width, as mango's proportion_single did
           fullscreen_on_one_column = false,
         },
-        -- e-ink is still: no shadows, no motion. Glass only when the palette is translucent,
+        -- no shadows, as under mango. Glass only when the palette is translucent,
         -- frosted with mango's old blur_params (vibrancy 0: mango desaturated, not boosted)
         decoration = {
           rounding = ${toString theme.radius},
@@ -94,7 +97,7 @@ in
             vibrancy = 0,
           },
         },
-        animations = { enabled = false },
+        animations = { enabled = ${lib.boolToString motion} },
         input = {
           repeat_rate = 75,
           repeat_delay = 200,
@@ -120,6 +123,13 @@ in
           no_donation_nag = true,
         },
       })
+
+      -- Only mango's scroller slide moves: focus, swapcol and colresize glide over mango's
+      -- animation_duration_move (150ms; speed counts 100ms steps) on its default move curve.
+      -- Opening, closing, fades, borders and layers stay instant, as with animations off.
+      hl.curve("mango", { type = "bezier", points = { {0.46, 1.0}, {0.29, 1} } })
+      hl.animation({ leaf = "global", enabled = false })
+      hl.animation({ leaf = "windowsMove", enabled = true, speed = 1.5, bezier = "mango" })
 
       -- fuzzel and mako are translucent like foot (theme.glass), so frost them too while blur is
       -- on; ignore_alpha keeps the clear corners around their rounded borders unblurred
