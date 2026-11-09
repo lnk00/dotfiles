@@ -34,7 +34,7 @@ in
       border = {
         width = 2;
         radius = theme.radius;
-        selection-radius = 4;
+        selection-radius = 0;
       };
     };
   };

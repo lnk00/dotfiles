@@ -19,8 +19,8 @@ in
     theme = frost.${variant} // {
       # termAlpha as an RRGGBBAA alpha byte, so layer surfaces frost like foot
       glass = lib.toLower (lib.toHexString (builtins.floor (frost.${variant}.termAlpha * 255 + 0.5)));
-      # corner radius for windows and popups; e-ink screens draw square
-      radius = if variant == "eink" then 0 else 8;
+      # corner radius for windows and popups: square in every variant
+      radius = 0;
     };
   };
 
@@ -34,6 +34,7 @@ in
   # HM only exports these as session variables, which greetd never sources,
   # so hyprland.nix also hands them to Hyprland with hl.env.
   home.pointerCursor = {
+    enable = true;
     package = pkgs.bibata-cursors;
     name = "Bibata-Modern-Classic";
     size = 24;

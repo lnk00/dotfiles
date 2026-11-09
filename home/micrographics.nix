@@ -221,12 +221,15 @@ let
           width: inner
           height: lines.implicitHeight
 
+          // every line flush right, against the screen corner
           Column {
             id: lines
+            width: face.inner
             spacing: Math.round(win.px * 0.45)
 
             Row {
               id: line1
+              anchors.right: parent.right
               spacing: Math.round(win.px * 0.35)
               Word { text: Qt.formatDate(clock.date, "ddd").toUpperCase() }
               Pill { filled: true; text: Qt.formatDate(clock.date, "d") }
@@ -250,6 +253,7 @@ let
 
             Row {
               id: line2
+              anchors.right: parent.right
               visible: win.weather !== null
               spacing: Math.round(win.px * 0.35)
               Row {
@@ -264,11 +268,13 @@ let
 
             Row {
               id: line3
+              anchors.right: parent.right
               visible: win.meetings !== null
               spacing: Math.round(win.px * 0.35)
               Glyph { id: voice; text: win.meeting ? "\u{f05cb}" : "\u{f00ef}" }
               Word {
-                width: face.inner - voice.width - parent.spacing
+                // as wide as the title, so the pictogram stays beside it
+                width: Math.min(implicitWidth, face.inner - voice.width - parent.spacing)
                 elide: Text.ElideRight
                 text: (win.meeting ? win.meeting.title : "No more meetings").toUpperCase()
               }
@@ -276,6 +282,7 @@ let
 
             Row {
               id: line4
+              anchors.right: parent.right
               visible: win.when !== null
               spacing: Math.round(win.px * 0.35)
               Pill { text: "\u{f0054}" }

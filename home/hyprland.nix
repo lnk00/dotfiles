@@ -1,4 +1,4 @@
-{ config, lib, pkgs, theme, variant, ... }:
+{ config, lib, pkgs, theme, ... }:
 
 let
   cursor = config.home.pointerCursor;
@@ -7,10 +7,17 @@ let
   # blurred, as under mango; eink is opaque and needs no blur
   frosted = theme.termAlpha < 1;
 
-  # e-ink is still; light and dark slide between columns, as under mango
-  motion = variant != "eink";
-
   hyprctl = "${pkgs.hyprland}/bin/hyprctl";
+
+  # Hyprland's border shader, minus the top and bottom edges. Built from the installed
+  # source so it follows updates, and --replace-fail stops the rebuild if upstream
+  # rewrites the line. Hyprland reads ~/.config/hypr/shaders before its built-in copy,
+  # at startup or on `hyprctl reloadshaders`. Space for the hidden edges stays
+  # reserved, so a 2px strip remains above and below each window.
+  sideBorders = pkgs.runCommand "border.glsl" { } ''
+    substitute ${pkgs.hyprland.src}/src/render/shaders/glsl/border.glsl $out \
+      --replace-fail 'min(min(distanceT, distanceB), min(distanceL, distanceR))' 'min(distanceL, distanceR)'
+  '';
 
   # new foot in the cwd of the focused foot's shell, else $HOME
   footHere = pkgs.writeShellApplication {
@@ -44,6 +51,8 @@ let
   rgba = c: "rgba(${c}ff)";
 in
 {
+  xdg.configFile."hypr/shaders/border.glsl".source = sideBorders;
+
   wayland.windowManager.hyprland = {
     enable = true;
     # configuration.nix's programs.hyprland installs both
@@ -63,10 +72,12 @@ in
 
       hl.config({
         general = {
-          -- mango's scroller, but wider: columns at 0.65 of the screen, the focused one centred
+          -- mango's scroller, but wider: columns at 0.65 of the screen, the focused one centred,
+          -- edge to edge with no gaps
           layout = "scrolling",
-          gaps_in = 8,
-          gaps_out = 8,
+          gaps_in = 0,
+          gaps_out = 0,
+          -- left and right edges only (sideBorders)
           border_size = 2,
           col = {
             -- fgSubtle, not fg: focus shows without a stark dark frame
@@ -97,7 +108,8 @@ in
             vibrancy = 0,
           },
         },
-        animations = { enabled = ${lib.boolToString motion} },
+        -- no motion: focus, swapcol and colresize jump straight to their place
+        animations = { enabled = false },
         input = {
           repeat_rate = 75,
           repeat_delay = 200,
@@ -124,15 +136,8 @@ in
         },
       })
 
-      -- Only mango's scroller slide moves: focus, swapcol and colresize glide over mango's
-      -- animation_duration_move (150ms; speed counts 100ms steps) on its default move curve.
-      -- Opening, closing, fades, borders and layers stay instant, as with animations off.
-      hl.curve("mango", { type = "bezier", points = { {0.46, 1.0}, {0.29, 1} } })
-      hl.animation({ leaf = "global", enabled = false })
-      hl.animation({ leaf = "windowsMove", enabled = true, speed = 1.5, bezier = "mango" })
-
       -- fuzzel and mako are translucent like foot (theme.glass), so frost them too while blur is
-      -- on; ignore_alpha keeps the clear corners around their rounded borders unblurred
+      -- on; ignore_alpha leaves any fully clear pixels around them unblurred
       hl.layer_rule({ name = "frost-launcher", match = { namespace = "^launcher$" }, blur = true, ignore_alpha = 0.5 })
       hl.layer_rule({ name = "frost-notifications", match = { namespace = "^notifications$" }, blur = true, ignore_alpha = 0.5 })
 
