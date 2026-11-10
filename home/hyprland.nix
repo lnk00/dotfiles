@@ -63,7 +63,10 @@ in
           -- a scroller: columns at 0.65 of the screen, the focused one centred, edge to edge
           -- with no gaps
           layout = "scrolling",
-          gaps_in = 0,
+          -- minus half of border_size: the border sits inside each tile, so neighbours overlap
+          -- and their two borders merge into one line as thick as the screen-edge ones. Only
+          -- clean because every border has the same colour
+          gaps_in = -1,
           gaps_out = 0,
           border_size = 2,
           col = {
