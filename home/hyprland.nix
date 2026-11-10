@@ -9,16 +9,6 @@ let
 
   hyprctl = "${pkgs.hyprland}/bin/hyprctl";
 
-  # Hyprland's border shader, minus the top and bottom edges. Built from the installed
-  # source so it follows updates, and --replace-fail stops the rebuild if upstream
-  # rewrites the line. Hyprland reads ~/.config/hypr/shaders before its built-in copy,
-  # at startup or on `hyprctl reloadshaders`. Space for the hidden edges stays
-  # reserved, so a 2px strip remains above and below each window.
-  sideBorders = pkgs.runCommand "border.glsl" { } ''
-    substitute ${pkgs.hyprland.src}/src/render/shaders/glsl/border.glsl $out \
-      --replace-fail 'min(min(distanceT, distanceB), min(distanceL, distanceR))' 'min(distanceL, distanceR)'
-  '';
-
   # new foot in the cwd of the focused foot's shell, else $HOME
   footHere = pkgs.writeShellApplication {
     name = "foot-here";
@@ -51,8 +41,6 @@ let
   rgba = c: "rgba(${c}ff)";
 in
 {
-  xdg.configFile."hypr/shaders/border.glsl".source = sideBorders;
-
   wayland.windowManager.hyprland = {
     enable = true;
     # configuration.nix's programs.hyprland installs both
@@ -77,7 +65,6 @@ in
           layout = "scrolling",
           gaps_in = 0,
           gaps_out = 0,
-          -- left and right edges only (sideBorders)
           border_size = 2,
           col = {
             -- fgSubtle, not fg: focus shows without a stark dark frame
