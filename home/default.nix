@@ -5,7 +5,6 @@
     ./theme.nix
     ./shell.nix
     ./git.nix
-    ./mango.nix
     ./hyprland.nix
     ./foot.nix
     ./helix.nix
@@ -17,7 +16,6 @@
     ./screenshot.nix
     ./wallpaper.nix
     ./clipboard.nix
-    ./screenshare.nix
     ./fuzzel.nix
     ./mako.nix
     ./clock.nix

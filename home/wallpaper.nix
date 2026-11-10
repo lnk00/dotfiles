@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 let
-  # swaps swaybg at runtime and saves the choice; mango.nix's autostart restores it
+  # swaps swaybg at runtime and saves the choice; hyprland.nix restores it at start
   wallpaper = pkgs.writeShellApplication {
     name = "wallpaper";
     runtimeInputs = with pkgs; [ fuzzel findutils gnused coreutils procps util-linux ];

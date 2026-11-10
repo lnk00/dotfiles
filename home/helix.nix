@@ -4,7 +4,7 @@ let
   inherit (frost) hash;
 
   # ui.background deliberately carries no bg so the terminal's translucency —
-  # and therefore mango's blur — shows through the editor.
+  # and therefore Hyprland's blur — shows through the editor.
   helixTheme = v: {
     "ui.background" = { fg = hash v.fg; };
     "ui.text" = { fg = hash v.fg; };

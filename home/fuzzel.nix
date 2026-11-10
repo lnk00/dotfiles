@@ -28,7 +28,7 @@ in
         selection-text = solid theme.fg;
         selection-match = solid theme.accent;
         counter = solid theme.fgSubtle;
-        # same as mango's window borders
+        # the window borders' colour, a little translucent
         border = "${theme.border}cc";
       };
       border = {

@@ -4,7 +4,7 @@ let
   cursor = config.home.pointerCursor;
 
   # light and dark let the wallpaper through (termAlpha < 1), meant to be seen
-  # blurred, as under mango; eink is opaque and needs no blur
+  # blurred; eink is opaque and needs no blur
   frosted = theme.termAlpha < 1;
 
   hyprctl = "${pkgs.hyprland}/bin/hyprctl";
@@ -34,7 +34,7 @@ let
     '';
   };
 
-  # mango's togglejump without the overview: pick a window by class and title, focus it
+  # pick a window by class and title, focus it
   windowPick = pkgs.writeShellApplication {
     name = "window-pick";
     runtimeInputs = with pkgs; [ fuzzel jq ];
@@ -72,8 +72,8 @@ in
 
       hl.config({
         general = {
-          -- mango's scroller, but wider: columns at 0.65 of the screen, the focused one centred,
-          -- edge to edge with no gaps
+          -- a scroller: columns at 0.65 of the screen, the focused one centred, edge to edge
+          -- with no gaps
           layout = "scrolling",
           gaps_in = 0,
           gaps_out = 0,
@@ -88,11 +88,11 @@ in
         scrolling = {
           column_width = 0.65,
           focus_fit_method = "center",
-          -- a lone window keeps that width, as mango's proportion_single did
+          -- a lone window keeps that width
           fullscreen_on_one_column = false,
         },
-        -- no shadows, as under mango. Glass only when the palette is translucent,
-        -- frosted with mango's old blur_params (vibrancy 0: mango desaturated, not boosted)
+        -- no shadows. Glass only when the palette is translucent, frosted without a colour
+        -- boost (vibrancy 0)
         decoration = {
           rounding = ${toString theme.radius},
           active_opacity = 1.0,
@@ -108,12 +108,40 @@ in
             vibrancy = 0,
           },
         },
+        -- groups are the tabs foot lacks: a new window opened from a grouped one joins it
+        -- (auto_group), and the bar above lists them. Grouped windows keep the same side
+        -- borders; the tabs are glass like foot, the active one paler
+        group = {
+          col = {
+            border_active = "${rgba theme.fgSubtle}",
+            border_inactive = "${rgba theme.border}",
+          },
+          groupbar = {
+            font_family = "JetBrainsMono Nerd Font Mono",
+            font_size = 10,
+            height = 18,
+            -- filled tabs instead of a strip under each title
+            gradients = true,
+            indicator_height = 0,
+            rounding = ${toString theme.radius},
+            gradient_rounding = ${toString theme.radius},
+            gaps_out = 0,
+            keep_upper_gap = false,
+            blur = ${lib.boolToString frosted},
+            col = {
+              active = "rgba(${theme.bg}${theme.glass})",
+              inactive = "rgba(${theme.bgInset}${theme.glass})",
+            },
+            text_color = "${rgba theme.fg}",
+            text_color_inactive = "${rgba theme.fgSubtle}",
+          },
+        },
         -- no motion: focus, swapcol and colresize jump straight to their place
         animations = { enabled = false },
         input = {
           repeat_rate = 75,
           repeat_delay = 200,
-          -- focus follows clicks only, like mango's sloppy_focus = 0
+          -- focus follows clicks only
           follow_mouse = "disabled",
         },
         cursor = {
@@ -166,9 +194,13 @@ in
       hl.bind(mod .. " + L", hl.dsp.layout("focus r"))
       hl.bind(mod .. " + SHIFT + H", hl.dsp.layout("swapcol l"))
       hl.bind(mod .. " + SHIFT + L", hl.dsp.layout("swapcol r"))
-      -- column width in screen fractions; 0.05 is about mango's 50px steps
+      -- column width in screen fractions, 5% a step
       hl.bind(mod .. " + CTRL + H", hl.dsp.layout("colresize -0.05"), { repeating = true })
       hl.bind(mod .. " + CTRL + L", hl.dsp.layout("colresize +0.05"), { repeating = true })
+      -- tabs: G makes the focused window a group (or dissolves its group), Y/O step through it
+      hl.bind(mod .. " + G", hl.dsp.group.toggle())
+      hl.bind(mod .. " + Y", hl.dsp.group.prev())
+      hl.bind(mod .. " + O", hl.dsp.group.next())
       hl.bind(mod .. " + S", hl.dsp.exec_cmd("screenshot full"))
       hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("screenshot region"))
       hl.bind(mod .. " + space", hl.dsp.exec_cmd("fuzzel"))

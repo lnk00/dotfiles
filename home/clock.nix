@@ -7,12 +7,11 @@
     Service.Restart = lib.mkForce "always";
   };
 
-  # time over date, centered on a blurred screen, for about 2s on SUPER+c (mango.nix)
+  # time over date, centered on a blurred screen, for about 2s on SUPER+c (hyprland.nix)
   programs.quickshell = {
     enable = true;
     activeConfig = "clock";
-    # mango-session.target (mango starts it itself) and hyprland-session.target (HM) both
-    # bind graphical-session.target, so the clock runs under either compositor
+    # HM's hyprland-session.target binds graphical-session.target, which starts the clock
     systemd = {
       enable = true;
       target = "graphical-session.target";
@@ -34,9 +33,8 @@
           function peek(): void { if (veil.visible) veil.dismiss(); else veil.visible = true }
         }
 
-        // overlay over the whole output, even fullscreen windows. mango's own layer blur and
-        // fade can't animate the blur (and its fade starts at half opacity), so the layer has
-        // no_blur and no_animation, and this blurs and fades a still of the screen itself
+        // overlay over the whole output, even fullscreen windows. A compositor's layer blur
+        // can't be animated, so this blurs and fades a still of the screen itself
         PanelWindow {
           id: veil
           // 0: the screen as it is; 1: blurred and tinted, with the clock on top
@@ -67,8 +65,8 @@
               onHasContentChanged: if (hasContent) fadeIn.start()
             }
           }
-          // greyscale and unlifted, so only the palette's bg tints it: with mango's blur_params
-          // (brighter, a bit of colour) the wallpaper's blue showed through as #1e1e22
+          // greyscale and unlifted, so only the palette's bg tints it: brightened and with
+          // a bit of colour left, the wallpaper's blue showed through as #1e1e22
           MultiEffect {
             x: -veil.bleed
             y: -veil.bleed

@@ -9,10 +9,10 @@ in
     enable = true;
     settings = {
       font = "JetBrainsMono Nerd Font Mono 10";
-      # translucent, so mango's layer blur frosts it like fuzzel
+      # translucent, so Hyprland's layer blur frosts it like fuzzel
       background-color = "#${theme.bg}${theme.glass}";
       text-color = hash theme.fg;
-      # same as mango's window borders
+      # the window borders' colour, a little translucent
       border-color = "#${theme.border}cc";
       progress-color = "over ${hash theme.selStrong}";
       border-size = 2;

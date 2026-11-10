@@ -5,8 +5,8 @@
 # lavender "earl" accent, with muted Catppuccin-Frappé hues for diagnostics.
 #
 # Colours are bare 6-digit hex, no prefix, because that is the one form every
-# consumer can cheaply convert from: helix wants "#rrggbb", mango wants
-# "0xrrggbbaa", foot wants it bare. Use the helpers at the bottom.
+# consumer can cheaply convert from: helix wants "#rrggbb", Hyprland wants
+# "rgba(rrggbbaa)", foot wants it bare. Use the helpers at the bottom.
 #
 # Every variant carries the same token names, so a program's theme is written
 # once as a function of a variant and then applied to each.
@@ -140,8 +140,4 @@ rec {
 
   # "eef3f8" -> "#eef3f8"       (helix, most GUI toolkits)
   hash = c: "#${c}";
-  # "eef3f8" -> "0xeef3f8ff"    (mango)
-  opaque = c: "0x${c}ff";
-  # "0a" is the alpha byte      (mango shadows, dim overlays)
-  withAlpha = a: c: "0x${c}${a}";
 }

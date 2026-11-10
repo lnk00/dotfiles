@@ -1,4 +1,4 @@
-{ lib, pkgs, mangowm, zen-browser, hunk, ... }:
+{ lib, pkgs, zen-browser, hunk, ... }:
 
 let
   # nixpkgs' AppImage sandbox lacks libgpg-error, so Qt's xcb plugin fails and Vial exits at launch
@@ -41,13 +41,11 @@ in
 
   services.greetd = {
     enable = true;
-    # mango stays as a fallback: F2 in tuigreet, then `mango`
     settings.default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd start-hyprland";
   };
 
-  # the screen_shader (home/hyprland.nix) is what mango can't do; xdph shares the screen
+  # xdph (xdg-desktop-portal-hyprland) shares the screen
   programs.hyprland.enable = true;
-  programs.mango.enable = true;
   programs.dconf.enable = true;
 
   fonts.enableDefaultPackages = true;
@@ -94,7 +92,7 @@ in
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    extraSpecialArgs = { inherit mangowm zen-browser hunk; };
+    extraSpecialArgs = { inherit zen-browser hunk; };
     backupFileExtension = "hm-bak";
     users.lnk0 = import ./home;
   };
