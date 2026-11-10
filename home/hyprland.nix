@@ -67,9 +67,10 @@ in
           gaps_out = 0,
           border_size = 2,
           col = {
-            -- fgSubtle, not fg: focus shows without a stark dark frame
+            -- one colour for every window: the focused column is centred, so the border
+            -- needn't mark it. fgSubtle, not fg, so the frame isn't stark
             active_border = "${rgba theme.fgSubtle}",
-            inactive_border = "${rgba theme.border}",
+            inactive_border = "${rgba theme.fgSubtle}",
           },
         },
         scrolling = {
@@ -101,7 +102,7 @@ in
         group = {
           col = {
             border_active = "${rgba theme.fgSubtle}",
-            border_inactive = "${rgba theme.border}",
+            border_inactive = "${rgba theme.fgSubtle}",
           },
           groupbar = {
             font_family = "JetBrainsMono Nerd Font Mono",
