@@ -58,6 +58,12 @@ in
     };
   };
 
+  # Pages fill the window edge to edge, without Zen's 8px frame, rounded corners or shadow.
+  # Merges with zen-home.nix's user.js, since policies refuse zen.* prefs
+  xdg.configFile."zen/o7sqv0ch.Default Profile/user.js".text = ''
+    user_pref("zen.theme.content-element-separation", 0);
+  '';
+
   # Import once: Dark Reader settings → Import Settings
   xdg.configFile."darkreader/earl-grey.json".text = builtins.toJSON darkReader;
 }
