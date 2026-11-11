@@ -79,6 +79,8 @@ in
         scrolling = {
           column_width = 0.65,
           focus_fit_method = "center",
+          -- SUPER+H/L stop at the first and last column instead of wrapping round
+          wrap_focus = false,
           -- a lone window keeps that width
           fullscreen_on_one_column = false,
         },
