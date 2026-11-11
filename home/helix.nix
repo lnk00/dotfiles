@@ -86,6 +86,8 @@ in
       };
       # replaces goto window center
       keys.normal.g.c = ":buffer-close";
+      # a j not followed by k is still typed, just held until the next key
+      keys.insert.j.k = "normal_mode";
     };
     themes = {
       frost-light = helixTheme frost.light;
