@@ -65,10 +65,11 @@ in
           layout = "scrolling",
           -- minus half of border_size: the border sits inside each tile, so neighbours overlap
           -- and their two borders merge into one line as thick as the screen-edge ones. Only
-          -- clean because every border has the same colour
-          gaps_in = -1,
+          -- clean because every border has the same colour. frame.nix closes the screen
+          -- edges, where the scroller cuts the side columns off, with a matching line
+          gaps_in = -${toString (theme.borderWidth / 2)},
           gaps_out = 0,
-          border_size = 2,
+          border_size = ${toString theme.borderWidth},
           col = {
             -- one colour for every window: the focused column is centred, so the border
             -- needn't mark it. fgSubtle, not fg, so the frame isn't stark

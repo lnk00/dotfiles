@@ -21,6 +21,8 @@ in
       glass = lib.toLower (lib.toHexString (builtins.floor (frost.${variant}.termAlpha * 255 + 0.5)));
       # corner radius for windows and popups: square in every variant
       radius = 0;
+      # window border width; frame.nix draws the screen frame at the same width
+      borderWidth = 2;
     };
   };
 

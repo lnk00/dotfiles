@@ -20,6 +20,7 @@
     ./mako.nix
     ./clock.nix
     ./micrographics.nix
+    ./frame.nix
     ./btop.nix
     ./fastfetch.nix
     ./cliamp.nix
