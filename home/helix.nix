@@ -72,6 +72,8 @@ in
         true-color = true;
         color-modes = true;
         indent-guides.render = true;
+        # capped at half the window height, so this keeps the cursor on the middle line
+        scrolloff = 999;
         statusline.mode = { normal = "NORMAL"; insert = "INSERT"; select = "SELECT"; };
       };
       # space-leader stays on the thumb on the 3w6; x = "execute".
