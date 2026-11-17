@@ -102,8 +102,9 @@ in
     shellAliases.ff = "yazi";
     shellAliases.dd = "lazydocker";
     shellAliases.qq = "lazysql";
-    # --operator lets lnk0 run tailscale without sudo afterwards
-    shellAliases.ts = "sudo tailscale up --operator=lnk0";
+    # --operator lets lnk0 run tailscale without sudo afterwards;
+    # `up` errors unless every non-default flag is repeated
+    shellAliases.ts = "sudo tailscale up --operator=lnk0 --accept-routes";
     # like btop, follows `variant`; cliamp.nix ships frost-light and frost-dark
     shellAliases.music = "cliamp --provider ytmusic --start-theme frost-${variant}";
     shellAliases.diff = "hunk diff";

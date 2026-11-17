@@ -26,6 +26,9 @@ in
     enable = true;
     # UDP 41641, lets peers connect directly instead of via DERP relays
     openFirewall = true;
+    # use the AWS/DO subnet routers; *.preview/staging.fullenrich.com
+    # split DNS points at 10.10.x.x, unreachable without these routes
+    extraSetFlags = [ "--accept-routes" ];
   };
 
   time.timeZone = "America/Montevideo";
