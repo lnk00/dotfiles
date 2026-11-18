@@ -137,6 +137,11 @@ in
           repeat_delay = 200,
           -- focus follows clicks only
           follow_mouse = "disabled",
+          -- Magic Trackpad: slower scrolling, and a press (not a tap) to click
+          touchpad = {
+            scroll_factor = 0.5,
+            tap_to_click = false,
+          },
         },
         cursor = {
           -- seconds still before the pointer hides
