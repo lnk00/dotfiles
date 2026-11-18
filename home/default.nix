@@ -25,6 +25,7 @@
     ./fastfetch.nix
     ./cliamp.nix
     ./lazysql.nix
+    ./voxtype.nix
   ];
 
   home.stateVersion = "26.05";

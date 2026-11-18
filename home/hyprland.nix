@@ -201,6 +201,12 @@ in
       hl.bind(mod .. " + V", hl.dsp.exec_cmd("clipboard-pick"))
       hl.bind(mod .. " + Tab", hl.dsp.exec_cmd("${windowPick}/bin/window-pick"))
       hl.bind(mod .. " + C", hl.dsp.exec_cmd("quickshell ipc -c clock call clock peek"))
+      -- dictation (voxtype.nix): hold SUPER+R and speak, the text is typed on release.
+      -- voxtype reads that chord from the keyboard itself, since a release bind here misses R
+      -- when SUPER comes up first; it's bound only so apps never see it. SUPER+W starts and
+      -- stops a hands-free take (any SUPER+…+R would also start the push-to-talk one)
+      hl.bind(mod .. " + R", function() end)
+      hl.bind(mod .. " + W", hl.dsp.exec_cmd("voxtype record toggle"))
     '';
   };
 }
