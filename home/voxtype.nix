@@ -1,8 +1,6 @@
-{ config, lib, pkgs, frost, theme, ... }:
+{ config, lib, pkgs, hash, theme, ... }:
 
 let
-  inherit (frost) hash;
-
   # the ONNX build: plain voxtype has Whisper only, and Whisper is too slow on CPU while the
   # 4060 Ti is on nouveau (no CUDA)
   voxtype = pkgs.voxtype-onnx;
@@ -96,7 +94,10 @@ in
     palette = "package"
   '';
 
-  # supervised like micrographics.nix: it has to be up before the first SUPER+R.
+  # the card's launcher finds quickshell on PATH
+  programs.quickshell.enable = true;
+
+  # supervised by systemd: it has to be up before the first SUPER+R.
   # The evdev hotkey needs the input group (configuration.nix)
   systemd.user.services.voxtype = {
     Unit = {

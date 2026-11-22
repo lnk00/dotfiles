@@ -33,7 +33,7 @@ let
   '';
 in
 {
-  # its own quickshell, supervised like micrographics
+  # its own quickshell, under systemd so it comes back if it dies
   systemd.user.services.frame = {
     Unit = {
       Description = "Screen frame matching the window borders";

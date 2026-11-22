@@ -1,22 +1,16 @@
-{ zen-browser, frost, variant, scheme, theme, ... }:
+{ zen-browser, hash, theme, ... }:
 
 let
-  inherit (frost) hash;
-
-  # the light scheme's colours; eink takes the light slot while it is the variant
-  light = if variant == "eink" then frost.eink else frost.light;
-
   # Dark Reader reads no managed storage, so policies can't set its colours;
   # this is an import file instead. An import replaces the whole theme
   # object, hence every key, defaults included.
-  darkReader = with frost.dark; {
+  darkReader = {
     enabled = true;
-    # recolour natively dark sites too: in dark mode their surfaces stay dark and
-    # greys go neutral; in light mode (eink) every site turns to paper
+    # recolour natively dark sites too: every site turns to paper
     detectDarkTheme = false;
     theme = {
-      # follows `variant`: 1 dark, 0 light
-      mode = if scheme == "dark" then 1 else 0;
+      # light
+      mode = 0;
       brightness = 100;
       contrast = 100;
       grayscale = 0;
@@ -26,10 +20,11 @@ let
       textStroke = 0;
       engine = "dynamicTheme";
       stylesheet = "";
-      darkSchemeBackgroundColor = hash bg;
-      darkSchemeTextColor = hash brWhite;
-      lightSchemeBackgroundColor = hash light.bg;
-      lightSchemeTextColor = hash light.fg;
+      # unused in light mode, but the import needs every key
+      darkSchemeBackgroundColor = "#101010";
+      darkSchemeTextColor = "#f0f0f0";
+      lightSchemeBackgroundColor = hash theme.bg;
+      lightSchemeTextColor = hash theme.fg;
       scrollbarColor = "";
       selectionColor = hash theme.sel;
       styleSystemControls = false;

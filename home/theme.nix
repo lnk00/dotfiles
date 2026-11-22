@@ -1,25 +1,18 @@
 { lib, pkgs, ... }:
 
 let
-  frost = import ./palette.nix;
-
-  # The single system-wide switch: "light", "dark" or "eink". Every home module derives
-  # from it, so changing this one word rethemes foot, helix, yazi, hyprland, fuzzel and mako
-  # together. foot still carries a light and a dark palette and can toggle at runtime.
-  variant = "light";
-
-  # for programs that only know light and dark; eink is paper, so light
-  scheme = if variant == "dark" then "dark" else "light";
+  palette = import ./palette.nix;
 in
 {
   # Every other home module takes these as plain arguments:
-  # { frost, variant, scheme, theme, ... }:
+  # { theme, hash, ... }:
   _module.args = {
-    inherit frost variant scheme;
-    theme = frost.${variant} // {
+    # "eef3f8" -> "#eef3f8"       (helix, most GUI toolkits)
+    hash = c: "#${c}";
+    theme = palette // {
       # termAlpha as an RRGGBBAA alpha byte, so layer surfaces frost like foot
-      glass = lib.toLower (lib.toHexString (builtins.floor (frost.${variant}.termAlpha * 255 + 0.5)));
-      # corner radius for windows and popups: square in every variant
+      glass = lib.toLower (lib.toHexString (builtins.floor (palette.termAlpha * 255 + 0.5)));
+      # corner radius for windows and popups: square everywhere
       radius = 0;
       # window border width; frame.nix draws the screen frame at the same width
       borderWidth = 2;
@@ -28,9 +21,8 @@ in
 
   # The desktop-wide light/dark preference, served over the portal as
   # org.freedesktop.appearance color-scheme. Chromium, Electron and GTK apps
-  # read it to pick their own variant, so it follows `variant` above.
-  dconf.settings."org/gnome/desktop/interface".color-scheme =
-    if variant == "dark" then "prefer-dark" else "prefer-light";
+  # read it to pick their own light variant.
+  dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-light";
 
   # without one, Hyprland falls back to its own logo as the pointer.
   # HM only exports these as session variables, which greetd never sources,
@@ -44,6 +36,4 @@ in
   };
 
   gtk.enable = true;
-  gtk.gtk3.extraConfig.gtk-application-prefer-dark-theme = variant == "dark";
-  gtk.gtk4.extraConfig.gtk-application-prefer-dark-theme = variant == "dark";
 }

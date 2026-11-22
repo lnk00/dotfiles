@@ -1,8 +1,5 @@
-{ frost, theme, ... }:
+{ hash, theme, ... }:
 
-let
-  inherit (frost) hash;
-in
 {
   # D-Bus-activated on the first notification; nothing to autostart
   services.mako = {

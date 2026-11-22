@@ -1,17 +1,17 @@
-{ lib, pkgs, theme, variant, ... }:
+{ lib, pkgs, theme, ... }:
 
 let
   # served over http rather than packed as an extension: Tridactyl can't run on another extension's pages
   port = 7380;
   url = "http://127.0.0.1:${toString port}/";
 
-  # time over date on the palette's bg, sized and spaced like the desktop clock (clock.nix)
+  # time over date on the palette's bg
   site = pkgs.writeTextDir "index.html" ''
     <!doctype html>
     <html lang="en">
     <head>
       <meta charset="utf-8">
-      <meta name="color-scheme" content="${variant}">
+      <meta name="color-scheme" content="light">
       <!-- already in the palette; Dark Reader would recolour the greys -->
       <meta name="darkreader-lock">
       <title>home</title>

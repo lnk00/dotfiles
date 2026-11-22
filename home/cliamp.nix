@@ -1,7 +1,7 @@
-{ config, lib, pkgs, frost, ... }:
+{ config, lib, pkgs, hash, theme, ... }:
 
 let
-  inherit (frost) hash;
+  v = theme;
 
   # yt-dlp reads the YouTube Music sign-in from Zen's (Firefox-format) cookie jar
   seed = pkgs.writeText "cliamp-config.toml" ''
@@ -14,12 +14,12 @@ let
   # green playing, yellow warnings, red errors and the favourite heart, which
   # also run the visualizer from low to high. No bg, so foot's translucency
   # shows through like helix and btop.
-  cliampTheme = v:
+  cliampTheme =
     let
       colors = {
         accent = v.accent;
         bright_fg = v.fg;
-        # fgSubtle would be 4.1:1 on the light bg; fgDim stays above 4.5 in both
+        # fgSubtle would be 4.1:1 on bg; fgDim stays above 4.5
         fg = v.fgDim;
         green = v.green;
         yellow = v.yellow;
@@ -31,10 +31,8 @@ in
 {
   home.packages = [ pkgs.cliamp ];
 
-  # only read, never written, so unlike config.toml these can be store symlinks
-  xdg.configFile."cliamp/themes/frost-light.toml".text = cliampTheme frost.light;
-  xdg.configFile."cliamp/themes/frost-dark.toml".text = cliampTheme frost.dark;
-  xdg.configFile."cliamp/themes/frost-eink.toml".text = cliampTheme frost.eink;
+  # only read, never written, so unlike config.toml it can be a store symlink
+  xdg.configFile."cliamp/themes/frost-light.toml".text = cliampTheme;
 
   # cliamp rewrites config.toml itself (theme on every exit, shuffle/repeat/eq on change),
   # so a store symlink would break: seed it once and let cliamp own it afterwards

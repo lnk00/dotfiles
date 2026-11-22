@@ -9,7 +9,7 @@ let
       # the checkout, not a store copy: a new image works without a rebuild,
       # and a saved path stays valid across rebuilds and gc
       dir=/etc/nixos/wallpapers
-      # the image on screen, as an absolute path; clock.nix frosts its card from it
+      # the image on screen, as an absolute path, for --restore
       state=${config.xdg.stateHome}/wallpaper
 
       case "''${1:-}" in

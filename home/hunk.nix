@@ -1,7 +1,7 @@
-{ lib, hunk, frost, variant, ... }:
+{ lib, hunk, hash, theme, ... }:
 
 let
-  inherit (frost) hash;
+  v = theme;
 
   # hunk takes only opaque #rrggbb, so a tint is hue c laid over bg at strength t
   tint = t: c: bg:
@@ -52,7 +52,7 @@ let
 
   # helix's earl_grey picks: keywords lavender, types yellow, comments dim.
   # Functions stay plain because hunk's scopes carry colour only, no bold.
-  syntax = v:
+  syntax =
     let
       paint = c: scopes: lib.genAttrs scopes (_: hash c);
     in
@@ -76,18 +76,15 @@ let
 
   # A custom theme inherits every key it leaves out from its GitHub base, so
   # all of them are set. Tint strengths are the ones hunk derives its own
-  # themes with, softer on a pale surface.
-  hunkTheme = name:
+  # light themes with.
+  hunkTheme =
     let
-      v = frost.${name};
-      scheme = if name == "dark" then "dark" else "light";
-      light = scheme == "light";
-      row = tint (if light then 0.12 else 0.2);
-      content = tint (if light then 0.18 else 0.28);
-      selected = tint (if light then 0.18 else 0.25);
+      row = tint 0.12;
+      content = tint 0.18;
+      selected = tint 0.18;
     in
     {
-      base = "github-${scheme}-default";
+      base = "github-light-default";
       background = hash v.bg;
       contextBg = hash v.bg;
       contextContentBg = hash v.bg;
@@ -121,7 +118,7 @@ let
       noteBackground = hash v.bgAlt;
       noteTitleBackground = hash v.bgAlt;
       noteTitleText = hash v.fg;
-      syntax_scopes = syntax v;
+      syntax_scopes = syntax;
     };
 in
 {
@@ -132,13 +129,10 @@ in
     settings = {
       # one column of +/- rows, never side by side
       mode = "unified";
-      # like helix, follows `variant` rather than foot's runtime toggle
-      theme = "frost-${variant}";
+      theme = "frost-light";
       # like helix's bg-less ui.background: foot's translucency shows through
       transparent_background = true;
-      themes.frost-light = hunkTheme "light";
-      themes.frost-dark = hunkTheme "dark";
-      themes.frost-eink = hunkTheme "eink";
+      themes.frost-light = hunkTheme;
     };
   };
 }

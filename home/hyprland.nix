@@ -3,8 +3,8 @@
 let
   cursor = config.home.pointerCursor;
 
-  # light and dark let the wallpaper through (termAlpha < 1), meant to be seen
-  # blurred; eink is opaque and needs no blur
+  # foot lets the wallpaper through (termAlpha < 1), meant to be seen blurred;
+  # at termAlpha 1 there would be nothing to blur
   frosted = theme.termAlpha < 1;
 
   hyprctl = "${pkgs.hyprland}/bin/hyprctl";
@@ -48,7 +48,7 @@ in
     portalPackage = null;
 
     # Hyprland 0.57 reads only hyprland.lua; HM's own settings would map every
-    # attribute to an hl.* call, so this is the Lua itself, like clock.nix's QML
+    # attribute to an hl.* call, so this is the Lua itself
     extraConfig = ''
       local mod = "SUPER"
 
@@ -104,7 +104,8 @@ in
         },
         -- groups are the tabs foot lacks: a new window opened from a grouped one joins it
         -- (auto_group), and the bar above lists them. Grouped windows keep the same side
-        -- borders; the tabs are glass like foot, the active one paler
+        -- borders; the tabs are glass like foot, the active one paler (colours set by
+        -- reading mode below)
         group = {
           col = {
             border_active = "${rgba theme.fgSubtle}",
@@ -122,10 +123,6 @@ in
             gaps_out = 0,
             keep_upper_gap = false,
             blur = ${lib.boolToString frosted},
-            col = {
-              active = "rgba(${theme.bg}${theme.glass})",
-              inactive = "rgba(${theme.bgInset}${theme.glass})",
-            },
             text_color = "${rgba theme.fg}",
             text_color_inactive = "${rgba theme.fgSubtle}",
           },
@@ -171,12 +168,28 @@ in
       -- Reading mode: snes19xx's e-ink shader over the whole screen (reading_mode.glsl).
       -- On from login; SUPER+e drops it for colour work. A config reload (every
       -- rebuild) turns it back on.
+      -- Paper isn't see-through, so while it is on foot and the group tabs are solid.
+      -- force_rgbx draws foot without its alpha channel; it stays off other windows
+      -- because it covers their popups too, and would blacken menus' clear corners.
+      -- foot's bg is premultiplied, so it comes out termAlpha darker, which the
+      -- shader's paper curve all but absorbs
       local reading = "${./reading_mode.glsl}"
+      local solid = hl.window_rule({ name = "reading-solid", match = { class = "^foot$" }, force_rgbx = true })
+      local function readingMode(on)
+        hl.config({
+          decoration = { screen_shader = on and reading or "" },
+          group = { groupbar = { col = {
+            active = on and "${rgba theme.bg}" or "rgba(${theme.bg}${theme.glass})",
+            inactive = on and "${rgba theme.bgInset}" or "rgba(${theme.bgInset}${theme.glass})",
+          } } },
+        })
+        solid:set_enabled(on)
+      end
       local readingOn = true
-      hl.config({ decoration = { screen_shader = reading } })
+      readingMode(readingOn)
       hl.bind(mod .. " + E", function()
         readingOn = not readingOn
-        hl.config({ decoration = { screen_shader = readingOn and reading or "" } })
+        readingMode(readingOn)
       end, { description = "toggle e-ink reading mode" })
 
       hl.on("hyprland.start", function()
@@ -205,7 +218,6 @@ in
       hl.bind(mod .. " + space", hl.dsp.exec_cmd("fuzzel"))
       hl.bind(mod .. " + V", hl.dsp.exec_cmd("clipboard-pick"))
       hl.bind(mod .. " + Tab", hl.dsp.exec_cmd("${windowPick}/bin/window-pick"))
-      hl.bind(mod .. " + C", hl.dsp.exec_cmd("quickshell ipc -c clock call clock peek"))
       -- dictation (voxtype.nix): hold SUPER+R and speak, the text is typed on release.
       -- voxtype reads that chord from the keyboard itself, since a release bind here misses R
       -- when SUPER comes up first; it's bound only so apps never see it. SUPER+W starts and

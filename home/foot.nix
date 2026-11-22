@@ -1,7 +1,9 @@
-{ frost, variant, scheme, ... }:
+{ theme, ... }:
 
 let
-  footColors = v: {
+  v = theme;
+
+  footColors = {
     alpha = v.termAlpha;
     alpha-mode = "matching";
     background = v.bg;
@@ -36,10 +38,10 @@ in
       main.font-italic = "JetBrainsMono Nerd Font Mono:style=Italic:size=10";
       main.font-bold-italic = "JetBrainsMono Nerd Font Mono:style=Bold Italic:size=10";
       main.pad = "14x14";
-      main.initial-color-theme = scheme;
+      # the palette sits in the light slot
+      main.initial-color-theme = "light";
       key-bindings.pipe-scrollback =
         ''[sh -c "f=$(mktemp --suffix=.log) && cat - > \"$f\" && foot hx \"$f\"; rm -f \"$f\""] Mod1+space'';
-      key-bindings.color-theme-toggle = "Control+Shift+t";
       key-bindings.show-urls-launch = "Control+Shift+o Mod1+u";
       key-bindings.scrollback-up-line = "Mod1+Up";
       key-bindings.scrollback-down-line = "Mod1+Down";
@@ -55,9 +57,7 @@ in
       text-bindings."\\x1b[104;5u" = "Control+h";
       text-bindings."\\x1b[108;5u" = "Control+l";
 
-      # eink is the light palette while it is the variant
-      colors-light = footColors (if variant == "eink" then frost.eink else frost.light);
-      colors-dark = footColors frost.dark;
+      colors-light = footColors;
     };
   };
 }

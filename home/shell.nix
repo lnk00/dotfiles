@@ -1,4 +1,4 @@
-{ lib, pkgs, variant, ... }:
+{ lib, pkgs, ... }:
 
 let
   # starship hides a group whose variables are all empty, so git_status uses
@@ -43,8 +43,8 @@ in
   };
 
   # Only ANSI color names and the default foreground, so the prompt follows
-  # foot's palette and its runtime light/dark toggle. No bright-white: on the
-  # light palette it is paper (Claude Code's light-ansi theme needs it light).
+  # foot's palette. No bright-white: on the light palette it is paper (Claude
+  # Code's light-ansi theme needs it light).
   programs.starship = {
     enable = true;
     settings = {
@@ -105,9 +105,11 @@ in
     # --operator lets lnk0 run tailscale without sudo afterwards;
     # `up` errors unless every non-default flag is repeated
     shellAliases.ts = "sudo tailscale up --operator=lnk0 --accept-routes";
-    # like btop, follows `variant`; cliamp.nix ships frost-light and frost-dark
-    shellAliases.music = "cliamp --provider ytmusic --start-theme frost-${variant}";
+    # cliamp.nix ships frost-light
+    shellAliases.music = "cliamp --provider ytmusic --start-theme frost-light";
     shellAliases.diff = "hunk diff";
+    # the date and time, now that the desktop has no clock
+    shellAliases.now = "date '+%A %-d %B %Y, %H:%M'";
     # no argument: fuzzel picker; wallpaper.nix has the rest
     shellAliases.wp = "wallpaper";
     shellAliases.ls = "eza -l --git --icons";

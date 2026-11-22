@@ -1,12 +1,9 @@
-{ frost, theme, ... }:
+{ hash, theme, ... }:
 
-let
-  inherit (frost) hash;
-in
 {
   # fastfetch takes "#rrggbb" and emits 24-bit escapes, so it reaches the
   # lavender accent, which none of foot's 16 ANSI slots carry. Like mako it
-  # reads `theme`, so it follows `variant` rather than foot's runtime toggle.
+  # reads `theme`.
   programs.fastfetch = {
     enable = true;
     settings = {

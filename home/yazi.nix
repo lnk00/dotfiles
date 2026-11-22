@@ -1,8 +1,6 @@
-{ frost, theme, ... }:
+{ hash, theme, ... }:
 
 let
-  inherit (frost) hash;
-
   # Same restraint as the editor: chrome recedes to the border/dim greys, the
   # lavender accent carries the cursor, the selection and the current tab, and
   # the hues appear only where yazi encodes meaning — permissions, progress,
@@ -141,8 +139,7 @@ in
 {
   programs.yazi = {
     enable = true;
-    # theme.toml overrides yazi's own dark/light pair, so — like helix — yazi
-    # follows `variant` rather than the terminal's runtime light/dark toggle.
+    # theme.toml overrides yazi's own dark/light pair
     theme = yaziTheme theme;
   };
 }

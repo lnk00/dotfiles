@@ -1,13 +1,13 @@
-{ lib, frost, variant, ... }:
+{ lib, hash, theme, ... }:
 
 let
-  inherit (frost) hash;
+  v = theme;
 
   # Same restraint as helix and yazi: box outlines and dividers recede to the
   # border grey, the lavender accent carries hotkeys, the process banner and
   # the low end of every load graph, and the hues appear only where btop
   # encodes meaning — heat, memory kinds, traffic direction.
-  btopTheme = v:
+  btopTheme =
     let
       # a gradient runs over a meter's length or a graph's height, so a quiet
       # system shows only `start`
@@ -62,15 +62,10 @@ in
   programs.btop = {
     enable = true;
     settings = {
-      # like helix, follows `variant` rather than foot's runtime toggle
-      color_theme = "frost-${variant}";
+      color_theme = "frost-light";
       # like helix's bg-less ui.background: foot's translucency shows through
       theme_background = false;
     };
-    themes = {
-      frost-light = btopTheme frost.light;
-      frost-dark = btopTheme frost.dark;
-      frost-eink = btopTheme frost.eink;
-    };
+    themes.frost-light = btopTheme;
   };
 }

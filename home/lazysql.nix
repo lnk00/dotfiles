@@ -1,16 +1,13 @@
-{ config, lib, pkgs, frost, scheme, theme, ... }:
+{ config, lib, pkgs, hash, theme, ... }:
 
 let
-  inherit (frost) hash;
-
-  # lazysql has a single [theme], so unlike helix it gets only the live variant
   v = theme;
 
   # lazysql takes only opaque #rrggbb, so a tint is hue c laid over bg —
-  # hunk's blend, at hunk's content strengths
+  # hunk's blend, at hunk's content strength
   tint = c:
     let
-      t = if scheme == "light" then 0.18 else 0.28;
+      t = 0.18;
       channel = s: i: lib.fromHexString (builtins.substring i 2 s);
       mix = i: builtins.floor (channel c i * t + channel v.bg i * (1 - t) + 0.5);
       hex2 = n: lib.fixedWidthString 2 "0" (lib.toLower (lib.toHexString n));
@@ -91,7 +88,7 @@ in
   # lazysql rewrites config.toml itself (on every saved connection and theme
   # pick), and the file holds connection URLs, so a store symlink would break
   # it. Instead each switch drops whatever [theme] tables the file has and
-  # appends ours: the connections stay, and the theme follows `variant`.
+  # appends ours: the connections stay, and the theme follows the palette.
   # A preset picked inside lazysql lasts until the next switch.
   home.activation.lazysqlTheme = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     cfg="${config.xdg.configHome}/lazysql/config.toml"

@@ -1,11 +1,11 @@
-{ frost, variant, ... }:
+{ hash, theme, ... }:
 
 let
-  inherit (frost) hash;
+  v = theme;
 
   # ui.background deliberately carries no bg so the terminal's translucency —
   # and therefore Hyprland's blur — shows through the editor.
-  helixTheme = v: {
+  helixTheme = {
     "ui.background" = { fg = hash v.fg; };
     "ui.text" = { fg = hash v.fg; };
     "ui.text.focus" = { fg = hash v.fg; modifiers = [ "bold" ]; };
@@ -67,7 +67,7 @@ in
     enable = true;
     defaultEditor = true;
     settings = {
-      theme = "frost-${variant}";
+      theme = "frost-light";
       editor = {
         true-color = true;
         color-modes = true;
@@ -91,10 +91,6 @@ in
       # a j not followed by k is still typed, just held until the next key
       keys.insert.j.k = "normal_mode";
     };
-    themes = {
-      frost-light = helixTheme frost.light;
-      frost-dark = helixTheme frost.dark;
-      frost-eink = helixTheme frost.eink;
-    };
+    themes.frost-light = helixTheme;
   };
 }
