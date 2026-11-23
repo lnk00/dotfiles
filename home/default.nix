@@ -35,6 +35,10 @@
   programs.yazi.enable = true;
   programs.btop.enable = true;
 
+  # dark GTK apps and dark websites: the gtk portal hands this to Zen as
+  # org.freedesktop.appearance color-scheme, which drives prefers-color-scheme
+  dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+
   xdg.mimeApps.enable = true;
   xdg.mimeApps.defaultApplications."x-scheme-handler/claude-cli" = "claude-code-url-handler.desktop";
 }

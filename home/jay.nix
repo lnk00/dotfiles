@@ -32,10 +32,19 @@ let
     '';
   };
 
+  # start Zen unless it already has a window; the windows rule puts it on the overlay
+  zenLaunch = pkgs.writeShellApplication {
+    name = "zen-launch";
+    text = ''
+      # the query prints nothing (and exits 0) when no window matches
+      [ -n "$(${jay} tree query match-windows -e 'app-id = "zen-beta"')" ] || exec zen-beta
+    '';
+  };
+
   exec = cmd: { type = "exec"; exec = cmd; };
 
   # SUPER+1..5 shows a workspace, SUPER+SHIFT+1..5 sends the focused window there
-  workspaces = lib.listToAttrs (lib.concatMap
+  workspaceKeys = lib.listToAttrs (lib.concatMap
     (i:
       let n = toString i; in [
         (lib.nameValuePair "logo-${n}" { type = "show-workspace"; name = n; })
@@ -101,15 +110,47 @@ let
       '';
     };
 
+    # the browser lives on an overlay, a workspace drawn over the normal one, so the
+    # normal workspaces hold only terminals. Every Zen window goes there, floating,
+    # centred at 16:10 like a MacBook Air
+    workspaces.browser.type = "overlay";
+    windows = [
+      {
+        match.app-id = "zen-beta";
+        initial-tile-state = "floating";
+        initial-floating-size = { width = 1920; height = 1200; };
+      }
+      # Zen opens straight into the overlay when SUPER+B showed it first; started any
+      # other way (fuzzel, a link) it lands on a normal workspace and is moved over.
+      # The overlay is shown first, as a hidden one has no output and squashes the
+      # window to 8x18. The move waits a main-loop iteration (just-mapped = false):
+      # until then Jay hasn't recorded the 1920x1200 and moves it at half the screen
+      {
+        match = { app-id = "zen-beta"; just-mapped = false; };
+        action = [
+          { type = "show-overlay"; name = "browser"; }
+          { type = "move-to-workspace"; name = "browser"; }
+        ];
+      }
+    ];
+
     on-graphics-initialized = [
       (exec [ "${pkgs.wl-clipboard}/bin/wl-paste" "--watch" "${pkgs.cliphist}/bin/cliphist" "store" ])
     ];
 
     shortcuts = {
-      logo-t = exec "${footHere}/bin/foot-here";
+      # new windows open in the browser overlay while it's up, so it goes away first
+      logo-t = [
+        { type = "hide-overlay"; name = "browser"; }
+        (exec "${footHere}/bin/foot-here")
+      ];
       logo-d = "close";
       logo-f = "toggle-fullscreen";
-      logo-b = exec "zen-beta";
+      # shows or hides the browser overlay, and starts Zen if it isn't running
+      logo-b = [
+        { type = "toggle-overlay"; name = "browser"; }
+        (exec "${zenLaunch}/bin/zen-launch")
+      ];
       logo-m = "quit";
       logo-h = "focus-left";
       logo-j = "focus-down";
@@ -135,7 +176,7 @@ let
       # see it. SUPER+W starts and stops a hands-free take
       logo-r = "consume";
       logo-w = exec [ "voxtype" "record" "toggle" ];
-    } // workspaces // vts;
+    } // workspaceKeys // vts;
 
     # width in steps of 5% of the 2560px screen, split between both edges, held to repeat
     complex-shortcuts = {

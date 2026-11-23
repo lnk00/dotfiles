@@ -4,14 +4,16 @@ let
   # served over http rather than packed as an extension: Tridactyl can't run on another extension's pages
   port = 7380;
   url = "http://127.0.0.1:${toString port}/";
+  eg = import ./earl-grey.nix pkgs;
 
-  # time over date, in the browser's own colours
+  # time over date in Helix's earl_grey: its background, the time white like the bar's
+  # clock, the date dimmed like its line numbers
   site = pkgs.writeTextDir "index.html" ''
     <!doctype html>
     <html lang="en">
     <head>
       <meta charset="utf-8">
-      <meta name="color-scheme" content="light dark">
+      <meta name="color-scheme" content="dark">
       <title>home</title>
       <style>
         html, body { height: 100%; margin: 0; }
@@ -21,6 +23,8 @@ let
           overflow: hidden;
           cursor: default;
           user-select: none;
+          background: ${eg.chaotica};
+          color: ${eg.snow};
           font-family: "JetBrainsMono Nerd Font", monospace;
           /* the time's size; the date and spacing scale with it */
           --size: min(240px, 18vw, 30vh);
@@ -36,6 +40,7 @@ let
         #date {
           font-size: calc(var(--size) / 5);
           margin-top: -0.25em;
+          color: ${eg.grey};
         }
       </style>
     </head>
