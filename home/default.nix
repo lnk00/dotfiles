@@ -2,13 +2,11 @@
 
 {
   imports = [
-    ./theme.nix
     ./shell.nix
     ./git.nix
-    ./hyprland.nix
+    ./jay.nix
     ./foot.nix
     ./helix.nix
-    ./yazi.nix
     ./zen.nix
     ./zen-home.nix
     ./tridactyl.nix
@@ -18,11 +16,8 @@
     ./clipboard.nix
     ./fuzzel.nix
     ./mako.nix
-    ./frame.nix
-    ./btop.nix
     ./fastfetch.nix
     ./cliamp.nix
-    ./lazysql.nix
     ./voxtype.nix
   ];
 
@@ -33,9 +28,13 @@
     bat
     lazygit
     lazydocker
+    lazysql
     eza
     bluetui
   ];
+
+  programs.yazi.enable = true;
+  programs.btop.enable = true;
 
   xdg.mimeApps.enable = true;
   xdg.mimeApps.defaultApplications."x-scheme-handler/claude-cli" = "claude-code-url-handler.desktop";

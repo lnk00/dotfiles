@@ -15,6 +15,9 @@ in
   boot.loader.systemd-boot.configurationLimit = 10;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
+  # nouveau keeps the atomic KMS ioctl to itself by default, and Jay won't drive a GPU without
+  # it: the monitor is on the 4060 Ti
+  boot.kernelParams = [ "nouveau.atomic=1" ];
 
   hardware.enableRedistributableFirmware = true;
   hardware.graphics.enable = true;
@@ -44,11 +47,22 @@ in
 
   services.greetd = {
     enable = true;
-    settings.default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd start-hyprland";
+    settings.default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd 'jay run'";
   };
 
-  # xdph (xdg-desktop-portal-hyprland) shares the screen
-  programs.hyprland.enable = true;
+  # Jay has no NixOS module. It starts its own ScreenCast backend and exports
+  # XDG_CURRENT_DESKTOP=jay, which picks jay-portals.conf; gtk covers the rest
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.jay pkgs.xdg-desktop-portal-gtk ];
+    config.jay = {
+      default = [ "gtk" ];
+      "org.freedesktop.impl.portal.ScreenCast" = [ "jay" ];
+      "org.freedesktop.impl.portal.RemoteDesktop" = [ "jay" ];
+    };
+  };
+  # Jay runs Xwayland from PATH, for X11 apps like Vial
+  programs.xwayland.enable = true;
   programs.dconf.enable = true;
 
   fonts.enableDefaultPackages = true;
@@ -84,6 +98,7 @@ in
 
   nixpkgs.config.allowUnfreePredicate = pkg: lib.getName pkg == "claude-code";
   environment.systemPackages = with pkgs; [
+    jay
     wl-clipboard
     git
     curl

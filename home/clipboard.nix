@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  # hyprland.nix runs the cliphist watcher; this picks an old entry back onto the clipboard
+  # jay.nix runs the cliphist watcher; this picks an old entry back onto the clipboard
   clipboard-pick = pkgs.writeShellApplication {
     name = "clipboard-pick";
     runtimeInputs = with pkgs; [ cliphist fuzzel wl-clipboard ];

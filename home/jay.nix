@@ -1,0 +1,155 @@
+{ config, lib, pkgs, ... }:
+
+let
+  jay = lib.getExe pkgs.jay;
+
+  # new foot in the cwd of the focused foot's shell, else $HOME
+  footHere = pkgs.writeShellApplication {
+    name = "foot-here";
+    runtimeInputs = with pkgs; [ foot jq procps coreutils ];
+    text = ''
+      dir=$HOME
+      pid=$(${jay} --json tree query match-windows -e 'focused = true app-id = "foot"' \
+        | jq -r '.client.pid // empty' | head -n 1) || true
+      if [ -n "$pid" ] && child=$(pgrep -nP "$pid"); then
+        dir=$(readlink "/proc/$child/cwd") || dir=$HOME
+      fi
+      [ -d "$dir" ] || dir=$HOME
+      exec foot --working-directory="$dir"
+    '';
+  };
+
+  # pick a window by app id and title, focus it
+  windowPick = pkgs.writeShellApplication {
+    name = "window-pick";
+    runtimeInputs = with pkgs; [ fuzzel wlrctl ];
+    text = ''
+      # wlrctl lists "app_id: title" and matches both exactly; fuzzel exits non-zero on Esc
+      entry=$(wlrctl toplevel list | fuzzel --dmenu --prompt "window ") || exit 0
+      wlrctl toplevel focus "app_id:''${entry%%: *}" "title:''${entry#*: }"
+    '';
+  };
+
+  exec = cmd: { type = "exec"; exec = cmd; };
+
+  # SUPER+1..5 shows a workspace, SUPER+SHIFT+1..5 sends the focused window there
+  workspaces = lib.listToAttrs (lib.concatMap
+    (i:
+      let n = toString i; in [
+        (lib.nameValuePair "logo-${n}" { type = "show-workspace"; name = n; })
+        (lib.nameValuePair "logo-shift-${n}" { type = "move-to-workspace"; name = n; })
+      ])
+    (lib.range 1 5));
+
+  # Jay switches VTs itself; without these ctrl-alt-Fn does nothing
+  vts = lib.listToAttrs (map
+    (i: lib.nameValuePair "ctrl-alt-F${toString i}" { type = "switch-to-vt"; num = i; })
+    (lib.range 1 12));
+
+  # A config file replaces Jay's built-in one entirely, so everything is spelled out.
+  # No [theme]: Jay's own look
+  settings = {
+    # HM swaps the symlink on every switch
+    auto-reload = true;
+    repeat-rate = { rate = 75; delay = 200; };
+    # focus follows clicks only
+    focus-follows-mouse = false;
+    # the screen never blanks
+    idle.minutes = 0;
+    cursor-size = config.home.pointerCursor.size;
+
+    # card1, the AMD iGPU, is the boot VGA device, but the monitor hangs off the 4060 Ti
+    render-device.pci-vendor = 4318; # 0x10de, NVIDIA
+
+    on-graphics-initialized = [
+      (exec [ "wallpaper" "--restore" ])
+      (exec [ "${pkgs.wl-clipboard}/bin/wl-paste" "--watch" "${pkgs.cliphist}/bin/cliphist" "store" ])
+    ];
+
+    shortcuts = {
+      logo-t = exec "${footHere}/bin/foot-here";
+      logo-d = "close";
+      logo-f = "toggle-fullscreen";
+      logo-b = exec "zen-beta";
+      logo-m = "quit";
+      logo-h = "focus-left";
+      logo-j = "focus-down";
+      logo-k = "focus-up";
+      logo-l = "focus-right";
+      logo-shift-h = "move-left";
+      logo-shift-j = "move-down";
+      logo-shift-k = "move-up";
+      logo-shift-l = "move-right";
+      # new windows go beside the focused one; this stacks them instead (and back)
+      logo-e = "toggle-split";
+      # tabs: G shows one window of the container at a time (or all again), Y/O step through it
+      logo-g = "toggle-mono";
+      logo-y = "focus-left";
+      logo-o = "focus-right";
+      logo-s = exec [ "screenshot" "full" ];
+      logo-shift-s = exec [ "screenshot" "region" ];
+      logo-space = exec "fuzzel";
+      logo-v = exec "clipboard-pick";
+      logo-Tab = exec "${windowPick}/bin/window-pick";
+      # dictation (voxtype.nix): hold SUPER+R and speak, the text is typed on release.
+      # voxtype reads that chord from the keyboard itself; it's bound only so apps never
+      # see it. SUPER+W starts and stops a hands-free take
+      logo-r = "consume";
+      logo-w = exec [ "voxtype" "record" "toggle" ];
+    } // workspaces // vts;
+
+    # width in steps of 5% of the 2560px screen, split between both edges, held to repeat
+    complex-shortcuts = {
+      logo-ctrl-h = { action = { type = "resize"; dx1 = 64; dx2 = -64; }; repeat = true; };
+      logo-ctrl-l = { action = { type = "resize"; dx1 = -64; dx2 = 64; }; repeat = true; };
+    };
+
+    # touchpads (the Magic Trackpad): slower scrolling, and a press (not a tap) to click
+    inputs = [
+      {
+        match.is-gesture = true;
+        px-scroll-multiplier = 0.5;
+        tap-enabled = false;
+      }
+    ];
+
+    # Jay hides privileged protocols from clients unless a rule grants them; without one
+    # these tools don't error, they hang or do nothing. A matching rule replaces the
+    # default grant (layer-shell), so slurp gets it back explicitly
+    clients = [
+      # cliphist's watcher, clipboard-pick, helix and Claude Code. nixpkgs wraps wl-copy,
+      # and the kernel cuts .wl-copy-wrapped to 15 characters
+      {
+        match.any = [ { comm = "wl-copy"; } { comm = ".wl-copy-wrappe"; } { comm = "wl-paste"; } ];
+        capabilities = [ "data-control" ];
+      }
+      # screenshot.nix
+      {
+        match.any = [ { comm = "grim"; } { comm = "slurp"; } ];
+        capabilities = [ "screencopy" "layer-shell" ];
+      }
+      # voxtype types its text with wtype
+      {
+        match.comm = "wtype";
+        capabilities = [ "virtual-keyboard" ];
+      }
+      # window-pick
+      {
+        match.comm = "wlrctl";
+        capabilities = [ "foreign-toplevel-manager" ];
+      }
+    ];
+  };
+in
+{
+  xdg.configFile."jay/config.toml".source = (pkgs.formats.toml { }).generate "jay-config.toml" settings;
+
+  # Jay draws no pointer without a cursor theme, and the system ships none; it falls back
+  # to ~/.icons/default, which this links to Adwaita
+  home.pointerCursor = {
+    enable = true;
+    package = pkgs.adwaita-icon-theme;
+    name = "Adwaita";
+    size = 24;
+  };
+}

@@ -1,19 +1,17 @@
-{ lib, pkgs, theme, ... }:
+{ lib, pkgs, ... }:
 
 let
   # served over http rather than packed as an extension: Tridactyl can't run on another extension's pages
   port = 7380;
   url = "http://127.0.0.1:${toString port}/";
 
-  # time over date on the palette's bg
+  # time over date, in the browser's own colours
   site = pkgs.writeTextDir "index.html" ''
     <!doctype html>
     <html lang="en">
     <head>
       <meta charset="utf-8">
-      <meta name="color-scheme" content="light">
-      <!-- already in the palette; Dark Reader would recolour the greys -->
-      <meta name="darkreader-lock">
+      <meta name="color-scheme" content="light dark">
       <title>home</title>
       <style>
         html, body { height: 100%; margin: 0; }
@@ -23,8 +21,6 @@ let
           overflow: hidden;
           cursor: default;
           user-select: none;
-          background: #${theme.bg};
-          color: #${theme.fg};
           font-family: "JetBrainsMono Nerd Font", monospace;
           /* the time's size; the date and spacing scale with it */
           --size: min(240px, 18vw, 30vh);
@@ -40,8 +36,6 @@ let
         #date {
           font-size: calc(var(--size) / 5);
           margin-top: -0.25em;
-          /* halfway from fgDim to fg: set apart from the time, but not by much */
-          color: color-mix(in srgb, #${theme.fgDim}, #${theme.fg});
         }
       </style>
     </head>

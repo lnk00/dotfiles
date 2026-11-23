@@ -1,34 +1,5 @@
-{ theme, ... }:
+{ ... }:
 
-let
-  v = theme;
-
-  footColors = {
-    alpha = v.termAlpha;
-    alpha-mode = "matching";
-    background = v.bg;
-    foreground = v.fg;
-    cursor = "${v.bg} ${v.accent}";
-    selection-background = v.sel;
-    selection-foreground = v.fg;
-    regular0 = v.black;
-    regular1 = v.red;
-    regular2 = v.green;
-    regular3 = v.yellow;
-    regular4 = v.blue;
-    regular5 = v.magenta;
-    regular6 = v.cyan;
-    regular7 = v.white;
-    bright0 = v.brBlack;
-    bright1 = v.brRed;
-    bright2 = v.brGreen;
-    bright3 = v.brYellow;
-    bright4 = v.brBlue;
-    bright5 = v.brMagenta;
-    bright6 = v.brCyan;
-    bright7 = v.brWhite;
-  };
-in
 {
   programs.foot = {
     enable = true;
@@ -38,8 +9,6 @@ in
       main.font-italic = "JetBrainsMono Nerd Font Mono:style=Italic:size=10";
       main.font-bold-italic = "JetBrainsMono Nerd Font Mono:style=Bold Italic:size=10";
       main.pad = "14x14";
-      # the palette sits in the light slot
-      main.initial-color-theme = "light";
       key-bindings.pipe-scrollback =
         ''[sh -c "f=$(mktemp --suffix=.log) && cat - > \"$f\" && foot hx \"$f\"; rm -f \"$f\""] Mod1+space'';
       key-bindings.show-urls-launch = "Control+Shift+o Mod1+u";
@@ -56,8 +25,6 @@ in
       text-bindings."\\x1b[107;5u" = "Control+k";
       text-bindings."\\x1b[104;5u" = "Control+h";
       text-bindings."\\x1b[108;5u" = "Control+l";
-
-      colors-light = footColors;
     };
   };
 }

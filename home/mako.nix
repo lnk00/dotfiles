@@ -1,30 +1,13 @@
-{ hash, theme, ... }:
+{ ... }:
 
 {
   # D-Bus-activated on the first notification; nothing to autostart
   services.mako = {
     enable = true;
     settings = {
-      font = "JetBrainsMono Nerd Font Mono 10";
-      # translucent, so Hyprland's layer blur frosts it like fuzzel
-      background-color = "#${theme.bg}${theme.glass}";
-      text-color = hash theme.fg;
-      # the window borders' colour, a little translucent
-      border-color = "#${theme.border}cc";
-      progress-color = "over ${hash theme.selStrong}";
-      border-size = 2;
-      border-radius = theme.radius;
-      padding = 14;
-      margin = 8;
-      width = 360;
-      max-icon-size = 48;
+      # mako's default keeps every notification until it's clicked
       default-timeout = 5000;
-
-      "urgency=low".text-color = hash theme.fgDim;
-      "urgency=critical" = {
-        border-color = hash theme.red;
-        default-timeout = 0;
-      };
+      "urgency=critical".default-timeout = 0;
     };
   };
 }
