@@ -4,6 +4,45 @@ let
   # the ONNX build: plain voxtype has Whisper only, and Whisper is too slow on CPU while the
   # 4060 Ti is on nouveau (no CUDA)
   voxtype = pkgs.voxtype-onnx;
+  eg = import ./earl-grey.nix pkgs;
+
+  # The recording card. The package ships its launcher but not the QML, which stays in the
+  # source; Theme.qml hardcodes 12px corners, made square like fuzzel's here
+  osdQml = pkgs.runCommand "voxtype-osd-qml" { } ''
+    cp -r ${voxtype.src}/quickshell $out
+    chmod -R u+w $out
+    substituteInPlace $out/voxtype-shared/Theme.qml \
+      --replace-fail "property int cornerRadius: 12" "property int cornerRadius: 0"
+  '';
+
+  # Helix's earl_grey, dressed like mako: solid popup grey, the split-line border, no glow.
+  # The accent carries the mic and waveform, the hues keep their meaning in the meter
+  osdStyle = pkgs.writeTextDir "voxtype-osd.toml" ''
+    name = "earl-grey"
+    version = "1"
+    description = "Helix's earl_grey palette"
+    palette = "package"
+
+    [colors]
+    accent = "${eg.earl}"
+    background = "${eg.deepspace}"
+    surface = "${eg.space}"
+    foreground = "${eg.snow}"
+    muted = "${eg.grey}"
+    success = "${eg.jade}"
+    warning = "${eg.maple}"
+    error = "${eg.blush}"
+    recording = "${eg.earl}"
+    streaming = "${eg.sky}"
+    transcribing = "${eg.maple}"
+    idle = "${eg.grey}"
+
+    [frame]
+    background = "background"
+    border = "${eg.space}"
+    glow = false
+    halo = false
+  '';
 in
 {
   home.packages = [ voxtype ];
@@ -48,6 +87,8 @@ in
     # the nixpkgs build has no gtk4 frontend
     [osd]
     frontend = "quickshell"
+    style = "${osdStyle}"
+    palette = "package"
   '';
 
   # the card's launcher finds quickshell on PATH
@@ -65,9 +106,8 @@ in
     };
     Service = {
       ExecStart = "${voxtype}/bin/voxtype daemon";
-      # the daemon spawns the recording card's launcher, which looks here before /usr/share;
-      # the package ships the launcher but leaves the QML in the source
-      Environment = "VOXTYPE_OSD_QML_PATH=${voxtype.src}/quickshell";
+      # the daemon spawns the recording card's launcher, which looks here before /usr/share
+      Environment = "VOXTYPE_OSD_QML_PATH=${osdQml}";
       Restart = "always";
     };
     Install.WantedBy = [ "graphical-session.target" ];

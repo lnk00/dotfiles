@@ -106,10 +106,8 @@ in
     shellAliases.ts = "sudo tailscale up --operator=lnk0 --accept-routes";
     shellAliases.music = "cliamp --provider ytmusic";
     shellAliases.diff = "hunk diff";
-    # the date and time, now that the desktop has no clock
+    # the date and time, as Jay's bar shows them
     shellAliases.now = "date '+%A %-d %B %Y, %H:%M'";
-    # no argument: fuzzel picker; wallpaper.nix has the rest
-    shellAliases.wp = "wallpaper";
     shellAliases.ls = "eza -l --git --icons";
     shellAliases.la = "eza -l -a --git --icons";
     shellAliases.tree = "eza -l --git --icons -T";

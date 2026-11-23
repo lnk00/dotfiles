@@ -2,6 +2,8 @@
 
 let
   jay = lib.getExe pkgs.jay;
+  eg = import ./earl-grey.nix pkgs;
+  coreutils = "${pkgs.coreutils}/bin";
 
   # new foot in the cwd of the focused foot's shell, else $HOME
   footHere = pkgs.writeShellApplication {
@@ -46,8 +48,7 @@ let
     (i: lib.nameValuePair "ctrl-alt-F${toString i}" { type = "switch-to-vt"; num = i; })
     (lib.range 1 12));
 
-  # A config file replaces Jay's built-in one entirely, so everything is spelled out.
-  # No [theme]: Jay's own look
+  # A config file replaces Jay's built-in one entirely, so everything is spelled out
   settings = {
     # HM swaps the symlink on every switch
     auto-reload = true;
@@ -61,8 +62,46 @@ let
     # card1, the AMD iGPU, is the boot VGA device, but the monitor hangs off the 4060 Ti
     render-device.pci-vendor = 4318; # 0x10de, NVIDIA
 
+    # Helix's earl_grey, each colour taken from the Helix element it stands in for.
+    # Screen-shared and attention titles keep Jay's dark red and purple: the palette has
+    # nothing that dark in those hues, and the light title text needs a dark background
+    theme = {
+      # the desktop, which has no wallpaper (ui.background)
+      bg-color = eg.chaotica;
+      # the bar is a statusline (ui.statusline)
+      bar-bg-color = eg.deepspace;
+      # white like the workspace labels next to it (ui.text.focus)
+      bar-status-text-color = eg.snow;
+      # where hx keeps its statusline
+      bar-position = "bottom";
+      # titles are a menu: the focused one ui.menu.selected, the rest ui.statusline.inactive
+      focused-title-bg-color = eg.lacquer;
+      focused-title-text-color = eg.snow;
+      unfocused-title-bg-color = eg.deepspace;
+      unfocused-title-text-color = eg.grey;
+      # the visible tab of an unfocused container: ui.highlight, ui.text
+      focused-inactive-title-bg-color = eg.space;
+      focused-inactive-title-text-color = eg.silver;
+      # split lines (ui.window)
+      separator-color = eg.space;
+      border-color = eg.space;
+      # drop targets and picked windows, see-through like Jay's default
+      highlight-color = "${eg.earl}7f";
+    };
+
+    # the date and time on the right of the bar, like the shell's `now`; a line a minute,
+    # on the minute
+    status = {
+      format = "plain";
+      exec.shell = ''
+        while :; do
+          ${coreutils}/date '+%A %-d %B %Y, %H:%M'
+          ${coreutils}/sleep $((60 - $(${coreutils}/date +%-S)))
+        done
+      '';
+    };
+
     on-graphics-initialized = [
-      (exec [ "wallpaper" "--restore" ])
       (exec [ "${pkgs.wl-clipboard}/bin/wl-paste" "--watch" "${pkgs.cliphist}/bin/cliphist" "store" ])
     ];
 
@@ -137,6 +176,12 @@ let
       {
         match.comm = "wlrctl";
         capabilities = [ "foreign-toplevel-manager" ];
+      }
+      # screen sharing (configuration.nix): it captures through ext-image-copy-capture and
+      # lists windows through ext-foreign-toplevel-list. nixpkgs wraps it
+      {
+        match.exe-regex = "/\\.?xdg-desktop-portal-wlr(-wrapped)?$";
+        capabilities = [ "screencopy" "foreign-toplevel-list" ];
       }
     ];
   };

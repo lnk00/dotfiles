@@ -12,7 +12,6 @@
     ./tridactyl.nix
     ./hunk.nix
     ./screenshot.nix
-    ./wallpaper.nix
     ./clipboard.nix
     ./fuzzel.nix
     ./mako.nix

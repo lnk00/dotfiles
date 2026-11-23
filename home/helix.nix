@@ -5,6 +5,8 @@
     enable = true;
     defaultEditor = true;
     settings = {
+      # foot and Jay take their colours from it (earl-grey.nix)
+      theme = "earl_grey";
       editor = {
         true-color = true;
         color-modes = true;

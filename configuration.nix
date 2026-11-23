@@ -50,15 +50,26 @@ in
     settings.default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd 'jay run'";
   };
 
-  # Jay has no NixOS module. It starts its own ScreenCast backend and exports
-  # XDG_CURRENT_DESKTOP=jay, which picks jay-portals.conf; gtk covers the rest
+  # Jay has no NixOS module. It exports XDG_CURRENT_DESKTOP=jay, which picks
+  # jay-portals.conf; gtk covers the rest
   xdg.portal = {
     enable = true;
     extraPortals = [ pkgs.jay pkgs.xdg-desktop-portal-gtk ];
     config.jay = {
       default = [ "gtk" ];
-      "org.freedesktop.impl.portal.ScreenCast" = [ "jay" ];
+      # screen sharing through the wlroots portal, for its fuzzel source picker: Jay's own
+      # backend has a built-in one that can't be swapped
+      "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" ];
+      # remote control, which wlr doesn't do
       "org.freedesktop.impl.portal.RemoteDesktop" = [ "jay" ];
+    };
+    # fuzzel lists every monitor and window; jay.nix grants the capture protocols
+    wlr = {
+      enable = true;
+      settings.screencast = {
+        chooser_type = "dmenu";
+        chooser_cmd = "${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt 'share '";
+      };
     };
   };
   # Jay runs Xwayland from PATH, for X11 apps like Vial
