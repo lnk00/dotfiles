@@ -1,0 +1,141 @@
+diff --git a/src/cursor_user.rs b/src/cursor_user.rs
+index 2f9faa9..2f890d8 100644
+--- a/src/cursor_user.rs
++++ b/src/cursor_user.rs
+@@ -105,9 +105,9 @@ impl CursorUserGroup {
+     pub fn deactivate(&self) {
+         if self.hardware_cursor.get() {
+             self.remove_hardware_cursor();
+-        } else {
+-            self.damage_active();
+         }
++        // outputs without a hardware cursor draw it in software, even in this group
++        self.damage_active();
+         self.active.set(None);
+     }
+ 
+diff --git a/src/ifs/wl_seat.rs b/src/ifs/wl_seat.rs
+index c7f467d..867b5b6 100644
+--- a/src/ifs/wl_seat.rs
++++ b/src/ifs/wl_seat.rs
+@@ -271,6 +271,10 @@ pub struct WlSeatGlobal {
+     kb_devices: CopyHashMap<PhysicalKeyboardId, Rc<PhysicalKeyboard>>,
+     cursor_user_group: Rc<CursorUserGroup>,
+     pointer_cursor: Rc<CursorUser>,
++    last_pointer_ns: Cell<u64>,
++    cursor_hidden: Cell<bool>,
++    cursor_shown: AsyncEvent,
++    cursor_hider: Cell<Option<SpawnedFuture<()>>>,
+     tree_changed: Rc<AsyncEvent>,
+     tree_changed_needs_layout: Cell<bool>,
+     selection: CloneCell<Option<Rc<dyn DynDataSource>>>,
+@@ -418,6 +422,10 @@ impl WlSeatGlobal {
+             kb_devices: Default::default(),
+             cursor_user_group,
+             pointer_cursor: cursor_user,
++            last_pointer_ns: Cell::new(state.now_nsec()),
++            cursor_hidden: Cell::new(false),
++            cursor_shown: Default::default(),
++            cursor_hider: Default::default(),
+             tree_changed: Default::default(),
+             tree_changed_needs_layout: Default::default(),
+             selection: Default::default(),
+@@ -472,6 +480,9 @@ impl WlSeatGlobal {
+         });
+         slf.pointer_cursor.set_owner(slf.clone());
+         slf.create_repeat_handler();
++        if !state.is_test {
++            slf.create_cursor_hider();
++        }
+         let seat = slf.clone();
+         let future = state.eng.spawn("seat handler", async move {
+             loop {
+@@ -1550,6 +1561,7 @@ impl WlSeatGlobal {
+         self.marks.clear();
+         self.key_repeater.take();
+         self.repeat_key_state.take();
++        self.cursor_hider.take();
+     }
+ 
+     pub fn id(&self) -> SeatId {
+diff --git a/src/ifs/wl_seat/event_handling.rs b/src/ifs/wl_seat/event_handling.rs
+index 3801595..8604241 100644
+--- a/src/ifs/wl_seat/event_handling.rs
++++ b/src/ifs/wl_seat/event_handling.rs
+@@ -64,6 +64,7 @@ use crate::tree::NodeBase;
+ use crate::tree::ToplevelNode;
+ use crate::tree::TreeTimeline::LiveTL;
+ use crate::utils::bitflags::BitflagsExt;
++use crate::utils::errorfmt::ErrorFmt;
+ use crate::utils::hash_map_ext::HashMapExt;
+ use crate::utils::linkedlist::LinkedNode;
+ use crate::utils::linkedlist::NodeRef;
+@@ -94,6 +95,9 @@ use std::rc::Weak;
+ 
+ mod event_handling_dfs_g_fuse;
+ 
++/// The cursor is hidden after this long without pointer or tablet input.
++const CURSOR_HIDE_DELAY_NS: u64 = 5_000_000_000;
++
+ #[derive(Default)]
+ pub struct NodeSeatState {
+     pointer_foci: SmallMap<SeatId, Rc<WlSeatGlobal>, 1>,
+@@ -399,6 +403,7 @@ impl WlSeatGlobal {
+             | InputEvent::PinchEnd { .. }
+             | InputEvent::HoldBegin { .. }
+             | InputEvent::HoldEnd { .. } => {
++                self.pointer_used();
+                 self.pointer_cursor.activate();
+             }
+             InputEvent::Key { .. } => {}
+@@ -408,8 +413,9 @@ impl WlSeatGlobal {
+             InputEvent::Axis120 { .. } => {}
+             InputEvent::SwitchEvent { .. } => {}
+             InputEvent::TabletToolAdded { .. } => {}
+-            InputEvent::TabletToolChanged { .. } => {}
+-            InputEvent::TabletToolButton { .. } => {}
++            // the tool's own cursor reactivates itself in the tablet code
++            InputEvent::TabletToolChanged { .. } => self.pointer_used(),
++            InputEvent::TabletToolButton { .. } => self.pointer_used(),
+             InputEvent::TabletToolRemoved { .. } => {}
+             InputEvent::TabletPadButton { .. } => {}
+             InputEvent::TabletPadModeSwitch { .. } => {}
+@@ -1486,6 +1492,38 @@ impl WlSeatGlobal {
+         });
+         self.key_repeater.set(Some(handle));
+     }
++
++    fn pointer_used(&self) {
++        self.last_pointer_ns.set(self.state.now_nsec());
++        if self.cursor_hidden.replace(false) {
++            self.cursor_shown.trigger();
++        }
++    }
++
++    /// Hides the cursor once the pointer has been idle for `CURSOR_HIDE_DELAY_NS`.
++    ///
++    /// Hiding deactivates the cursor group, which stops both the hardware and the
++    /// software cursor from being drawn. The next pointer event activates the pointer
++    /// cursor again.
++    pub(super) fn create_cursor_hider(self: &Rc<Self>) {
++        let slf = self.clone();
++        let handle = self.state.eng.spawn("cursor hider", async move {
++            loop {
++                let deadline_ns = slf.last_pointer_ns.get() + CURSOR_HIDE_DELAY_NS;
++                if slf.state.now_nsec() < deadline_ns {
++                    if let Err(e) = slf.state.ring.timeout(deadline_ns).await {
++                        log::error!("Could not wait for cursor timeout: {}", ErrorFmt(e));
++                        return;
++                    }
++                    continue;
++                }
++                slf.cursor_hidden.set(true);
++                slf.cursor_user_group.deactivate();
++                slf.cursor_shown.triggered().await;
++            }
++        });
++        self.cursor_hider.set(Some(handle));
++    }
+ }
+ 
+ // Button callbacks

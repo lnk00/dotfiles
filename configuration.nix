@@ -108,6 +108,16 @@ in
   services.udev.packages = [ vial ];
 
   nixpkgs.config.allowUnfreePredicate = pkg: lib.getName pkg == "claude-code";
+  # Jay has no setting to hide an idle cursor; the patch hides it after 5 s without
+  # pointer input (CURSOR_HIDE_DELAY_NS) and the next motion, click or scroll brings it back.
+  # It touches Jay's seat code, so a Jay update may need it rebased
+  nixpkgs.overlays = [
+    (final: prev: {
+      jay = prev.jay.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [ ./jay-hide-cursor.patch ];
+      });
+    })
+  ];
   environment.systemPackages = with pkgs; [
     jay
     wl-clipboard
